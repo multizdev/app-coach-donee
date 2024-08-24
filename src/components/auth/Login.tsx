@@ -7,8 +7,11 @@ import PasswordInput from "@components/input/PasswordInput";
 import { loginValidationSchema } from "./validationSchemas";
 import { Icon } from "@ant-design/react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 
 const Login = () => {
+  const { replace } = useRouter();
+
   const handleGoogleLogin = () => {
     console.log("Google login");
   };
@@ -20,6 +23,7 @@ const Login = () => {
         validationSchema={loginValidationSchema}
         onSubmit={(values) => {
           console.log("Success:", values);
+          replace("home");
         }}
       >
         {({ handleSubmit }) => (

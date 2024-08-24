@@ -6,8 +6,10 @@ import TextInputField from "@components/input/TextInputField";
 import PasswordInput from "@components/input/PasswordInput";
 import { registerValidationSchema } from "./validationSchemas";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 
 const Register = () => {
+  const { replace } = useRouter();
   return (
     <View className="flex-1 gap-4 bg-white rounded-t-full p-6">
       <Formik
@@ -20,6 +22,7 @@ const Register = () => {
         validationSchema={registerValidationSchema}
         onSubmit={(values) => {
           console.log("Success:", values);
+          replace("home");
         }}
       >
         {({ handleSubmit }) => (
