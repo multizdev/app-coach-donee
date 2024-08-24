@@ -2,14 +2,7 @@ import React, { ReactElement } from "react";
 import { FlatList, ListRenderItemInfo } from "react-native";
 import ActivityCard from "@components/elements/activities/ActivityCard";
 import { Activity } from "@src/types";
-import {
-  COLOR_AQUA,
-  COLOR_DARK_GREEN,
-  COLOR_LIGHT_GREEN,
-  COLOR_PINK,
-  COLOR_PURPLE,
-  COLOR_YELLOW,
-} from "@src/constants";
+import { COLOR_AQUA, COLOR_PINK, COLOR_YELLOW } from "@src/constants";
 
 const activities: Activity[] = [
   {

@@ -1,6 +1,7 @@
 import React, { ReactElement } from "react";
-import { Text, Image, TouchableOpacity, View, Button } from "react-native";
+import { Text, Image, TouchableOpacity, View } from "react-native";
 import { Activity } from "@src/types";
+import { useRouter } from "expo-router";
 
 function ActivityCard({
   item,
@@ -10,6 +11,8 @@ function ActivityCard({
   index: number;
 }): ReactElement {
   const { name, background, image, category } = item;
+
+  const { push } = useRouter();
 
   return (
     <TouchableOpacity
@@ -54,6 +57,7 @@ function ActivityCard({
         <TouchableOpacity
           className="p-4 bg-white rounded-full"
           style={{ elevation: 4 }}
+          onPress={() => push("schedule")}
         >
           <Text className="text-md font-bold">Schedule</Text>
         </TouchableOpacity>

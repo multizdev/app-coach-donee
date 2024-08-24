@@ -8,17 +8,16 @@ import {
   ListRenderItemInfo,
   StyleSheet,
 } from "react-native";
-import { Icon } from "@ant-design/react-native";
 import ActivitiesList from "@components/lists/ActivitiesList";
 import {
   COLOR_AQUA,
   COLOR_BLUE,
-  COLOR_DARK_GREEN,
-  COLOR_LIGHT_GREEN,
   COLOR_PINK,
-  COLOR_PURPLE,
   COLOR_YELLOW,
 } from "@src/constants";
+import { useRouter } from "expo-router";
+import { LinearGradient } from "expo-linear-gradient";
+import CustomHeader from "@components/elements/headers/CustomHeader";
 
 type FilterOption = {
   name: string;
@@ -35,38 +34,26 @@ const filterOptions: FilterOption[] = [
 function HomeScreen(): ReactElement {
   const statusBarHeight = StatusBar.currentHeight;
 
+  const { replace } = useRouter();
+
+  // colors={["#60A5FA", "#98d3ff"]
+
   return (
-    <View
+    <LinearGradient
+      colors={["#242424", "#98d3ff"] /* Corresponds to blue-400 and blue-100 */}
+      start={{ x: 0, y: 1 }}
+      end={{ x: 0, y: 0 }}
       style={{
         paddingTop: statusBarHeight,
-        backgroundColor: "#242424",
         gap: 40,
       }}
       className="flex-1 w-full justify-center items-center p-6"
     >
-      <View className="w-full h-[100] flex flex-row items-center gap-6">
-        <TouchableOpacity
-          style={{
-            width: 80,
-            borderRadius: 30,
-            borderWidth: 3,
-            borderStyle: "solid",
-            borderColor: "#3c3c3c",
-            backgroundColor: "#242424",
-          }}
-          className="h-full bg-black rounded-3xl border-2 border-amber-50 flex justify-center items-center"
-        >
-          <Icon name="arrow-left" color="white" />
-        </TouchableOpacity>
-        <View className="flex-1 flex-col">
-          <Text style={{ fontSize: 30 }} className="text-white">
-            Top Guru's For
-          </Text>
-          <Text style={{ fontSize: 30 }} className="text-white font-bold">
-            Yoga Exercise
-          </Text>
-        </View>
-      </View>
+      <CustomHeader
+        textFirst="Top Guru's For"
+        textBottom="Yoga Exercise"
+        action={() => replace("/")}
+      />
       <View className="flex-1 w-full h-full">
         <FlatList
           horizontal={true}
@@ -87,7 +74,7 @@ function HomeScreen(): ReactElement {
         />
         <ActivitiesList />
       </View>
-    </View>
+    </LinearGradient>
   );
 }
 
