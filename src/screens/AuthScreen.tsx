@@ -1,19 +1,28 @@
+// ./src/screens/AuthScreen.tsx
 import React, { ReactElement } from "react";
 import { ImageBackground, Text, TouchableOpacity, View } from "react-native";
-import Login from "@components/auth/Login";
 import useAppStore from "@stores/useAppStore";
+import AuthForm from "@components/auth/AuthForm";
+import { LinearGradient } from "expo-linear-gradient";
 
-function AuthScreen(): ReactElement {
+const AuthScreen = (): ReactElement => {
   const { authState, setAuthState } = useAppStore();
 
   return (
     <ImageBackground
       source={require("@assets/background/coach.webp")}
       className="flex-1 justify-end items-center"
-      imageStyle={{ resizeMode: "cover" }} // For background cover effect
+      imageStyle={{ resizeMode: "cover" }}
     >
-      <View className="w-screen h-[60vh] bg-blue-400 rounded-t-3xl">
-        <View className="w-full h-[10vh] flex justify-center items-center gap-2">
+      <View className="w-screen h-[65vh] bg-blue-400 overflow-hidden rounded-t-3xl">
+        <LinearGradient
+          colors={
+            ["#60A5FA", "#98d3ff"] /* Corresponds to blue-400 and blue-100 */
+          }
+          start={{ x: 0, y: 1 }}
+          end={{ x: 0, y: 0 }}
+          className="w-full h-[10vh] bg-green-300 flex justify-center items-center gap-2"
+        >
           <Text className="text-white font-bold">Welcome to Our GYM</Text>
           <View className="flex flex-row items-center gap-6 text-white">
             <TouchableOpacity onPress={() => setAuthState("login")}>
@@ -32,13 +41,13 @@ function AuthScreen(): ReactElement {
               </Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </LinearGradient>
         <View className="flex-1 bg-white rounded-t-3xl">
-          <Login />
+          <AuthForm />
         </View>
       </View>
     </ImageBackground>
   );
-}
+};
 
 export default AuthScreen;
