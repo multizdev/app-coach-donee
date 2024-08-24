@@ -5,14 +5,7 @@ import { useRouter } from "expo-router";
 import CustomHeader from "@components/elements/headers/CustomHeader";
 import HeadingChips from "@components/elements/chips/HeadingChips";
 import { Calendar } from "react-native-calendars";
-import {
-  COLOR_AQUA,
-  COLOR_BLUE,
-  COLOR_LIGHT_GREEN,
-  COLOR_PINK,
-  COLOR_PURPLE,
-  COLOR_YELLOW,
-} from "@src/constants";
+import { COLOR_LIGHT_GREEN, COLOR_PINK, COLOR_YELLOW } from "@src/constants";
 
 const trainers = [
   { name: "Donee", image: require("@assets/background/coach.webp") },
