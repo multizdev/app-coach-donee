@@ -2,7 +2,7 @@ import React, { ReactElement } from "react";
 import { FlatList, ListRenderItemInfo } from "react-native";
 import ActivityCard from "@components/elements/activities/ActivityCard";
 import { Activity } from "@src/types";
-import { COLOR_AQUA, COLOR_PINK, COLOR_YELLOW } from "@src/constants";
+import { COLOR_AQUA, COLOR_BLUE, COLOR_YELLOW } from "@src/constants";
 
 const activities: Activity[] = [
   {
@@ -13,7 +13,7 @@ const activities: Activity[] = [
   },
   {
     name: "Diet Consultation",
-    background: COLOR_PINK,
+    background: COLOR_BLUE,
     category: "Nutrition",
     image: require("@assets/activities/coach_donee_blue.png"),
   },
@@ -23,21 +23,6 @@ const activities: Activity[] = [
     category: "Strength",
     image: require("@assets/activities/coach_donee_3.png"),
   },
-  /*  {
-    name: "Swimming Coaching",
-    background: COLOR_LIGHT_GREEN,
-    category: "Nutrition",
-  },
-  {
-    name: "Kettlebell",
-    background: COLOR_PURPLE,
-    category: "Nutrition",
-  },
-  {
-    name: "Sport Massage",
-    background: COLOR_DARK_GREEN,
-    category: "Nutrition",
-  },*/
 ];
 
 function ActivitiesList(): ReactElement {

@@ -6,6 +6,16 @@ module.exports = {
   theme: {
     extend: {
       backgroundImage: {},
+      colors: {
+        primary: "#76A9FA",
+        "primary-dark": "#538aaf",
+        "my-purple": "#878afa",
+        "my-green": "#76fabc",
+        "my-green-dark": "#53af83",
+        "my-yellow": "#fbf6b5",
+        "my-pink": "#fae8fb",
+        "my-aqua": "#ccf4f2",
+      },
     },
   },
   plugins: [],

@@ -1,8 +1,6 @@
 import React, { ReactElement } from "react";
 import { View, ScrollView, FlatList, Text, Image } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
-import CustomHeader from "@components/elements/headers/CustomHeader";
 import HeadingChips from "@components/elements/chips/HeadingChips";
 import { Calendar } from "react-native-calendars";
 import { COLOR_LIGHT_GREEN, COLOR_PINK, COLOR_YELLOW } from "@src/constants";
@@ -25,8 +23,6 @@ const times = [
 ];
 
 function ScheduleScreen(): ReactElement {
-  const { back } = useRouter();
-
   return (
     <LinearGradient
       colors={["#242424", "#98d3ff"] /* Corresponds to blue-400 and blue-100 */}
@@ -34,11 +30,6 @@ function ScheduleScreen(): ReactElement {
       end={{ x: 0, y: 0 }}
       className="flex-1 w-full p-6 gap-6"
     >
-      <CustomHeader
-        textFirst="Set Schedule"
-        textBottom="Date & Time"
-        action={() => back()}
-      />
       <ScrollView>
         <View className="flex-1 w-full gap-6">
           <HeadingChips
