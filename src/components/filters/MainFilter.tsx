@@ -28,13 +28,13 @@ const filterOptions: FilterOption[] = [
 function MainFilter(): ReactElement {
   return (
     <FlatList
-      horizontal={true}
+      horizontal
       data={filterOptions}
       renderItem={({ item }: ListRenderItemInfo<FilterOption>) => {
         return (
           <TouchableOpacity
             style={{ elevation: 2 }}
-            className="w-[100] h-[40] overflow-hidden rounded-full mx-2"
+            className="w-[100] h-[40] overflow-hidden rounded-full mx-[4]"
           >
             <LinearGradient
               colors={["#76A9FA", "#98d3ff"]}

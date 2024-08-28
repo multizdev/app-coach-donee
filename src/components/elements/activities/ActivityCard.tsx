@@ -57,7 +57,7 @@ function ActivityCard({
         <TouchableOpacity
           className="p-4 bg-white rounded-full"
           style={{ elevation: 4 }}
-          onPress={() => push("schedule")}
+          onPress={() => push("booking")}
         >
           <Text className="text-md font-bold">Schedule</Text>
         </TouchableOpacity>

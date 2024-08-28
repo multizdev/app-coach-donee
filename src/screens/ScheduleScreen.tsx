@@ -1,9 +1,21 @@
 import React, { ReactElement } from "react";
-import { View, ScrollView, FlatList, Text, Image } from "react-native";
+import {
+  View,
+  ScrollView,
+  FlatList,
+  Text,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import HeadingChips from "@components/elements/chips/HeadingChips";
 import { Calendar } from "react-native-calendars";
-import { COLOR_LIGHT_GREEN, COLOR_PINK, COLOR_YELLOW } from "@src/constants";
+import {
+  COLOR_AQUA,
+  COLOR_BLUE,
+  COLOR_LIGHT_GREEN,
+  COLOR_YELLOW,
+} from "@src/constants";
 
 const trainers = [
   { name: "Donee", image: require("@assets/background/coach.webp") },
@@ -24,19 +36,10 @@ const times = [
 
 function ScheduleScreen(): ReactElement {
   return (
-    <LinearGradient
-      colors={["#242424", "#98d3ff"] /* Corresponds to blue-400 and blue-100 */}
-      start={{ x: 0, y: 1 }}
-      end={{ x: 0, y: 0 }}
-      className="flex-1 w-full p-6 gap-6"
-    >
+    <View className="flex-1 w-full p-6 gap-6 bg-white">
       <ScrollView>
         <View className="flex-1 w-full gap-6">
-          <HeadingChips
-            text="SELECT TRAINER"
-            width={120}
-            color={COLOR_YELLOW}
-          />
+          <HeadingChips text="SELECT TRAINER" width={120} color={COLOR_BLUE} />
           <View
             style={{
               paddingTop: 6,
@@ -47,18 +50,18 @@ function ScheduleScreen(): ReactElement {
             }}
           >
             <FlatList
-              horizontal={true}
+              horizontal
               data={trainers}
               renderItem={({ item }) => {
                 const { name, image } = item;
                 return (
                   <View className="flex-1 mr-8 items-center gap-2">
                     <Image
-                      className="contain-content rounded-full border-4 border-white"
+                      className="rounded-full border-2 border-black"
                       source={image}
                       style={{ width: 80, height: 80 }}
                     />
-                    <Text className="text-white">{name}</Text>
+                    <Text className="font-bold text-lg">{name}</Text>
                   </View>
                 );
               }}
@@ -70,30 +73,32 @@ function ScheduleScreen(): ReactElement {
             color={COLOR_YELLOW}
           />
           <Calendar style={{ borderRadius: 10 }} />
-          <View
-            style={{
-              paddingTop: 6,
-              paddingBottom: 10,
-            }}
-          >
+          <View className="py-2">
             <FlatList
-              horizontal={true}
+              horizontal
               data={times}
               renderItem={({ item }) => {
                 const { time } = item;
                 return (
-                  <View
-                    style={{ backgroundColor: COLOR_YELLOW }}
-                    className="w-[80] h-[40] flex-1 mr-8 justify-center items-center p-2 px-4 rounded-full"
+                  <TouchableOpacity
+                    style={{ elevation: 2 }}
+                    className="w-[100] h-[40] overflow-hidden rounded-full mx-[4]"
                   >
-                    <Text>{time}</Text>
-                  </View>
+                    <LinearGradient
+                      colors={["#76A9FA", "#98d3ff"]}
+                      start={{ x: 0, y: 1 }}
+                      end={{ x: 0, y: 0 }}
+                      className="w-full h-full flex justify-center items-center"
+                    >
+                      <Text className="text-white">{time}</Text>
+                    </LinearGradient>
+                  </TouchableOpacity>
                 );
               }}
             />
           </View>
           <View
-            style={{ elevation: 4, backgroundColor: COLOR_PINK }}
+            style={{ elevation: 2, backgroundColor: COLOR_AQUA }}
             className="flex-1 flex-row items-center w-full p-4 rounded-3xl"
           >
             <View className="flex-1 items-center gap-2">
@@ -123,9 +128,29 @@ function ScheduleScreen(): ReactElement {
               </Text>
             </View>
           </View>
+          <TouchableOpacity
+            style={{ elevation: 2 }}
+            className="h-[50] rounded-full overflow-hidden"
+          >
+            <LinearGradient
+              colors={
+                [
+                  "#60A5FA",
+                  "#98d3ff",
+                ] /* Corresponds to blue-400 and blue-100 */
+              }
+              start={{ x: 0, y: 1 }}
+              end={{ x: 0, y: 0 }}
+              className="w-full h-full flex justify-center items-center"
+            >
+              <Text className="text-white text-center font-semibold">
+                Book Now
+              </Text>
+            </LinearGradient>
+          </TouchableOpacity>
         </View>
       </ScrollView>
-    </LinearGradient>
+    </View>
   );
 }
 

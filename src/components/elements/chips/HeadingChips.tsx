@@ -1,5 +1,6 @@
 import React, { ReactElement } from "react";
-import { Text, View } from "react-native";
+import { Text } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 
 function HeadingChips({
   text,
@@ -11,12 +12,15 @@ function HeadingChips({
   width: number;
 }): ReactElement {
   return (
-    <View
+    <LinearGradient
+      colors={["#53af83", "#7adaae"]}
+      start={{ x: 0, y: 1 }}
+      end={{ x: 0, y: 0 }}
       style={{ width, backgroundColor: color }}
-      className="p-2 flex justify-center items-center rounded-full"
+      className="p-2 flex justify-center items-center rounded-full overflow-hidden"
     >
-      <Text className="text-sm">{text}</Text>
-    </View>
+      <Text className="text-sm text-white">{text}</Text>
+    </LinearGradient>
   );
 }
 

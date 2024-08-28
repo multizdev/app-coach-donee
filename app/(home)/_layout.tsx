@@ -23,11 +23,11 @@ function HomeLayout(): ReactElement {
           }}
         />
         <Tabs.Screen
-          name="test1"
+          name="schedule"
           options={{
-            title: "My Profile",
+            title: "Schedule",
             tabBarIcon: () => (
-              <AntDesign name="home" size={24} color={COLOR_BLUE} />
+              <AntDesign name="calendar" size={24} color={COLOR_BLUE} />
             ),
           }}
         />
