@@ -7,4 +7,14 @@ type Activity = {
   category: string;
 };
 
-export type { Activity };
+type DaysSelection = {
+  monday: boolean;
+  tuesday: boolean;
+  wednesday: boolean;
+  thursday: boolean;
+  friday: boolean;
+  saturday: boolean;
+  sunday: boolean;
+};
+
+export type { Activity, DaysSelection };

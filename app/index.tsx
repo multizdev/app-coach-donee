@@ -1,4 +1,4 @@
-import AuthScreen from "@src/screens/AuthScreen";
+import AuthScreen from "@src/modules/auth/screens/AuthScreen";
 
 function App() {
   return <AuthScreen />;
