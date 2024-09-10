@@ -17,4 +17,10 @@ type DaysSelection = {
   sunday: boolean;
 };
 
-export type { Activity, DaysSelection };
+type Day = {
+  dayName: string;
+  dateNumber: number;
+  dateInstance: Date;
+};
+
+export type { Activity, DaysSelection, Day };

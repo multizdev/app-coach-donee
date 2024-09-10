@@ -1,10 +1,12 @@
 import React, { ReactElement } from "react";
-import { COLOR_BLUE } from "src/modules/common/constants";
-import { Stack } from "expo-router";
 import { TouchableOpacity, View, Image } from "react-native";
+
+import { Stack } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 
-function HomeLayout(): ReactElement {
+import { COLOR_BLUE } from "src/modules/common/constants";
+
+function MyBookingsLayout(): ReactElement {
   return (
     <Stack
       screenOptions={() => ({
@@ -41,4 +43,4 @@ function HomeLayout(): ReactElement {
   );
 }
 
-export default HomeLayout;
+export default MyBookingsLayout;

@@ -1,7 +1,7 @@
 import React, { ReactElement } from "react";
 import { Tabs } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { AntDesign, Ionicons } from "@expo/vector-icons";
+import { AntDesign, Ionicons, Entypo } from "@expo/vector-icons";
 import { COLOR_BLUE } from "src/modules/common/constants";
 
 function HomeLayout(): ReactElement {
@@ -41,6 +41,15 @@ function HomeLayout(): ReactElement {
                 size={24}
                 color={COLOR_BLUE}
               />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="booking"
+          options={{
+            title: "Bookings",
+            tabBarIcon: () => (
+              <Entypo name="list" size={24} color={COLOR_BLUE} />
             ),
           }}
         />
