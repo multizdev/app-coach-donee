@@ -46,7 +46,7 @@ const Login = () => {
               <Text className="text-blue-400 text-right">Forgot Password?</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={{ elevation: 6 }}
+              style={{ elevation: 2 }}
               className="h-[50] rounded-full overflow-hidden"
               onPress={() => handleSubmit()}
             >

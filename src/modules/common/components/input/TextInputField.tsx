@@ -14,7 +14,7 @@ const TextInputField = ({ name, ...props }: TextInputFieldProps) => {
     <View className="flex-col gap-2">
       <View className="rounded-full">
         <TextInput
-          style={{ elevation: 4 }}
+          style={{ elevation: 2 }}
           className="h-[50] bg-white rounded-full px-4"
           onChangeText={field.onChange(name)}
           onBlur={field.onBlur(name)}

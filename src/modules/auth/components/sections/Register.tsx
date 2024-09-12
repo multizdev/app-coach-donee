@@ -43,7 +43,7 @@ const Register = () => {
             />
 
             <TouchableOpacity
-              style={{ elevation: 6 }}
+              style={{ elevation: 2 }}
               className="h-[50] rounded-full overflow-hidden"
               onPress={() => handleSubmit()}
             >

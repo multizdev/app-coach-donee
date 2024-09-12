@@ -7,7 +7,7 @@ function BioTab(): ReactElement {
   return (
     <ScrollView contentContainerClassName="flex-col p-4 pb-8 gap-4">
       <Text className="font-bold text-xl text-gray-500">Services</Text>
-      <ScrollView contentContainerClassName="w-full flex-row gap-2">
+      <View className="w-full flex-row flex-wrap gap-2">
         {[
           "Personal Training",
           "Assisted Stretching",
@@ -27,7 +27,7 @@ function BioTab(): ReactElement {
             </LinearGradient>
           );
         })}
-      </ScrollView>
+      </View>
       <Text className="font-bold text-xl text-gray-500">Experience</Text>
       <Text className="text-sm text-gray-500">
         Hello, my name is Donee, and I have 18 years of experience working in
@@ -50,10 +50,8 @@ function BioTab(): ReactElement {
           "Animal Flow Level 1",
           "Animal Flow Level 1",
         ].map((certificate: string, index: number) => (
-          <Text key={index} className="text-md text-gray-500">
-            <Text className="text-primary-dark text-lg font-bold">
-              {index + 1}.
-            </Text>{" "}
+          <Text key={certificate + index} className="text-md text-gray-500">
+            <Text className="text-primary text-lg font-bold">{index + 1}.</Text>{" "}
             {certificate}
           </Text>
         ))}

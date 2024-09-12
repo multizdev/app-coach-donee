@@ -24,8 +24,11 @@ const PasswordInput = ({ name, placeholder, ...props }: PasswordInputProps) => {
   };
 
   return (
-    <View>
-      <View className="flex-row items-center bg-gray-100 rounded-full px-4">
+    <View className="flex-col gap-2">
+      <View
+        style={{ elevation: 2 }}
+        className="flex-row bg-white items-center rounded-full px-4"
+      >
         <TextInput
           className="flex-1 h-[50]"
           secureTextEntry={!isPasswordVisible}
