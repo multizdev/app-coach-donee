@@ -1,6 +1,7 @@
 import React, { ReactElement } from "react";
+
 import { Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
+
 import { COLOR_BLUE } from "@src/modules/common/constants";
 
 function ScheduleLayout(): ReactElement {
@@ -17,7 +18,6 @@ function ScheduleLayout(): ReactElement {
           animation: "slide_from_right",
         }}
       />
-      <StatusBar style="auto" />
     </>
   );
 }

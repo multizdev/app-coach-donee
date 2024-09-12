@@ -11,10 +11,11 @@ const TextInputField = ({ name, ...props }: TextInputFieldProps) => {
   const [field, meta] = useField(name);
 
   return (
-    <View>
+    <View className="flex-col gap-2">
       <View className="rounded-full">
         <TextInput
-          className="h-[50] bg-gray-100 rounded-full px-4"
+          style={{ elevation: 4 }}
+          className="h-[50] bg-white rounded-full px-4"
           onChangeText={field.onChange(name)}
           onBlur={field.onBlur(name)}
           value={field.value}

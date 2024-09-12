@@ -1,4 +1,5 @@
 import React, { ReactElement, useEffect, useState } from "react";
+
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import * as Font from "expo-font";
@@ -46,7 +47,7 @@ function RootLayout(): ReactElement {
           animation: "slide_from_right",
         }}
       />
-      <StatusBar style="auto" />
+      <StatusBar style="dark" />
     </>
   );
 }

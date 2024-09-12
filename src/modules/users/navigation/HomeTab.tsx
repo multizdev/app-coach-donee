@@ -1,10 +1,12 @@
 import React, { ReactElement } from "react";
-import ActivitiesList from "@src/modules/users/components/lists/ActivitiesList";
+
 import { View } from "react-native";
+
+import ActivitiesList from "@src/modules/users/components/lists/ActivitiesList";
 
 function HomeTab(): ReactElement {
   return (
-    <View className="p-4 bg-white">
+    <View className="flex-1 bg-white">
       <ActivitiesList />
     </View>
   );

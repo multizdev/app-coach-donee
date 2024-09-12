@@ -1,12 +1,14 @@
 // ./src/components/auth/Register.tsx
 import React from "react";
 import { Text, View, TouchableOpacity } from "react-native";
+
 import { Formik } from "formik";
+import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
+
 import TextInputField from "@src/modules/common/components/input/TextInputField";
 import PasswordInput from "@src/modules/common/components/input/PasswordInput";
 import { registerValidationSchema } from "@src/modules/auth/components/forms/validationSchemas";
-import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
 
 const Register = () => {
   const { replace } = useRouter();

@@ -1,14 +1,16 @@
 import React, { ReactElement } from "react";
 
 import { Tabs } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import { AntDesign, Entypo } from "@expo/vector-icons";
+import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 
 import { COLOR_BLUE } from "src/modules/common/constants";
+import { View } from "react-native";
+
+const ICON_SIZE = 24;
 
 function HomeLayout(): ReactElement {
   return (
-    <>
+    <View className="flex-1 bg-white">
       <Tabs
         screenOptions={{
           tabBarActiveTintColor: COLOR_BLUE,
@@ -19,32 +21,80 @@ function HomeLayout(): ReactElement {
           name="home"
           options={{
             title: "Home",
-            tabBarIcon: () => (
-              <AntDesign name="home" size={24} color={COLOR_BLUE} />
-            ),
+            tabBarIcon: ({ focused }) =>
+              focused ? (
+                <Ionicons name="home" size={ICON_SIZE} color={COLOR_BLUE} />
+              ) : (
+                <Ionicons
+                  name="home-outline"
+                  size={ICON_SIZE}
+                  color={COLOR_BLUE}
+                />
+              ),
           }}
         />
         <Tabs.Screen
           name="schedule"
           options={{
             title: "Schedule",
-            tabBarIcon: () => (
-              <AntDesign name="calendar" size={24} color={COLOR_BLUE} />
-            ),
+            tabBarIcon: ({ focused }) =>
+              focused ? (
+                <Ionicons
+                  name="calendar-sharp"
+                  size={ICON_SIZE}
+                  color={COLOR_BLUE}
+                />
+              ) : (
+                <Ionicons
+                  name="calendar-outline"
+                  size={ICON_SIZE}
+                  color={COLOR_BLUE}
+                />
+              ),
           }}
         />
         <Tabs.Screen
-          name="mybooking"
+          name="clients"
           options={{
-            title: "Bookings",
-            tabBarIcon: () => (
-              <Entypo name="list" size={24} color={COLOR_BLUE} />
-            ),
+            title: "Clients",
+            tabBarIcon: ({ focused }) =>
+              focused ? (
+                <MaterialCommunityIcons
+                  name="account-group"
+                  size={ICON_SIZE}
+                  color={COLOR_BLUE}
+                />
+              ) : (
+                <MaterialCommunityIcons
+                  name="account-group-outline"
+                  size={ICON_SIZE}
+                  color={COLOR_BLUE}
+                />
+              ),
+          }}
+        />
+        <Tabs.Screen
+          name="chat"
+          options={{
+            title: "Chats",
+            tabBarIcon: ({ focused }) =>
+              focused ? (
+                <Ionicons
+                  name="chatbox-ellipses"
+                  size={ICON_SIZE}
+                  color={COLOR_BLUE}
+                />
+              ) : (
+                <Ionicons
+                  name="chatbox-ellipses-outline"
+                  size={ICON_SIZE}
+                  color={COLOR_BLUE}
+                />
+              ),
           }}
         />
       </Tabs>
-      <StatusBar style="auto" />
-    </>
+    </View>
   );
 }
 

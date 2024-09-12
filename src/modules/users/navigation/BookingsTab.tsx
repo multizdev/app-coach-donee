@@ -29,8 +29,8 @@ const BookingListComponent = () => {
             <Text className="font-bold text-gray-500">
               Tue, 03 Sep . 7:00pm - 8:00pm
             </Text>
-            <Text className="font-bold text-gray-500 text-xl">Coach Donee</Text>
-            <Text className="text-gray-500 text-xl">Personal Training</Text>
+            <Text className="font-bold text-gray-500 text-lg">Coach Donee</Text>
+            <Text className="text-gray-500 text-md">Personal Training</Text>
           </View>
           <View className="h-full">
             <LinearGradient
@@ -44,7 +44,7 @@ const BookingListComponent = () => {
               end={{ x: 0, y: 0 }}
               className="rounded-full overflow-hidden w-[80] justify-center items-center py-1"
             >
-              <Text className="text-white text-md">AED 200</Text>
+              <Text className="text-white text-sm">AED 200</Text>
             </LinearGradient>
           </View>
         </TouchableOpacity>

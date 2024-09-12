@@ -1,9 +1,9 @@
 import React, { ReactElement } from "react";
 
-import ScheduleTab from "@src/modules/trainers/navigation/ScheduleTab";
+import MyBookingsScreen from "@src/modules/trainers/screens/MyBookingsScreen";
 
 function Schedule(): ReactElement {
-  return <ScheduleTab />;
+  return <MyBookingsScreen />;
 }
 
 export default Schedule;

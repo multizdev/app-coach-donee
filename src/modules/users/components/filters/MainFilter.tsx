@@ -29,6 +29,7 @@ function MainFilter(): ReactElement {
   return (
     <FlatList
       horizontal
+      showsHorizontalScrollIndicator={false}
       data={filterOptions}
       renderItem={({ item }: ListRenderItemInfo<FilterOption>) => {
         return (

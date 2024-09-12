@@ -18,7 +18,7 @@ function ChatHeader(): ReactElement {
       <Image
         className="rounded-full border-2 border-gray-200"
         source={require("@assets/background/coach.webp")}
-        style={{ width: 60, height: 60 }}
+        style={{ width: 50, height: 50 }}
       />
       <Text className="text-2xl text-primary">Coach Donee</Text>
     </View>

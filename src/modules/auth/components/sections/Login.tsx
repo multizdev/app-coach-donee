@@ -13,7 +13,7 @@ const Login = () => {
   const { replace, push } = useRouter();
 
   const takeToUser = () => {
-    push("/user/(home)");
+    push("/user/home/(home)");
     console.log("Going to User");
   };
 
