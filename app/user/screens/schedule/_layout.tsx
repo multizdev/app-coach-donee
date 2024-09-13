@@ -14,7 +14,7 @@ function ScheduleLayout(): ReactElement {
             backgroundColor: "white",
           },
           headerTintColor: COLOR_BLUE,
-          title: "Schedule",
+          title: "Schedule Session",
           animation: "slide_from_right",
         }}
       />

@@ -8,6 +8,7 @@ import { LinearGradient } from "expo-linear-gradient";
 
 import TextInputField from "@src/modules/common/components/input/TextInputField";
 import { MaterialIcons } from "@expo/vector-icons";
+import PrimaryButton from "@src/modules/common/components/input/PrimaryButton";
 
 const updateSchema = Yup.object().shape({
   fullName: Yup.string().required("Full Name is required"),
@@ -105,28 +106,7 @@ function UpdateUserForm() {
             {touched.gender && errors.gender && (
               <Text className="text-red-500">{errors.gender}</Text>
             )}
-            <TouchableOpacity
-              activeOpacity={0.6}
-              style={{ elevation: 4 }}
-              className="h-[50] rounded-full overflow-hidden"
-              onPress={() => handleSubmit()}
-            >
-              <LinearGradient
-                colors={
-                  [
-                    "#60A5FA",
-                    "#98d3ff",
-                  ] /* Corresponds to blue-400 and blue-100 */
-                }
-                start={{ x: 0, y: 1 }}
-                end={{ x: 0, y: 0 }}
-                className="w-full h-full flex justify-center items-center"
-              >
-                <Text className="text-white text-center font-semibold">
-                  Update
-                </Text>
-              </LinearGradient>
-            </TouchableOpacity>
+            <PrimaryButton text="Update" onPress={handleSubmit} />
           </View>
         )}
       </Formik>

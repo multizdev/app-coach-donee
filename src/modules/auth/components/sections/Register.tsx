@@ -1,19 +1,17 @@
 // ./src/components/auth/Register.tsx
 import React, { ReactElement } from "react";
-import { Text, View, TouchableOpacity } from "react-native";
+import { View } from "react-native";
 
 import { Formik } from "formik";
-import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
 
 import TextInputField from "@src/modules/common/components/input/TextInputField";
 import PasswordInput from "@src/modules/common/components/input/PasswordInput";
 import { registerValidationSchema } from "@src/modules/auth/components/forms/validationSchemas";
+import PrimaryButton from "@src/modules/common/components/input/PrimaryButton";
 import useAuth from "@src/modules/auth/hooks/useAuth";
 
 function Register(): ReactElement {
-  const { replace } = useRouter();
-  const { registerUser } = useAuth();
+  const { registerUser, isLoading } = useAuth();
 
   return (
     <View className="flex-1 gap-4 bg-white rounded-t-full p-6">
@@ -25,11 +23,7 @@ function Register(): ReactElement {
           confirmPassword: "",
         }}
         validationSchema={registerValidationSchema}
-        onSubmit={async (values) => {
-          console.log("Success:", values);
-          await registerUser(values);
-          // replace("home");
-        }}
+        onSubmit={registerUser}
       >
         {({ handleSubmit }) => (
           <>
@@ -46,27 +40,11 @@ function Register(): ReactElement {
               placeholder="Confirm Password"
             />
 
-            <TouchableOpacity
-              style={{ elevation: 2 }}
-              className="h-[50] rounded-full overflow-hidden"
-              onPress={() => handleSubmit()}
-            >
-              <LinearGradient
-                colors={
-                  [
-                    "#60A5FA",
-                    "#98d3ff",
-                  ] /* Corresponds to blue-400 and blue-100 */
-                }
-                start={{ x: 0, y: 1 }}
-                end={{ x: 0, y: 0 }}
-                className="w-full h-full flex justify-center items-center"
-              >
-                <Text className="text-white text-center font-semibold">
-                  Register
-                </Text>
-              </LinearGradient>
-            </TouchableOpacity>
+            <PrimaryButton
+              text="Register"
+              onPress={handleSubmit}
+              loading={isLoading}
+            />
           </>
         )}
       </Formik>

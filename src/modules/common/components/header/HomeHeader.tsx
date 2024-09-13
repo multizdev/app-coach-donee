@@ -1,11 +1,13 @@
 import React, { ReactElement } from "react";
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { View, Text, TouchableOpacity, Image, Alert } from "react-native";
 
 import { DrawerActions } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "expo-router";
+import auth from "@react-native-firebase/auth";
 
 import { COLOR_BLUE } from "@src/modules/common/constants";
+import useAuth from "@src/modules/auth/hooks/useAuth";
 
 function HomeHeader({
   title,
@@ -17,6 +19,15 @@ function HomeHeader({
   filter?: ReactElement;
 }): ReactElement {
   const navigation = useNavigation();
+  const { onAuthStateChanged } = useAuth();
+
+  const signOut = async () => {
+    try {
+      await auth().signOut();
+    } catch (e) {
+      if (e instanceof Error) Alert.alert("Problem Signing out", e.message);
+    }
+  };
 
   return (
     <View className="flex-1 items-center justify-between w-full pr-8 gap-4">
@@ -42,7 +53,10 @@ function HomeHeader({
           )}
         </View>
         <View className="flex-1 items-end">
-          <TouchableOpacity className="w-[40] h-[40] flex justify-center items-center rounded-2xl">
+          <TouchableOpacity
+            className="w-[40] h-[40] flex justify-center items-center rounded-2xl"
+            onPress={signOut}
+          >
             <MaterialIcons name="exit-to-app" size={30} color={COLOR_BLUE} />
           </TouchableOpacity>
         </View>

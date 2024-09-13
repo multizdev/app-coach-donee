@@ -1,7 +1,7 @@
 import React, { ReactElement } from "react";
 import { View, Text, FlatList } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
-import { COLOR_DARK_BLUE } from "@src/modules/common/constants";
+import { COLOR_BLUE } from "@src/modules/common/constants";
 
 type Review = {
   name: string;
@@ -20,11 +20,11 @@ function RatingSection(): ReactElement {
   return (
     <View className="flex-row items-center gap-8">
       <View className="flex-row items-center gap-2">
-        <FontAwesome name="star" size={24} color={COLOR_DARK_BLUE} />
-        <FontAwesome name="star" size={24} color={COLOR_DARK_BLUE} />
-        <FontAwesome name="star" size={24} color={COLOR_DARK_BLUE} />
-        <FontAwesome name="star" size={24} color={COLOR_DARK_BLUE} />
-        <FontAwesome name="star" size={24} color={COLOR_DARK_BLUE} />
+        <FontAwesome name="star" size={24} color={COLOR_BLUE} />
+        <FontAwesome name="star" size={24} color={COLOR_BLUE} />
+        <FontAwesome name="star" size={24} color={COLOR_BLUE} />
+        <FontAwesome name="star" size={24} color={COLOR_BLUE} />
+        <FontAwesome name="star" size={24} color={COLOR_BLUE} />
       </View>
       <Text className="font-bold text-primary-dark">5.0</Text>
     </View>
@@ -39,11 +39,11 @@ function CustomerReview({ item }: { item: Review }): ReactElement {
       <View className="flex-col gap-2">
         <Text className="text-lg">{name}</Text>
         <View className="flex-row items-center">
-          <FontAwesome name="star" size={size} color={COLOR_DARK_BLUE} />
-          <FontAwesome name="star" size={size} color={COLOR_DARK_BLUE} />
-          <FontAwesome name="star" size={size} color={COLOR_DARK_BLUE} />
-          <FontAwesome name="star" size={size} color={COLOR_DARK_BLUE} />
-          <FontAwesome name="star" size={size} color={COLOR_DARK_BLUE} />
+          <FontAwesome name="star" size={size} color={COLOR_BLUE} />
+          <FontAwesome name="star" size={size} color={COLOR_BLUE} />
+          <FontAwesome name="star" size={size} color={COLOR_BLUE} />
+          <FontAwesome name="star" size={size} color={COLOR_BLUE} />
+          <FontAwesome name="star" size={size} color={COLOR_BLUE} />
         </View>
         <Text className="text-md text-gray-500">{message}</Text>
       </View>

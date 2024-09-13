@@ -12,10 +12,10 @@ import HeadingChips from "@src/modules/users/components/elements/chips/HeadingCh
 import { Calendar } from "react-native-calendars";
 import {
   COLOR_AQUA,
-  COLOR_BLUE,
   COLOR_LIGHT_GREEN,
   COLOR_YELLOW,
 } from "@src/modules/common/constants";
+import PrimaryButton from "@src/modules/common/components/input/PrimaryButton";
 
 const trainers = [
   { name: "Donee", image: require("@assets/background/coach.webp") },
@@ -36,53 +36,26 @@ const times = [
 
 function ScheduleScreen(): ReactElement {
   return (
-    <View className="flex-1 w-full p-6 gap-6 bg-white">
-      <ScrollView>
-        <View className="flex-1 w-full gap-6">
-          <HeadingChips text="SELECT TRAINER" width={120} color={COLOR_BLUE} />
-          <View
-            style={{
-              paddingTop: 6,
-              paddingBottom: 10,
-              borderBottomWidth: 1,
-              borderStyle: "solid",
-              borderBottomColor: "white",
-            }}
-          >
-            <FlatList
-              horizontal
-              data={trainers}
-              renderItem={({ item }) => {
-                const { name, image } = item;
-                return (
-                  <View className="flex-1 mr-8 items-center gap-2">
-                    <Image
-                      className="rounded-full border-2 border-black"
-                      source={image}
-                      style={{ width: 80, height: 80 }}
-                    />
-                    <Text className="font-bold text-lg">{name}</Text>
-                  </View>
-                );
-              }}
-            />
-          </View>
+    <View className="flex-1 w-full p-4 gap-6 bg-white">
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View className="flex-1 w-full py-2 gap-4">
           <HeadingChips
             text="SELECT DATE & TIME"
             width={150}
             color={COLOR_YELLOW}
           />
           <Calendar style={{ borderRadius: 10 }} />
-          <View className="py-2">
+          <View>
             <FlatList
               horizontal
+              showsHorizontalScrollIndicator={false}
               data={times}
               renderItem={({ item }) => {
                 const { time } = item;
                 return (
                   <TouchableOpacity
                     style={{ elevation: 2 }}
-                    className="w-[100] h-[40] overflow-hidden rounded-full mx-[4]"
+                    className="w-[100] h-[40] overflow-hidden rounded-full m-2"
                   >
                     <LinearGradient
                       colors={["#76A9FA", "#98d3ff"]}
@@ -128,28 +101,9 @@ function ScheduleScreen(): ReactElement {
               </Text>
             </View>
           </View>
-          <TouchableOpacity
-            style={{ elevation: 2 }}
-            className="h-[50] rounded-full overflow-hidden"
-          >
-            <LinearGradient
-              colors={
-                [
-                  "#60A5FA",
-                  "#98d3ff",
-                ] /* Corresponds to blue-400 and blue-100 */
-              }
-              start={{ x: 0, y: 1 }}
-              end={{ x: 0, y: 0 }}
-              className="w-full h-full flex justify-center items-center"
-            >
-              <Text className="text-white text-center font-semibold">
-                Book Now
-              </Text>
-            </LinearGradient>
-          </TouchableOpacity>
         </View>
       </ScrollView>
+      <PrimaryButton text="Schedule Now" />
     </View>
   );
 }

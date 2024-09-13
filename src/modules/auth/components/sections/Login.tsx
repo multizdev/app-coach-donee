@@ -6,8 +6,8 @@ import TextInputField from "@src/modules/common/components/input/TextInputField"
 import PasswordInput from "@src/modules/common/components/input/PasswordInput";
 import { loginValidationSchema } from "@src/modules/auth/components/forms/validationSchemas";
 import { Icon } from "@ant-design/react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
+import PrimaryButton from "@src/modules/common/components/input/PrimaryButton";
 
 const Login = () => {
   const { replace, push } = useRouter();
@@ -45,27 +45,7 @@ const Login = () => {
             <TouchableOpacity>
               <Text className="text-blue-400 text-right">Forgot Password?</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={{ elevation: 2 }}
-              className="h-[50] rounded-full overflow-hidden"
-              onPress={() => handleSubmit()}
-            >
-              <LinearGradient
-                colors={
-                  [
-                    "#60A5FA",
-                    "#98d3ff",
-                  ] /* Corresponds to blue-400 and blue-100 */
-                }
-                start={{ x: 0, y: 1 }}
-                end={{ x: 0, y: 0 }}
-                className="w-full h-full flex justify-center items-center"
-              >
-                <Text className="text-white text-center font-semibold">
-                  Sign In
-                </Text>
-              </LinearGradient>
-            </TouchableOpacity>
+            <PrimaryButton text="Sign In" onPress={handleSubmit} />
           </>
         )}
       </Formik>

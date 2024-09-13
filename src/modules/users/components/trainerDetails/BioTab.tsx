@@ -1,7 +1,7 @@
 import React, { ReactElement } from "react";
 import { View, Text, ScrollView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { COLOR_DARK_BLUE } from "@src/modules/common/constants";
+import { COLOR_BLUE } from "@src/modules/common/constants";
 
 function BioTab(): ReactElement {
   return (
@@ -18,7 +18,7 @@ function BioTab(): ReactElement {
         ].map((item: string) => {
           return (
             <LinearGradient
-              colors={[COLOR_DARK_BLUE, "#98d3ff"]}
+              colors={[COLOR_BLUE, "#98d3ff"]}
               start={{ x: 0, y: 1 }}
               end={{ x: 0, y: 0 }}
               className="px-4 py-2 rounded-full overflow-hidden flex justify-center items-center bg-primary"

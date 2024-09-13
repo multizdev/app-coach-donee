@@ -1,7 +1,11 @@
+import { useState } from "react";
 import { Alert } from "react-native";
 
-import firebase from "@react-native-firebase/app";
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
+import firestore from "@react-native-firebase/firestore";
+
+import useAppStore from "@src/modules/common/stores/useAppStore";
+import { useRouter } from "expo-router";
 
 type UserRegisterData = {
   fullName: string;
@@ -10,23 +14,69 @@ type UserRegisterData = {
   confirmPassword: string;
 };
 
+export default useAuth;
+
 function useAuth() {
-  const registerUser = async ({ email, password }: UserRegisterData) => {
+  const { replace } = useRouter();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const { accountType, setUser } = useAppStore();
+
+  const registerUser = async ({
+    fullName,
+    email,
+    password,
+  }: UserRegisterData) => {
+    setIsLoading(true);
     try {
-      const userCredentials: FirebaseAuthTypes.UserCredential =
+      const { user }: FirebaseAuthTypes.UserCredential =
         await auth().createUserWithEmailAndPassword(email, password);
 
-      console.log("USER", userCredentials.user);
-      console.log("Additional Info", userCredentials.additionalUserInfo);
+      await user.updateProfile({
+        displayName: fullName,
+      });
+
+      await firestore().collection(`${accountType}s`).doc(user.uid).set({
+        fullName,
+        email,
+        createdAt: firestore.FieldValue.serverTimestamp(),
+      });
+
+      await onAuthStateChanged();
     } catch (e) {
       if (e instanceof Error) {
         console.error("Registration error:", e);
         Alert.alert("Registration Error", e.message);
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  return { registerUser };
-}
+  const onAuthStateChanged = async () => {
+    const user = auth().currentUser;
 
-export default useAuth;
+    if (user) {
+      setIsLoading(true);
+      setUser(user);
+
+      const userDoc = await firestore().collection("Users").doc(user.uid).get();
+      const trainerDoc = await firestore()
+        .collection("Trainers")
+        .doc(user.uid)
+        .get();
+
+      setIsLoading(false);
+
+      if (userDoc.exists) {
+        replace("/user/home/(home)");
+      } else if (trainerDoc.exists) {
+        replace("/trainer/(home)");
+      }
+    } else if (user === null) {
+      replace("/");
+    }
+  };
+
+  return { registerUser, isLoading, onAuthStateChanged };
+}

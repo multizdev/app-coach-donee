@@ -1,4 +1,7 @@
 import { create, StoreApi, UseBoundStore } from "zustand";
+
+import { FirebaseAuthTypes } from "@react-native-firebase/auth";
+
 import { DaysSelection } from "@src/types";
 
 const initialDays: DaysSelection = {
@@ -30,6 +33,8 @@ type State = {
   days: DaysSelection;
   daysTimes: DaysTime;
   daysArray: DaysArray[];
+  accountType: string | null;
+  user: FirebaseAuthTypes.User | null;
 };
 
 type Actions = {
@@ -42,6 +47,8 @@ type Actions = {
     startTime: Date,
     endTime: Date,
   ) => void;
+  setAccountType: (accountType: string | null) => void;
+  setUser: (user: FirebaseAuthTypes.User | null) => void;
 };
 
 const defaultState: State = {
@@ -52,6 +59,8 @@ const defaultState: State = {
     day: day as keyof DaysSelection,
     selected,
   })),
+  accountType: null,
+  user: null,
 };
 
 const useAppStore: UseBoundStore<StoreApi<State & Actions>> = create(
@@ -83,6 +92,9 @@ const useAppStore: UseBoundStore<StoreApi<State & Actions>> = create(
       set((state) => ({
         daysTimes: { ...state.daysTimes, [day]: { startTime, endTime } },
       })),
+    setAccountType: (accountType: string | null) =>
+      set(() => ({ accountType })),
+    setUser: (user: FirebaseAuthTypes.User | null) => set(() => ({ user })),
   }),
 );
 

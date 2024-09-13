@@ -7,6 +7,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 
 import TextInputField from "@src/modules/common/components/input/TextInputField";
+import PrimaryButton from "@src/modules/common/components/input/PrimaryButton";
 
 const experienceSchema = Yup.object().shape({
   bio: Yup.string().required("Bio/Experience is required"),
@@ -120,23 +121,7 @@ function ExperienceDetailsScreen(): ReactElement {
               ))}
             </View>
           </View>
-          <TouchableOpacity
-            activeOpacity={0.6}
-            style={{ elevation: 4 }}
-            className="h-[50] rounded-full overflow-hidden"
-            onPress={() => handleSubmit()}
-          >
-            <LinearGradient
-              colors={["#60A5FA", "#98d3ff"]}
-              start={{ x: 0, y: 1 }}
-              end={{ x: 0, y: 0 }}
-              className="w-full h-full flex justify-center items-center"
-            >
-              <Text className="text-white text-center font-semibold">
-                Submit
-              </Text>
-            </LinearGradient>
-          </TouchableOpacity>
+          <PrimaryButton text="Submit" />
         </View>
       )}
     </Formik>
