@@ -13,6 +13,8 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "bundleIdentifier": "com.multidevs.coachdonee",
       "supportsTablet": true
     },
     "android": {
@@ -20,6 +22,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "googleServicesFile": "./google-services.json",
       "package": "com.multidevs.coachdonee"
     },
     "web": {
@@ -27,7 +30,9 @@
     },
     "plugins": [
       "expo-router",
-      "expo-video"
+      "expo-video",
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth"
     ],
     "extra": {
       "router": {

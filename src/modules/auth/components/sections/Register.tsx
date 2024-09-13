@@ -1,5 +1,5 @@
 // ./src/components/auth/Register.tsx
-import React from "react";
+import React, { ReactElement } from "react";
 import { Text, View, TouchableOpacity } from "react-native";
 
 import { Formik } from "formik";
@@ -9,9 +9,12 @@ import { useRouter } from "expo-router";
 import TextInputField from "@src/modules/common/components/input/TextInputField";
 import PasswordInput from "@src/modules/common/components/input/PasswordInput";
 import { registerValidationSchema } from "@src/modules/auth/components/forms/validationSchemas";
+import useAuth from "@src/modules/auth/hooks/useAuth";
 
-const Register = () => {
+function Register(): ReactElement {
   const { replace } = useRouter();
+  const { registerUser } = useAuth();
+
   return (
     <View className="flex-1 gap-4 bg-white rounded-t-full p-6">
       <Formik
@@ -22,9 +25,10 @@ const Register = () => {
           confirmPassword: "",
         }}
         validationSchema={registerValidationSchema}
-        onSubmit={(values) => {
+        onSubmit={async (values) => {
           console.log("Success:", values);
-          replace("home");
+          await registerUser(values);
+          // replace("home");
         }}
       >
         {({ handleSubmit }) => (
@@ -68,6 +72,6 @@ const Register = () => {
       </Formik>
     </View>
   );
-};
+}
 
 export default Register;
