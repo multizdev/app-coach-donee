@@ -1,8 +1,7 @@
 import React, { ReactElement } from "react";
 
 import { Tabs } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import { AntDesign, Ionicons, Entypo } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { COLOR_BLUE } from "src/modules/common/constants";
 
@@ -47,6 +46,26 @@ function HomeLayout(): ReactElement {
               ) : (
                 <Ionicons
                   name="chatbox-ellipses-outline"
+                  size={ICON_SIZE}
+                  color={COLOR_BLUE}
+                />
+              ),
+          }}
+        />
+        <Tabs.Screen
+          name="trainers"
+          options={{
+            title: "Trainers",
+            tabBarIcon: ({ focused }) =>
+              focused ? (
+                <MaterialCommunityIcons
+                  name="account-group"
+                  size={ICON_SIZE}
+                  color={COLOR_BLUE}
+                />
+              ) : (
+                <MaterialCommunityIcons
+                  name="account-group-outline"
                   size={ICON_SIZE}
                   color={COLOR_BLUE}
                 />

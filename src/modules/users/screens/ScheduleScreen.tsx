@@ -7,14 +7,17 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
+
+import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
-import HeadingChips from "@src/modules/users/components/elements/chips/HeadingChips";
 import { Calendar } from "react-native-calendars";
+
 import {
   COLOR_AQUA,
   COLOR_LIGHT_GREEN,
   COLOR_YELLOW,
 } from "@src/modules/common/constants";
+import HeadingChips from "@src/modules/users/components/elements/chips/HeadingChips";
 import PrimaryButton from "@src/modules/common/components/input/PrimaryButton";
 
 const trainers = [
@@ -35,6 +38,8 @@ const times = [
 ];
 
 function ScheduleScreen(): ReactElement {
+  const { replace, dismissAll } = useRouter();
+
   return (
     <View className="flex-1 w-full p-4 gap-6 bg-white">
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -103,7 +108,13 @@ function ScheduleScreen(): ReactElement {
           </View>
         </View>
       </ScrollView>
-      <PrimaryButton text="Schedule Now" />
+      <PrimaryButton
+        text="Schedule Now"
+        onPress={() => {
+          dismissAll();
+          replace("user/home/(home)/trainers");
+        }}
+      />
     </View>
   );
 }

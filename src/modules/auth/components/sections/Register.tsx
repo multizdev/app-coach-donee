@@ -10,7 +10,7 @@ import { registerValidationSchema } from "@src/modules/auth/components/forms/val
 import PrimaryButton from "@src/modules/common/components/input/PrimaryButton";
 import useAuth from "@src/modules/auth/hooks/useAuth";
 
-function Register(): ReactElement {
+function Register(): ReactElement | null {
   const { registerUser, isLoading } = useAuth();
 
   return (
@@ -30,7 +30,7 @@ function Register(): ReactElement {
             <TextInputField name="fullName" placeholder="Full Name" />
             <TextInputField
               name="email"
-              placeholder="Enter Email"
+              placeholder="Enter Emaila"
               keyboardType="email-address"
               autoCapitalize="none"
             />

@@ -12,11 +12,11 @@ function TrainerHeader(): ReactElement {
   const { push } = useRouter();
 
   return (
-    <View className="flex-col gap-4 px-4">
+    <View className="flex-col gap-2 px-4">
       <View className="w-full flex-row justify-between items-center gap-4">
         <View className="flex-row items-center gap-2">
           <Text className="font-bold text-2xl text-gray-600">Donee</Text>
-          <AntDesign name="star" size={16} color="black" />
+          <AntDesign name="star" size={16} color={COLOR_BLUE} />
           <Text className="text-sm text-gray-500">5.0</Text>
           <Text className="text-sm text-gray-500">(212)</Text>
         </View>

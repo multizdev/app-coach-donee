@@ -14,13 +14,18 @@ type UserRegisterData = {
   confirmPassword: string;
 };
 
+type UserLoginData = {
+  email: string;
+  password: string;
+};
+
 export default useAuth;
 
 function useAuth() {
   const { replace } = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const { accountType, setUser } = useAppStore();
+  const { accountType, setAccountType, setUser } = useAppStore();
 
   const registerUser = async ({
     fullName,
@@ -42,7 +47,7 @@ function useAuth() {
         createdAt: firestore.FieldValue.serverTimestamp(),
       });
 
-      await onAuthStateChanged();
+      setUser(user);
     } catch (e) {
       if (e instanceof Error) {
         console.error("Registration error:", e);
@@ -53,30 +58,41 @@ function useAuth() {
     }
   };
 
-  const onAuthStateChanged = async () => {
-    const user = auth().currentUser;
+  const emailSignIn = async (values: UserLoginData) => {
+    setIsLoading(true);
+    try {
+    } catch (e) {
+      if (e instanceof Error) {
+        console.error("Login error:", e);
+        Alert.alert("Login Error", e.message);
+      }
+    }
+  };
+
+  const onAuthStateChanged = async (user: FirebaseAuthTypes.User | null) => {
+    setIsLoading(true);
 
     if (user) {
-      setIsLoading(true);
-      setUser(user);
-
+      // Fetch user document
       const userDoc = await firestore().collection("Users").doc(user.uid).get();
       const trainerDoc = await firestore()
         .collection("Trainers")
         .doc(user.uid)
         .get();
 
-      setIsLoading(false);
-
+      // Check if navigation is already handled to avoid repetitive navigation
       if (userDoc.exists) {
         replace("/user/home/(home)");
       } else if (trainerDoc.exists) {
         replace("/trainer/(home)");
       }
-    } else if (user === null) {
+    } else {
       replace("/");
     }
+
+    setAccountType(null);
+    setIsLoading(false); // Stop loading when all processing is done
   };
 
-  return { registerUser, isLoading, onAuthStateChanged };
+  return { registerUser, emailSignIn, isLoading, onAuthStateChanged };
 }

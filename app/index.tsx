@@ -26,8 +26,6 @@ function App() {
       backAction,
     );
 
-    // auth().onAuthStateChanged(onAuthStateChanged);
-
     return () => backHandler.remove();
   }, [accountType]);
 
