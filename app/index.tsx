@@ -1,15 +1,11 @@
 import React, { useEffect } from "react";
 import { ImageBackground, View, BackHandler } from "react-native";
 
-import auth from "@react-native-firebase/auth";
-
 import AuthScreen from "@src/modules/auth/screens/AuthScreen";
 import PrimaryButton from "@src/modules/common/components/input/PrimaryButton";
 import useAppStore from "@src/modules/common/stores/useAppStore";
-import useAuth from "@src/modules/auth/hooks/useAuth";
 
 function App() {
-  const { onAuthStateChanged } = useAuth();
   const { accountType, setAccountType } = useAppStore();
 
   useEffect(() => {
@@ -27,7 +23,7 @@ function App() {
     );
 
     return () => backHandler.remove();
-  }, [accountType]);
+  }, [accountType, setAccountType]);
 
   if (accountType === null)
     return (

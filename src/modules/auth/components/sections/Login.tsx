@@ -7,9 +7,9 @@ import { Icon } from "@ant-design/react-native";
 
 import TextInputField from "@src/modules/common/components/input/TextInputField";
 import PasswordInput from "@src/modules/common/components/input/PasswordInput";
-import { loginValidationSchema } from "@src/modules/auth/components/forms/validationSchemas";
 import PrimaryButton from "@src/modules/common/components/input/PrimaryButton";
 import useAuth from "@src/modules/auth/hooks/useAuth";
+import { loginValidationSchema } from "@src/modules/auth/components/forms/validationSchemas";
 
 const Login = () => {
   const { isLoading, emailSignIn } = useAuth();

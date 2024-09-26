@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, Image, Alert } from "react-native";
 
 import { DrawerActions } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useNavigation, useRouter } from "expo-router";
+import { useNavigation } from "expo-router";
 import auth from "@react-native-firebase/auth";
 
 import { COLOR_BLUE } from "@src/modules/common/constants";

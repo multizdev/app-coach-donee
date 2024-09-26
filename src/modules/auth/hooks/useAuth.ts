@@ -58,14 +58,38 @@ function useAuth() {
     }
   };
 
-  const emailSignIn = async (values: UserLoginData) => {
+  const emailSignIn = async ({ email, password }: UserLoginData) => {
     setIsLoading(true);
     try {
+      const { user }: FirebaseAuthTypes.UserCredential =
+        await auth().signInWithEmailAndPassword(email, password);
+
+      // Fetch the user document from Firestore
+      const userDoc = await firestore().collection("Users").doc(user.uid).get();
+      const trainerDoc = await firestore()
+        .collection("Trainers")
+        .doc(user.uid)
+        .get();
+
+      // Set the user in the store
+      setUser(user);
+
+      // Navigate based on user role
+      if (userDoc.exists) {
+        replace("/user/home/(home)");
+      } else if (trainerDoc.exists) {
+        replace("/trainer/(home)");
+      } else {
+        // If no role found, navigate to a default page
+        replace("/");
+      }
     } catch (e) {
       if (e instanceof Error) {
         console.error("Login error:", e);
         Alert.alert("Login Error", e.message);
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 

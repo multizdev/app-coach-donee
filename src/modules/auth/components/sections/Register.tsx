@@ -30,7 +30,7 @@ function Register(): ReactElement | null {
             <TextInputField name="fullName" placeholder="Full Name" />
             <TextInputField
               name="email"
-              placeholder="Enter Emaila"
+              placeholder="Enter Email"
               keyboardType="email-address"
               autoCapitalize="none"
             />
