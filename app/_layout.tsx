@@ -37,8 +37,6 @@ function RootLayout(): ReactElement {
   }, []);
 
   useEffect(() => {
-    console.log("USER", auth().currentUser);
-
     if (user === null) {
       setUser(auth().currentUser);
     }

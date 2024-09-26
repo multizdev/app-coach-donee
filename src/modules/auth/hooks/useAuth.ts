@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert } from "react-native";
 
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
+import messaging from "@react-native-firebase/messaging";
+
+import { useRouter } from "expo-router";
 
 import useAppStore from "@src/modules/common/stores/useAppStore";
-import { useRouter } from "expo-router";
 
 type UserRegisterData = {
   fullName: string;
@@ -25,7 +27,36 @@ function useAuth() {
   const { replace } = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const { accountType, setAccountType, setUser } = useAppStore();
+  const { user, accountType, setAccountType, setUser } = useAppStore();
+
+  useEffect(() => {
+    // Handle FCM token generation and update on state changes
+    const updateFCMToken = async () => {
+      if (user) {
+        console.log("YES");
+        const token = await messaging().getToken();
+        console.log("TOKEN", token);
+        console.log("ACCOUNT", accountType);
+        await firestore().collection(`${accountType}s`).doc(user.uid).update({
+          fcmToken: token,
+        });
+      }
+    };
+
+    (async () => updateFCMToken())();
+
+    const unsubscribeOnTokenRefresh = messaging().onTokenRefresh(
+      async (token) => {
+        if (user) {
+          await firestore().collection(`${accountType}s`).doc(user.uid).update({
+            fcmToken: token,
+          });
+        }
+      },
+    );
+
+    return unsubscribeOnTokenRefresh; // Cleanup on unmount
+  }, [accountType, user]);
 
   const registerUser = async ({
     fullName,
@@ -106,8 +137,10 @@ function useAuth() {
 
       // Check if navigation is already handled to avoid repetitive navigation
       if (userDoc.exists) {
+        setAccountType("User");
         replace("/user/home/(home)");
       } else if (trainerDoc.exists) {
+        setAccountType("Trainer");
         replace("/trainer/(home)");
       }
     } else {
