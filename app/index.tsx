@@ -23,7 +23,7 @@ function App() {
     );
 
     return () => backHandler.remove();
-  }, [accountType, setAccountType]);
+  }, [accountType]);
 
   if (accountType === null)
     return (

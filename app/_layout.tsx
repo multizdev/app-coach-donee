@@ -39,9 +39,11 @@ function RootLayout(): ReactElement {
   useEffect(() => {
     console.log("USER", auth().currentUser);
 
-    setUser(auth().currentUser);
+    if (user === null) {
+      setUser(auth().currentUser);
+    }
     (async () => await onAuthStateChanged(user))();
-  }, [user, setUser, onAuthStateChanged]);
+  }, [user]);
 
   if (!fontsLoaded) {
     return <ActivityIndicator size="large" />; // Keep the splash screen visible while loading fonts
