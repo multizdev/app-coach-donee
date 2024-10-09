@@ -8,6 +8,8 @@ import messaging from "@react-native-firebase/messaging";
 import { useRouter } from "expo-router";
 
 import useAppStore from "@src/modules/common/stores/useAppStore";
+import User from "@server/database/models/User";
+import Trainer from "@server/database/models/Trainer";
 
 type UserRegisterData = {
   fullName: string;
@@ -27,7 +29,14 @@ function useAuth() {
   const { replace } = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const { user, accountType, setAccountType, setUser } = useAppStore();
+  const {
+    user,
+    accountType,
+    setAccountType,
+    setUser,
+    setDetailedUser,
+    setDetailedTrainer,
+  } = useAppStore();
 
   useEffect(() => {
     // Handle FCM token generation and update on state changes
@@ -119,10 +128,11 @@ function useAuth() {
       // Set the user in the stores
       setUser(user);
 
-      // Navigate based on user role
       if (userDoc.exists) {
+        setDetailedUser(userDoc.data() as User);
         replace("/user/home/(home)");
       } else if (trainerDoc.exists) {
+        setDetailedUser(trainerDoc.data() as Trainer);
         replace("/trainer/(home)");
       } else {
         // If no role found, navigate to a default page
@@ -152,9 +162,11 @@ function useAuth() {
       // Check if navigation is already handled to avoid repetitive navigation
       if (userDoc.exists) {
         setAccountType("User");
+        setDetailedUser(userDoc.data() as User);
         replace("/user/home/(home)");
       } else if (trainerDoc.exists) {
         setAccountType("Trainer");
+        setDetailedTrainer(trainerDoc.data() as Trainer);
         replace("/trainer/(home)");
       }
     } else {

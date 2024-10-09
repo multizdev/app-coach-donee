@@ -3,6 +3,8 @@ import { create, StoreApi, UseBoundStore } from "zustand";
 import { FirebaseAuthTypes } from "@react-native-firebase/auth";
 
 import { DaysSelection } from "@src/types";
+import User from "@server/database/models/User";
+import Trainer from "@server/database/models/Trainer";
 
 const initialDays: DaysSelection = {
   monday: false,
@@ -35,6 +37,8 @@ type State = {
   daysArray: DaysArray[];
   accountType: string | null;
   user: FirebaseAuthTypes.User | null;
+  detailedUser: User | null;
+  detailedTrainer: Trainer | null;
 };
 
 type Actions = {
@@ -49,6 +53,8 @@ type Actions = {
   ) => void;
   setAccountType: (accountType: string | null) => void;
   setUser: (user: FirebaseAuthTypes.User | null) => void;
+  setDetailedUser: (detailedUser: User | null) => void;
+  setDetailedTrainer: (detailedTrainer: Trainer | null) => void;
 };
 
 const defaultState: State = {
@@ -61,6 +67,8 @@ const defaultState: State = {
   })),
   accountType: null,
   user: null,
+  detailedUser: null,
+  detailedTrainer: null,
 };
 
 const useAppStore: UseBoundStore<StoreApi<State & Actions>> = create(
@@ -95,6 +103,10 @@ const useAppStore: UseBoundStore<StoreApi<State & Actions>> = create(
     setAccountType: (accountType: string | null) =>
       set(() => ({ accountType })),
     setUser: (user: FirebaseAuthTypes.User | null) => set(() => ({ user })),
+    setDetailedUser: (detailedUser: User | null) =>
+      set(() => ({ detailedUser })),
+    setDetailedTrainer: (detailedTrainer: Trainer | null) =>
+      set(() => ({ detailedTrainer })),
   }),
 );
 
