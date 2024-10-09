@@ -1,24 +1,34 @@
 import React, { ReactElement } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, View } from "react-native";
 
-import { AntDesign, Feather } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import { AntDesign } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { COLOR_BLUE } from "@src/modules/common/constants";
 import PrimaryButton from "@src/modules/common/components/input/PrimaryButton";
-import { useRouter } from "expo-router";
+import Trainer from "@server/database/models/Trainer";
 
-function TrainerHeader(): ReactElement {
+function TrainerHeader({ trainer }: { trainer: Trainer }): ReactElement {
   const { push } = useRouter();
+
+  const { fullName, session, rating, packages } = trainer;
+
+  const minimumPricePackage = packages?.reduce(
+    (min, pkg) => (pkg.price < min.price ? pkg : min),
+    packages[0],
+  );
 
   return (
     <View className="flex-col gap-2 px-4">
       <View className="w-full flex-row justify-between items-center gap-4">
         <View className="flex-row items-center gap-2">
-          <Text className="font-bold text-2xl text-gray-600">Donee</Text>
+          <Text className="font-bold text-2xl text-gray-600">{fullName}</Text>
           <AntDesign name="star" size={16} color={COLOR_BLUE} />
-          <Text className="text-sm text-gray-500">5.0</Text>
-          <Text className="text-sm text-gray-500">(212)</Text>
+          <Text className="text-sm text-gray-500">{rating ? rating : 0.0}</Text>
+          <Text className="text-sm text-gray-500">
+            ({session ? session : 0})
+          </Text>
         </View>
       </View>
       <LinearGradient
@@ -30,11 +40,10 @@ function TrainerHeader(): ReactElement {
         <Text className="text-white">English</Text>
       </LinearGradient>
       <View className="w-full flex-row items-end justify-between">
-        <Text className="text-sm text-gray-500">From AED 200 per session</Text>
-        <TouchableOpacity className="flex-row items-end gap-1">
-          <Feather name="share" size={24} color={COLOR_BLUE} />
-          <Text className="text-md text-primary">Share</Text>
-        </TouchableOpacity>
+        <Text className="text-sm text-gray-500">
+          From AED {minimumPricePackage ? minimumPricePackage.price : 0} per
+          session
+        </Text>
       </View>
       <PrimaryButton
         text="Book Now"
