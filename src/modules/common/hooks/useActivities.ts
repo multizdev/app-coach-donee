@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import firestore from "@react-native-firebase/firestore";
 
 import { Activity } from "@server/database/models/Activity";
-import useActivitiesStore from "@src/modules/users/stores/home/useActivitiesStore";
+import useActivitiesStore from "@src/modules/common/stores/useActivitiesStore";
 
 function useActivities() {
   const { services, loadingServices, setServices, setLoadingServices } =

@@ -6,7 +6,7 @@ import { FontAwesome } from "@expo/vector-icons";
 
 import { COLOR_BLUE } from "@src/modules/common/constants";
 import Trainer from "@server/database/models/Trainer";
-import useBookingTrainers from "@src/modules/users/hooks/home/booking/useBookingTrainers";
+import useBookingTrainers from "@src/modules/users/hooks/booking/useBookingTrainers";
 import { ActivityIndicator } from "@ant-design/react-native";
 import useBookingStore from "@src/modules/users/stores/home/useBookingStore";
 

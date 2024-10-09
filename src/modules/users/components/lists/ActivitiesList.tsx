@@ -7,7 +7,7 @@ import {
   COLOR_YELLOW,
 } from "@src/modules/common/constants";
 import ActivityCard from "@src/modules/users/components/elements/activities/ActivityCard";
-import useActivities from "@src/modules/users/hooks/home/useActivities";
+import useActivities from "@src/modules/common/hooks/useActivities";
 import { Activity } from "@server/database/models/Activity";
 
 function ActivitiesList(): ReactElement {
