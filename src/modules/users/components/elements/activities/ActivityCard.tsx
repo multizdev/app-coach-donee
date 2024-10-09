@@ -1,37 +1,46 @@
 import React, { ReactElement } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import { Activity } from "@src/types";
 import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
+import { Activity } from "@server/database/models/Activity";
+import useBookingStore from "@src/modules/users/stores/home/useBookingStore";
 
 function ActivityCard({
   item,
+  color,
 }: {
   item: Activity;
   index: number;
+  color: string;
 }): ReactElement {
-  const { name, background, category } = item;
-
+  const { setServiceId } = useBookingStore();
   const { push } = useRouter();
+
+  const { id, name, categoryName } = item;
+
+  const handleActivitySelect = () => {
+    setServiceId(id);
+    push("user/screens/trainers");
+  };
 
   return (
     <TouchableOpacity
       style={{
         elevation: 2,
-        backgroundColor: background,
+        backgroundColor: color,
       }}
       className="mb-4 rounded-3xl overflow-hidden"
-      onPress={() => push("user/screens/trainers")}
+      onPress={handleActivitySelect}
     >
       <LinearGradient
-        colors={["#fff", background] /* Corresponds to blue-400 and blue-100 */}
+        colors={["#fff", color] /* Corresponds to blue-400 and blue-100 */}
         start={{ x: 1, y: 0 }}
         end={{ x: 0, y: 0 }}
         className="w-full flex-row items-center justify-between px-4 py-4 rounded-3xl overflow-hidden"
       >
         <View className="ml-[55]" />
         <View>
-          <Text className="text-xl font-bold">{category}</Text>
+          <Text className="text-xl font-bold">{categoryName}</Text>
           <Text className="text-md text-center">{name}</Text>
         </View>
         <Image

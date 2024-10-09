@@ -33,10 +33,7 @@ function useAuth() {
     // Handle FCM token generation and update on state changes
     const updateFCMToken = async () => {
       if (user) {
-        console.log("YES");
         const token = await messaging().getToken();
-        console.log("TOKEN", token);
-        console.log("ACCOUNT", accountType);
         await firestore().collection(`${accountType}s`).doc(user.uid).update({
           fcmToken: token,
         });
@@ -119,7 +116,7 @@ function useAuth() {
         .doc(user.uid)
         .get();
 
-      // Set the user in the store
+      // Set the user in the stores
       setUser(user);
 
       // Navigate based on user role

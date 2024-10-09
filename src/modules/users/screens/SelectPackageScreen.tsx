@@ -1,29 +1,25 @@
-import React, { ReactElement, useState } from "react";
+import React, { ReactElement, useMemo } from "react";
 import { View, Text, FlatList, TouchableOpacity } from "react-native";
-import { AntDesign, Ionicons } from "@expo/vector-icons"; // Assuming you're using Ionicons
+
+import { AntDesign } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+
+import { ActivityIndicator } from "@ant-design/react-native";
 
 import PrimaryButton from "@src/modules/common/components/input/PrimaryButton";
 import { COLOR_BLUE } from "@src/modules/common/constants";
-import { useRouter } from "expo-router";
-
-type Package = {
-  sessions: number;
-  pricePerSession: number;
-};
-
-const packages: Package[] = [
-  { sessions: 1, pricePerSession: 300 },
-  { sessions: 5, pricePerSession: 280 },
-  { sessions: 8, pricePerSession: 260 },
-  { sessions: 12, pricePerSession: 240 },
-  { sessions: 24, pricePerSession: 220 },
-  { sessions: 36, pricePerSession: 200 },
-];
+import useBookingStore from "@src/modules/users/stores/home/useBookingStore";
+import { Package } from "@server/database/models/Package";
 
 function SelectPackageScreen(): ReactElement {
   const { push } = useRouter();
 
-  const [selectedPackage, setSelectedPackage] = useState<Package>(packages[0]);
+  const { allTrainers, trainerId, selectedPackage, setPackage } =
+    useBookingStore();
+
+  const trainer = useMemo(() => {
+    return allTrainers.find((t) => t.id === trainerId) || null;
+  }, [allTrainers, trainerId]);
 
   const renderItem = ({ item }: { item: Package }) => (
     <TouchableOpacity
@@ -33,7 +29,7 @@ function SelectPackageScreen(): ReactElement {
         borderWidth: 2,
       }}
       className="flex-row items-center bg-white h-[60] p-2 px-4 m-2 rounded-2xl gap-4"
-      onPress={() => setSelectedPackage(item)}
+      onPress={() => setPackage(item)}
     >
       <AntDesign
         name="checkcircleo"
@@ -46,32 +42,40 @@ function SelectPackageScreen(): ReactElement {
       >
         -
       </Text>
-      <Text className="text-md">{`AED ${item.pricePerSession} / session`}</Text>
+      <Text className="text-md">{`AED ${(item.price / item.sessions).toFixed(0)} / session`}</Text>
     </TouchableOpacity>
   );
 
   return (
-    <View className="flex-1 justify-between bg-white">
-      <View className="flex-1 p-4">
-        <FlatList
-          data={packages}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.sessions.toString()}
-        />
-      </View>
-      <View className="flex-col w-full p-4 gap-2">
-        <View className="flex-row items-center justify-between px-4">
-          <Text className="font-bold text-xl text-primary">Total Amount</Text>
-          <Text className="text-xl">
-            AED {selectedPackage.pricePerSession * selectedPackage.sessions}
-          </Text>
+    <>
+      {trainer ? (
+        <View className="flex-1 justify-between bg-white">
+          <View className="flex-1 p-4">
+            <FlatList
+              data={trainer.packages}
+              renderItem={renderItem}
+              keyExtractor={(item) => item.sessions.toString()}
+            />
+          </View>
+          <View className="flex-col w-full p-4 gap-2">
+            <View className="flex-row items-center justify-between px-4">
+              <Text className="font-bold text-xl text-primary">
+                Total Amount
+              </Text>
+              <Text className="text-xl">AED {selectedPackage?.price}</Text>
+            </View>
+            <PrimaryButton
+              text="Checkout"
+              onPress={() => push("user/screens/schedule")}
+            />
+          </View>
         </View>
-        <PrimaryButton
-          text="Checkout"
-          onPress={() => push("user/screens/schedule")}
-        />
-      </View>
-    </View>
+      ) : (
+        <View className="flex-1 justify-center items-center">
+          <ActivityIndicator />
+        </View>
+      )}
+    </>
   );
 }
 

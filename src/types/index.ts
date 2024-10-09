@@ -1,12 +1,3 @@
-import { ImageSourcePropType } from "react-native";
-
-type Activity = {
-  name: string;
-  background: string;
-  image: ImageSourcePropType | undefined;
-  category: string;
-};
-
 type DaysSelection = {
   monday: boolean;
   tuesday: boolean;
@@ -23,4 +14,4 @@ type Day = {
   dateInstance: Date;
 };
 
-export type { Activity, DaysSelection, Day };
+export type { DaysSelection, Day };
