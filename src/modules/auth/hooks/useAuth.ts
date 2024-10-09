@@ -45,17 +45,13 @@ function useAuth() {
 
     (async () => updateFCMToken())();
 
-    const unsubscribeOnTokenRefresh = messaging().onTokenRefresh(
-      async (token) => {
-        if (user) {
-          await firestore().collection(`${accountType}s`).doc(user.uid).update({
-            fcmToken: token,
-          });
-        }
-      },
-    );
-
-    return unsubscribeOnTokenRefresh; // Cleanup on unmount
+    return messaging().onTokenRefresh(async (token) => {
+      if (user) {
+        await firestore().collection(`${accountType}s`).doc(user.uid).update({
+          fcmToken: token,
+        });
+      }
+    }); // Cleanup on unmount
   }, [accountType, user]);
 
   const registerUser = async ({
@@ -72,11 +68,32 @@ function useAuth() {
         displayName: fullName,
       });
 
-      await firestore().collection(`${accountType}s`).doc(user.uid).set({
+      const userDocData = {
         fullName,
         email,
         createdAt: firestore.FieldValue.serverTimestamp(),
-      });
+      };
+
+      if (accountType === "User") {
+        await firestore()
+          .collection("Users")
+          .doc(user.uid)
+          .set({
+            ...userDocData,
+            access: true,
+          });
+      } else if (accountType === "Trainer") {
+        await firestore()
+          .collection("Trainers")
+          .doc(user.uid)
+          .set({
+            ...userDocData,
+            access: true,
+            status: "active",
+            services: [],
+            packages: [],
+          });
+      }
 
       setUser(user);
     } catch (e) {
