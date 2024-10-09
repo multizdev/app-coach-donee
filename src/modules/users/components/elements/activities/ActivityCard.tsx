@@ -3,6 +3,7 @@ import { Image, Text, TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { Activity } from "@server/database/models/Activity";
+import useBookingStore from "@src/modules/users/stores/home/useBookingStore";
 
 function ActivityCard({
   item,
@@ -12,9 +13,15 @@ function ActivityCard({
   index: number;
   color: string;
 }): ReactElement {
-  const { name, categoryName } = item;
-
+  const { setServiceId } = useBookingStore();
   const { push } = useRouter();
+
+  const { id, name, categoryName } = item;
+
+  const handleActivitySelect = () => {
+    setServiceId(id);
+    push("user/screens/trainers");
+  };
 
   return (
     <TouchableOpacity
@@ -23,7 +30,7 @@ function ActivityCard({
         backgroundColor: color,
       }}
       className="mb-4 rounded-3xl overflow-hidden"
-      onPress={() => push("user/screens/trainers")}
+      onPress={handleActivitySelect}
     >
       <LinearGradient
         colors={["#fff", color] /* Corresponds to blue-400 and blue-100 */}
