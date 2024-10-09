@@ -2,11 +2,14 @@ import { create, StoreApi, UseBoundStore } from "zustand";
 
 import Trainer from "@server/database/models/Trainer";
 
+import { Package } from "@server/database/models/Package";
+
 type State = {
   allTrainers: Trainer[];
   serviceId: string | null;
   trainerId: string | null;
   loading: boolean;
+  selectedPackage: Package | null;
 };
 
 type Actions = {
@@ -14,6 +17,7 @@ type Actions = {
   setTrainerId: (trainerId: string) => void;
   setAllTrainers: (allTrainers: Trainer[]) => void;
   setLoading: (loading: boolean) => void;
+  setPackage: (pkg: Package) => void;
 };
 
 const defaultState: State = {
@@ -21,6 +25,7 @@ const defaultState: State = {
   trainerId: null,
   allTrainers: [],
   loading: false,
+  selectedPackage: null,
 };
 
 const useActivitiesStore: UseBoundStore<StoreApi<State & Actions>> = create(
@@ -31,6 +36,7 @@ const useActivitiesStore: UseBoundStore<StoreApi<State & Actions>> = create(
     setAllTrainers: (allTrainers: Trainer[]) =>
       set(() => ({ allTrainers: [...allTrainers] })),
     setLoading: (loading: boolean) => set(() => ({ loading })),
+    setPackage: (pkg: Package) => set(() => ({ selectedPackage: pkg })),
   }),
 );
 

@@ -10,7 +10,7 @@ import PrimaryButton from "@src/modules/common/components/input/PrimaryButton";
 import Trainer from "@server/database/models/Trainer";
 
 function TrainerHeader({ trainer }: { trainer: Trainer }): ReactElement {
-  const { push } = useRouter();
+  const { replace } = useRouter();
 
   const { fullName, session, rating, packages } = trainer;
 
@@ -48,7 +48,7 @@ function TrainerHeader({ trainer }: { trainer: Trainer }): ReactElement {
       <PrimaryButton
         text="Book Now"
         size="small"
-        onPress={() => push("user/screens/package")}
+        onPress={() => replace("user/screens/package")}
       />
     </View>
   );

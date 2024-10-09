@@ -9,6 +9,7 @@ function MediaTab(): ReactElement {
   const [isPlaying, setIsPlaying] = useState(true);
   const player = useVideoPlayer(videoSource, (playerInstance) => {
     playerInstance.loop = true;
+    playerInstance.volume = 0;
     playerInstance.play();
   });
 
@@ -29,32 +30,8 @@ function MediaTab(): ReactElement {
 
   return (
     <ScrollView contentContainerClassName="py-4">
-      <View className="flex-row flex-wrap justify-center p-4 gap-4">
-        <View className="w-[45%] rounded-3xl overflow-hidden">
-          <VideoView
-            style={{ width: "100%", height: 200 }}
-            player={player}
-            allowsFullscreen
-            allowsPictureInPicture
-          />
-        </View>
-        <View className="w-[45%] rounded-3xl overflow-hidden">
-          <VideoView
-            style={{ width: "100%", height: 200 }}
-            player={player}
-            allowsFullscreen
-            allowsPictureInPicture
-          />
-        </View>
-        <View className="w-[45%] rounded-3xl overflow-hidden">
-          <VideoView
-            style={{ width: "100%", height: 200 }}
-            player={player}
-            allowsFullscreen
-            allowsPictureInPicture
-          />
-        </View>
-        <View className="w-[45%] rounded-3xl overflow-hidden">
+      <View className="flex-row flex-wrap p-4 gap-4">
+        <View className="w-[45%] rounded-3xl overflow-hidden bg-black">
           <VideoView
             style={{ width: "100%", height: 200 }}
             player={player}
