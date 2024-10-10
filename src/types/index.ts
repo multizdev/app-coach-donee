@@ -1,11 +1,11 @@
 type DaysSelection = {
-  monday: boolean;
-  tuesday: boolean;
-  wednesday: boolean;
-  thursday: boolean;
-  friday: boolean;
-  saturday: boolean;
-  sunday: boolean;
+  monday?: boolean;
+  tuesday?: boolean;
+  wednesday?: boolean;
+  thursday?: boolean;
+  friday?: boolean;
+  saturday?: boolean;
+  sunday?: boolean;
 };
 
 type Day = {
@@ -14,4 +14,8 @@ type Day = {
   dateInstance: Date;
 };
 
-export type { DaysSelection, Day };
+type DaysTime = Record<keyof DaysSelection, { startTime: Date; endTime: Date }>;
+
+type DaysArray = { day: keyof DaysSelection; selected: boolean };
+
+export type { DaysSelection, Day, DaysTime, DaysArray };

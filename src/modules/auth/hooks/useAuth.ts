@@ -148,6 +148,33 @@ function useAuth() {
     }
   };
 
+  useEffect(() => {
+    if (!user) return;
+
+    const unsubscribeUser = firestore()
+      .collection("Users")
+      .doc(user.uid)
+      .onSnapshot((doc) => {
+        if (doc.exists) {
+          setDetailedUser(doc.data() as User);
+        }
+      });
+
+    const unsubscribeTrainer = firestore()
+      .collection("Trainers")
+      .doc(user.uid)
+      .onSnapshot((doc) => {
+        if (doc.exists) {
+          setDetailedTrainer(doc.data() as Trainer);
+        }
+      });
+
+    return () => {
+      unsubscribeUser();
+      unsubscribeTrainer();
+    };
+  }, [user]);
+
   const onAuthStateChanged = async (user: FirebaseAuthTypes.User | null) => {
     setIsLoading(true);
 

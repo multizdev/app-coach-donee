@@ -7,7 +7,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import useAppStore from "@src/modules/common/stores/useAppStore";
 import SelectedDays from "@src/modules/trainers/components/schedule/SelectedDays";
 import AwayMode from "@src/modules/trainers/components/schedule/AwayMode";
-import { DaysSelection } from "@src/types";
+import firestore from "@react-native-firebase/firestore";
+import { DaysArray, DaysSelection, DaysTime } from "@src/types";
 
 function RenderItem({
   item,
@@ -40,7 +41,7 @@ function RenderItem({
 }
 
 function ScheduleTab(): ReactElement {
-  const { daysArray } = useAppStore();
+  const { user, daysArray, daysTimes } = useAppStore();
 
   return (
     <View className="flex-1 bg-white">
@@ -60,6 +61,17 @@ function ScheduleTab(): ReactElement {
       <TouchableOpacity
         style={{ elevation: 2 }}
         className="h-[50] rounded-full overflow-hidden mx-4 mb-4"
+        onPress={async () => {
+          const selectedDays = daysArray.filter((day) => day.selected);
+
+          const finalDayTimes: DaysTime = Object.fromEntries(
+            selectedDays.map(({ day }: DaysArray) => [day, daysTimes[day]]),
+          ) as DaysTime;
+
+          await firestore().collection("Trainers").doc(user?.uid).update({
+            schedule: finalDayTimes,
+          });
+        }}
       >
         <LinearGradient
           colors={

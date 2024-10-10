@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import firestore from "@react-native-firebase/firestore";
 import useAppStore from "@src/modules/common/stores/useAppStore";
+import { stringToDate } from "@server/utils/date";
 
 function getDate(daysAhead: number) {
   const date = new Date();
@@ -29,9 +30,21 @@ function useAwayMode(): {
     (detailedTrainer && detailedTrainer?.status === "holiday") || false,
   );
 
-  const [startDate, setStartDate] = useState<Date>(getDate(1));
+  const [currentStartDate, currentEndDate] = useMemo(() => {
+    if (detailedTrainer && detailedTrainer.awayMode) {
+      const { startDate, endDate } = detailedTrainer.awayMode;
 
-  const [endDate, setEndDate] = useState<Date>(getDate(2));
+      return [stringToDate(startDate), stringToDate(endDate)];
+    } else {
+      return [null, null];
+    }
+  }, [detailedTrainer]);
+
+  const [startDate, setStartDate] = useState<Date>(
+    currentStartDate || getDate(1),
+  );
+
+  const [endDate, setEndDate] = useState<Date>(currentEndDate || getDate(2));
 
   const [isPickerVisible, setPickerVisible] = useState(false);
   const [currentPicker, setCurrentPicker] = useState<"start" | "end">("start");

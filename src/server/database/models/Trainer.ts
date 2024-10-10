@@ -2,6 +2,7 @@
 
 import { Package } from "@server/database/models/Package";
 import Person from "@server/database/models/Person";
+import { DaysTime } from "@src/types";
 
 interface Trainer extends Person {
   access: boolean;
@@ -13,6 +14,7 @@ interface Trainer extends Person {
   certificates: string[];
   services: string[];
   packages?: Package[];
+  schedule: DaysTime | undefined;
 }
 
 export default Trainer;

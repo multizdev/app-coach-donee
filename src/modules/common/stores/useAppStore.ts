@@ -1,8 +1,6 @@
 import { create, StoreApi, UseBoundStore } from "zustand";
-
 import { FirebaseAuthTypes } from "@react-native-firebase/auth";
-
-import { DaysSelection } from "@src/types";
+import { DaysArray, DaysSelection, DaysTime } from "@src/types";
 import User from "@server/database/models/User";
 import Trainer from "@server/database/models/Trainer";
 
@@ -16,8 +14,6 @@ const initialDays: DaysSelection = {
   sunday: false,
 };
 
-type DaysTime = Record<keyof DaysSelection, { startTime: Date; endTime: Date }>;
-
 const initialTimes: DaysTime = {
   monday: { startTime: new Date(), endTime: new Date() },
   tuesday: { startTime: new Date(), endTime: new Date() },
@@ -27,8 +23,6 @@ const initialTimes: DaysTime = {
   saturday: { startTime: new Date(), endTime: new Date() },
   sunday: { startTime: new Date(), endTime: new Date() },
 };
-
-type DaysArray = { day: keyof DaysSelection; selected: boolean };
 
 type State = {
   authState: string;
@@ -44,7 +38,7 @@ type State = {
 type Actions = {
   setAuthState: (authState: string) => void;
   setDays: (days: DaysSelection) => void;
-  setDaysArray: (day: string) => void;
+  setDaysArray: () => void;
   toggleDay: (day: keyof DaysSelection) => void;
   setDayTime: (
     day: keyof DaysSelection,
@@ -55,6 +49,7 @@ type Actions = {
   setUser: (user: FirebaseAuthTypes.User | null) => void;
   setDetailedUser: (detailedUser: User | null) => void;
   setDetailedTrainer: (detailedTrainer: Trainer | null) => void;
+  setSchedule: (schedule: DaysTime) => void;
 };
 
 const defaultState: State = {
@@ -78,10 +73,12 @@ const useAppStore: UseBoundStore<StoreApi<State & Actions>> = create(
     setDays: (days: DaysSelection) => set(() => ({ days })),
     setDaysArray: () =>
       set((state) => {
-        const daysArray = Object.entries(state.days).map(([day, selected]) => ({
-          day: day as keyof DaysSelection,
-          selected,
-        }));
+        const daysArray: any = Object.entries(state.days).map(
+          ([day, selected]) => ({
+            day: day as keyof DaysSelection,
+            selected,
+          }),
+        );
         return { daysArray };
       }),
     toggleDay: (day: keyof DaysSelection) =>
@@ -90,10 +87,12 @@ const useAppStore: UseBoundStore<StoreApi<State & Actions>> = create(
           ...state.days,
           [day]: !state.days[day],
         };
-        const daysArray = Object.entries(newDays).map(([day, selected]) => ({
-          day: day as keyof DaysSelection,
-          selected,
-        }));
+        const daysArray: any = Object.entries(newDays).map(
+          ([day, selected]) => ({
+            day: day as keyof DaysSelection,
+            selected,
+          }),
+        );
         return { days: newDays, daysArray };
       }),
     setDayTime: (day: keyof DaysSelection, startTime: Date, endTime: Date) =>
@@ -107,6 +106,29 @@ const useAppStore: UseBoundStore<StoreApi<State & Actions>> = create(
       set(() => ({ detailedUser })),
     setDetailedTrainer: (detailedTrainer: Trainer | null) =>
       set(() => ({ detailedTrainer })),
+    setSchedule: (schedule: DaysTime) =>
+      set((state) => {
+        const updatedDays = { ...initialDays };
+        const updatedTimes = { ...state.daysTimes };
+
+        Object.entries(schedule).forEach(([day, times]) => {
+          updatedDays[day as keyof DaysSelection] = true;
+          updatedTimes[day as keyof DaysSelection] = times;
+        });
+
+        const daysArray: any = Object.entries(updatedDays).map(
+          ([day, selected]) => ({
+            day: day as keyof DaysSelection,
+            selected,
+          }),
+        );
+
+        return {
+          days: updatedDays,
+          daysTimes: updatedTimes,
+          daysArray,
+        };
+      }),
   }),
 );
 
