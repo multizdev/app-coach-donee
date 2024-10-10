@@ -1,12 +1,13 @@
 import React, { ReactElement } from "react";
 import { Text, View, TouchableOpacity, ScrollView } from "react-native";
+
 import HeadingChips from "@src/modules/users/components/elements/chips/HeadingChips";
 import { COLOR_BLUE } from "@src/modules/common/constants";
 import { LinearGradient } from "expo-linear-gradient";
 import useAppStore from "@src/modules/common/stores/useAppStore";
-import { DaysSelection } from "@src/types";
 import SelectedDays from "@src/modules/trainers/components/schedule/SelectedDays";
 import AwayMode from "@src/modules/trainers/components/schedule/AwayMode";
+import { DaysSelection } from "@src/types";
 
 function RenderItem({
   item,

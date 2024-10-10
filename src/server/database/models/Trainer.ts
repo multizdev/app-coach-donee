@@ -6,6 +6,7 @@ import Person from "@server/database/models/Person";
 interface Trainer extends Person {
   access: boolean;
   status: "active" | "break" | "holiday";
+  awayMode: { startDate: string; endDate: string } | null;
   experience: string | null;
   session: number | null;
   rating: number | null;
