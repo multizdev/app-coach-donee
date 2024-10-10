@@ -46,7 +46,7 @@ function BioTab({ trainer }: { trainer: Trainer }): ReactElement {
       {experience && (
         <>
           <Text className="font-bold text-xl text-gray-500">Experience</Text>
-          <Text className="text-sm text-gray-500">experience</Text>
+          <Text className="text-sm text-gray-500">{experience}</Text>
         </>
       )}
       {certificates && (
