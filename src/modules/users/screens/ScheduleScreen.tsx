@@ -13,6 +13,7 @@ import { LinearGradient } from "expo-linear-gradient";
 
 import moment from "moment";
 
+import { Timestamp } from "@react-native-firebase/firestore";
 import { Calendar } from "react-native-calendars";
 
 import {
@@ -26,16 +27,6 @@ import useBookingStore from "@src/modules/users/stores/home/useBookingStore";
 import Trainer from "@server/database/models/Trainer";
 import { DaysTime } from "@src/types";
 
-const times = [
-  { time: "8:00 am" },
-  { time: "9:00 am" },
-  { time: "10:00 am" },
-  { time: "11:00 am" },
-  { time: "12:00 pm" },
-  { time: "1:00 pm" },
-  { time: "2:00 pm" },
-];
-
 function ScheduleScreen(): ReactElement {
   const { replace, dismissAll } = useRouter();
 
@@ -48,6 +39,11 @@ function ScheduleScreen(): ReactElement {
   const trainer: Trainer | null = useMemo(() => {
     return allTrainers.find((t) => t.id === trainerId) || null;
   }, [allTrainers, trainerId]);
+
+  const [timeSpan, setTimeSpan] = useState<{
+    startTime: Date;
+    endTime: Date;
+  } | null>(null);
 
   const handleDateSelect = (day: { dateString: string }) => {
     if (trainer && trainer.schedule) {
@@ -67,25 +63,34 @@ function ScheduleScreen(): ReactElement {
         scheduleForDay.startTime &&
         scheduleForDay.endTime
       ) {
-        const startTime = new Date(
-          (scheduleForDay.startTime as any).seconds * 1000 +
-            Math.floor((scheduleForDay.endTime as any).nanoseconds / 1000000),
-        );
-        const endTime = new Date(
-          (scheduleForDay.endTime as any).seconds * 1000 +
-            Math.floor((scheduleForDay.endTime as any).nanoseconds / 1000000),
-        );
+        const startTime = (
+          scheduleForDay.startTime as unknown as Timestamp
+        ).toDate();
+        const endTime = (
+          scheduleForDay.endTime as unknown as Timestamp
+        ).toDate();
 
-        console.log({
-          dayOfWeek,
-          startTime,
-          endTime,
-        });
+        setTimeSpan({ startTime, endTime });
       } else {
-        console.log("No schedule available for this day");
+        setTimeSpan(null);
       }
     }
   };
+
+  const times: { time: string }[] | null = useMemo(() => {
+    if (timeSpan) {
+      const timeSlots = [];
+      for (
+        let i = timeSpan.startTime.getTime();
+        i < timeSpan.endTime.getTime();
+        i += 60 * 60 * 1000
+      ) {
+        const time = new Date(i);
+        timeSlots.push({ time: moment(time).format("h:mm a") });
+      }
+      return timeSlots;
+    } else return null;
+  }, [timeSpan]);
 
   return (
     <View className="flex-1 w-full p-4 gap-6 bg-white">
