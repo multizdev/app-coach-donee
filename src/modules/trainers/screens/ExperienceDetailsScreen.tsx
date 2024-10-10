@@ -12,6 +12,7 @@ import { Activity } from "@server/database/models/Activity";
 import useAppStore from "@src/modules/common/stores/useAppStore";
 import { ActivityIndicator } from "@ant-design/react-native";
 import firestore from "@react-native-firebase/firestore";
+import { useRouter } from "expo-router";
 
 const experienceSchema = Yup.object().shape({
   bio: Yup.string().required("Bio/Experience is required"),
@@ -21,8 +22,10 @@ const experienceSchema = Yup.object().shape({
 });
 
 function ExperienceDetailsScreen(): ReactElement {
-  const { user, detailedTrainer, setDetailedTrainer } = useAppStore();
+  const { back, canGoBack } = useRouter();
+
   const { services } = useActivities();
+  const { user, detailedTrainer, setDetailedTrainer } = useAppStore();
 
   const [certificates, setCertificates] = useState<string[]>(
     detailedTrainer?.certificates || [""],
@@ -63,6 +66,8 @@ function ExperienceDetailsScreen(): ReactElement {
           certificates: values.certificates,
           services: selectedSkills,
         });
+
+        if (canGoBack()) back();
       } catch (error) {
         console.error("Failed to update trainer details: ", error);
       }

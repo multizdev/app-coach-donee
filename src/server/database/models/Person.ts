@@ -5,6 +5,7 @@ interface Person {
   fullName: string;
   displayName?: string;
   email: string;
+  gender: "male" | "female";
   phoneNumber?: string;
   fcmToken?: string;
 }
