@@ -3,6 +3,7 @@ import { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { DaysArray, DaysSelection, DaysTime } from "@src/types";
 import User from "@server/database/models/User";
 import Trainer from "@server/database/models/Trainer";
+import { Timestamp } from "@react-native-firebase/firestore";
 
 const initialDays: DaysSelection = {
   monday: false,
@@ -111,7 +112,12 @@ const useAppStore: UseBoundStore<StoreApi<State & Actions>> = create(
         const updatedDays = { ...initialDays };
         const updatedTimes = { ...state.daysTimes };
 
-        Object.entries(schedule).forEach(([day, times]) => {
+        Object.entries(schedule).forEach(([day, { startTime, endTime }]) => {
+          const times = {
+            startTime: (startTime as unknown as Timestamp).toDate(),
+            endTime: (endTime as unknown as Timestamp).toDate(),
+          };
+
           updatedDays[day as keyof DaysSelection] = true;
           updatedTimes[day as keyof DaysSelection] = times;
         });

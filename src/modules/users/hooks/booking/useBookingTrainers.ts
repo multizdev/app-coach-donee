@@ -20,7 +20,7 @@ const useBookingTrainers = () => {
 
         const trainersList: Trainer[] = [];
         querySnapshot.forEach((doc) => {
-          trainersList.push(doc.data() as Trainer);
+          trainersList.push({ id: doc.id, ...doc.data() } as Trainer);
         });
 
         setAllTrainers(trainersList);

@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useMemo, useState } from "react";
 import {
   View,
   ScrollView,
@@ -10,6 +10,9 @@ import {
 
 import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
+
+import moment from "moment";
+
 import { Calendar } from "react-native-calendars";
 
 import {
@@ -19,13 +22,9 @@ import {
 } from "@src/modules/common/constants";
 import HeadingChips from "@src/modules/users/components/elements/chips/HeadingChips";
 import PrimaryButton from "@src/modules/common/components/input/PrimaryButton";
-
-const trainers = [
-  { name: "Donee", image: require("@assets/background/coach.webp") },
-  { name: "Donee", image: require("@assets/background/coach.webp") },
-  { name: "Donee", image: require("@assets/background/coach.webp") },
-  { name: "Donee", image: require("@assets/background/coach.webp") },
-];
+import useBookingStore from "@src/modules/users/stores/home/useBookingStore";
+import Trainer from "@server/database/models/Trainer";
+import { DaysTime } from "@src/types";
 
 const times = [
   { time: "8:00 am" },
@@ -40,6 +39,54 @@ const times = [
 function ScheduleScreen(): ReactElement {
   const { replace, dismissAll } = useRouter();
 
+  const { allTrainers, trainerId } = useBookingStore();
+
+  const [selectedDate, setSelectedDate] = useState<string>(
+    `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`,
+  );
+
+  const trainer: Trainer | null = useMemo(() => {
+    return allTrainers.find((t) => t.id === trainerId) || null;
+  }, [allTrainers, trainerId]);
+
+  const handleDateSelect = (day: { dateString: string }) => {
+    if (trainer && trainer.schedule) {
+      const { schedule } = trainer;
+
+      const date = moment(day.dateString).toDate();
+      setSelectedDate(day.dateString);
+
+      const dayOfWeek = moment(date)
+        .format("dddd")
+        .toLowerCase() as keyof DaysTime;
+
+      const scheduleForDay = schedule[dayOfWeek];
+
+      if (
+        scheduleForDay &&
+        scheduleForDay.startTime &&
+        scheduleForDay.endTime
+      ) {
+        const startTime = new Date(
+          (scheduleForDay.startTime as any).seconds * 1000 +
+            Math.floor((scheduleForDay.endTime as any).nanoseconds / 1000000),
+        );
+        const endTime = new Date(
+          (scheduleForDay.endTime as any).seconds * 1000 +
+            Math.floor((scheduleForDay.endTime as any).nanoseconds / 1000000),
+        );
+
+        console.log({
+          dayOfWeek,
+          startTime,
+          endTime,
+        });
+      } else {
+        console.log("No schedule available for this day");
+      }
+    }
+  };
+
   return (
     <View className="flex-1 w-full p-4 gap-6 bg-white">
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -49,7 +96,17 @@ function ScheduleScreen(): ReactElement {
             width={150}
             color={COLOR_YELLOW}
           />
-          <Calendar style={{ borderRadius: 10 }} />
+          <Calendar
+            style={{ borderRadius: 10 }}
+            onDayPress={handleDateSelect}
+            markedDates={{
+              [selectedDate]: {
+                selected: true,
+                disableTouchEvent: true,
+                selectedDotColor: "orange",
+              },
+            }}
+          />
           <View>
             <FlatList
               horizontal
