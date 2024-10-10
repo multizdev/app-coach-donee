@@ -1,10 +1,18 @@
-import useAppStore from "@src/modules/common/stores/useAppStore";
-import { ReactElement } from "react";
+import { ReactElement, useEffect } from "react";
 import { View, Text } from "react-native";
+
+import useAppStore from "@src/modules/common/stores/useAppStore";
 import TimeSelection from "@src/modules/trainers/components/schedule/TimeSelection";
 
 function SelectedDays(): ReactElement {
-  const { daysArray } = useAppStore();
+  const { daysArray, detailedTrainer, setSchedule } = useAppStore();
+
+  useEffect(() => {
+    if (detailedTrainer && detailedTrainer.schedule) {
+      setSchedule(detailedTrainer.schedule);
+    }
+  }, [detailedTrainer, setSchedule]);
+
   const selectedDays = daysArray.filter((day) => day.selected);
 
   return (

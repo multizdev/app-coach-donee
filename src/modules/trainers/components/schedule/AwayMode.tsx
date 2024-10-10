@@ -1,41 +1,25 @@
-import React, { ReactElement, useState } from "react";
-import HeadingChips from "@src/modules/users/components/elements/chips/HeadingChips";
-import { COLOR_BLUE } from "@src/modules/common/constants";
+import React, { ReactElement } from "react";
 import { Switch, View, Text, TouchableOpacity } from "react-native";
+
 import DatePicker from "react-native-date-picker";
 
+import HeadingChips from "@src/modules/users/components/elements/chips/HeadingChips";
+import useAwayMode from "@src/modules/trainers/hooks/useAwayMode";
+import { COLOR_BLUE } from "@src/modules/common/constants";
+
 function AwayMode(): ReactElement {
-  const [isEnabled, setIsEnabled] = useState(false);
-  const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
-
-  const [startDate, setStartDate] = useState<Date>(new Date());
-  const [endDate, setEndDate] = useState<Date>(new Date());
-  const [isPickerVisible, setPickerVisible] = useState(false);
-  const [currentPicker, setCurrentPicker] = useState<"start" | "end">("start");
-
-  const showPicker = (picker: "start" | "end") => {
-    setCurrentPicker(picker);
-    setPickerVisible(true);
-  };
-
-  const hidePicker = () => setPickerVisible(false);
-
-  const handleConfirm = (selectedDate: Date) => {
-    if (currentPicker === "start") {
-      setStartDate(selectedDate);
-    } else {
-      setEndDate(selectedDate);
-    }
-    hidePicker();
-  };
-
-  const formatDate = (date?: Date): string => {
-    if (!date) return "";
-    const day = date.getDate();
-    const month = date.getMonth() + 1; // Months are zero indexed
-    const year = date.getFullYear();
-    return `${month}/${day}/${year}`;
-  };
+  const {
+    isEnabled,
+    startDate,
+    endDate,
+    isPickerVisible,
+    currentPicker,
+    showPicker,
+    hidePicker,
+    handleConfirm,
+    toggleSwitch,
+    formatDate,
+  } = useAwayMode();
 
   return (
     <View className="flex-1 gap-6">
@@ -46,13 +30,13 @@ function AwayMode(): ReactElement {
           thumbColor="#fff"
           ios_backgroundColor="#3e3e3e"
           onValueChange={toggleSwitch}
-          value={isEnabled}
+          value={isEnabled!}
         />
       </View>
       <View className="flex-row items-center justify-between">
         <Text className="text-xl font-bold text-primary">Start Date</Text>
         <TouchableOpacity
-          onPress={() => showPicker("start")}
+          onPress={() => !isEnabled && showPicker("start")}
           className="p-2 rounded-md mx-2"
         >
           <Text>{formatDate(startDate) || "Select Start Date"}</Text>
@@ -61,7 +45,7 @@ function AwayMode(): ReactElement {
       <View className="flex-row items-center justify-between">
         <Text className="text-xl font-bold text-primary">End Date</Text>
         <TouchableOpacity
-          onPress={() => showPicker("end")}
+          onPress={() => !isEnabled && showPicker("end")}
           className="p-2 rounded-md mx-2"
         >
           <Text>{formatDate(endDate) || "Select End Date"}</Text>

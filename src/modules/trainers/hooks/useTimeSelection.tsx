@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { DaysSelection } from "@src/types";
 import useAppStore from "@src/modules/common/stores/useAppStore";
 
@@ -30,8 +31,21 @@ function useTimeSelection(day: keyof DaysSelection) {
     hidePicker();
   };
 
-  const formatTime = (date?: Date): string => {
+  const convertToDate = (timestamp: {
+    seconds: number;
+    nanoseconds: number;
+  }): Date => {
+    return new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
+  };
+
+  const formatTime = (date?: any): string => {
     if (!date) return "";
+
+    // If date is a Firestore timestamp object
+    if (date.seconds !== undefined && date.nanoseconds !== undefined) {
+      date = convertToDate(date);
+    }
+
     const hours = date.getHours();
     const minutes = date.getMinutes();
     const formattedHours = hours % 12 || 12; // convert to 12-hour format
