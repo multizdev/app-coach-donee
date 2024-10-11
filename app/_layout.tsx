@@ -8,7 +8,7 @@ import auth from "@react-native-firebase/auth";
 
 // Import your global CSS file
 import "@/global.css";
-import { ActivityIndicator } from "@ant-design/react-native";
+import { ActivityIndicator, Provider } from "@ant-design/react-native";
 import useAppStore from "@src/modules/common/stores/useAppStore";
 import useAuth from "@src/modules/auth/hooks/useAuth";
 
@@ -48,7 +48,7 @@ function RootLayout(): ReactElement {
   }
 
   return (
-    <>
+    <Provider>
       <Stack
         screenOptions={{
           headerShown: false,
@@ -60,7 +60,7 @@ function RootLayout(): ReactElement {
         }}
       />
       <StatusBar style="dark" />
-    </>
+    </Provider>
   );
 }
 
