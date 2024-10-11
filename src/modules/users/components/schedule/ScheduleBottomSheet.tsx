@@ -1,10 +1,23 @@
-import React, { ReactElement, RefObject, useCallback, useMemo } from "react";
+import React, { ReactElement, RefObject, useMemo } from "react";
 import { Text, View, ScrollView } from "react-native";
 
+import { Fontisto, Ionicons } from "@expo/vector-icons";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 
 import useBookingStore from "@src/modules/users/stores/home/useBookingStore";
+import { COLOR_DARK_GREEN } from "@src/modules/common/constants";
+
+// Function to format date
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  const options: Intl.DateTimeFormatOptions = {
+    month: "short",
+    day: "numeric",
+    weekday: "short",
+  };
+  return date.toLocaleDateString("en-US", options);
+};
 
 function ScheduleBottomSheet({
   bottomSheetRef,
@@ -13,11 +26,6 @@ function ScheduleBottomSheet({
 }): ReactElement {
   // Get selected dates from store
   const { selectedDates } = useBookingStore();
-
-  // Callbacks
-  const handleSheetChanges = useCallback((index: number) => {
-    console.log("handleSheetChanges", index);
-  }, []);
 
   const snapPoints = useMemo(() => ["25%", "50%", "75%"], []);
 
@@ -32,34 +40,30 @@ function ScheduleBottomSheet({
           className="flex-1 flex-row items-center justify-between bg-white rounded-xl overflow-hidden"
         >
           <View className="w-2 h-full bg-my-green-dark" />
-          <View className="flex-grow flex-row justify-between p-6">
-            <View className="flex-row gap-2 items-center">
-              <Text className="text-xl font-bold text-my-green-dark">
-                Date:
-              </Text>
-              <Text className="text-xl text-gray-600">{date}</Text>
+          <View className="flex-grow flex-row items-center justify-between p-6">
+            <View className="flex-row items-center gap-4">
+              <Fontisto name="date" size={24} color={COLOR_DARK_GREEN} />
+              <Text className="text-xl text-gray-800">{formatDate(date)}</Text>
             </View>
-            <View className="flex-row gap-2 items-center">
-              <Text className="text-xl font-bold text-my-green-dark">
-                Time:
-              </Text>
-              <Text className="text-xl text-gray-600">{time}</Text>
+            <View className="flex-row gap-4 items-center">
+              <Ionicons
+                name="time-outline"
+                size={24}
+                color={COLOR_DARK_GREEN}
+              />
+              <Text className="text-xl">{time}</Text>
             </View>
           </View>
         </View>
       ));
   }, [selectedDates]);
 
-  console.log("Selected Dates:", Object.entries(selectedDates)); // Logging the selected dates to debug
-
   return (
     <BottomSheet
       ref={bottomSheetRef}
       index={-1}
-      onChange={handleSheetChanges}
       snapPoints={snapPoints}
       enablePanDownToClose={true}
-      backgroundStyle={{ backgroundColor: "rgb(250,250,250)" }}
     >
       <BottomSheetView>
         <ScrollView>

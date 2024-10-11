@@ -1,4 +1,4 @@
-import React, { ReactElement, useRef } from "react";
+import React, { ReactElement, useMemo, useRef } from "react";
 import {
   View,
   ScrollView,
@@ -10,12 +10,9 @@ import {
 
 import { Calendar, CalendarProps } from "react-native-calendars";
 import BottomSheet from "@gorhom/bottom-sheet";
+import { Toast } from "@ant-design/react-native";
 
-import {
-  COLOR_AQUA,
-  COLOR_LIGHT_GREEN,
-  COLOR_YELLOW,
-} from "@src/modules/common/constants";
+import { COLOR_LIGHT_GREEN, COLOR_YELLOW } from "@src/modules/common/constants";
 import {
   BTN_STYLE_ELEVATION,
   PRIMARY_BTN_TEXT,
@@ -32,13 +29,8 @@ import {
 import ScheduleBottomSheet from "@src/modules/users/components/schedule/ScheduleBottomSheet";
 
 function ScheduleScreen(): ReactElement {
-  const {
-    selectedPackage,
-    serviceName,
-    selectedTime,
-    selectedDate,
-    selectedDates,
-  } = useBookingStore();
+  const { selectedPackage, serviceName, selectedDate, selectedDates } =
+    useBookingStore();
 
   const { trainer, times, markedDates, scheduleBooking, handleDateSelect } =
     useBookingSchedule();
@@ -51,6 +43,17 @@ function ScheduleScreen(): ReactElement {
   }
 
   const bottomSheetRef = useRef<BottomSheet>(null);
+
+  const [unscheduled, scheduled] = useMemo(() => {
+    const datesArray = Object.entries(selectedDates).filter(
+      ([_, time]) => time !== null,
+    );
+
+    if (datesArray.length === 0)
+      bottomSheetRef.current && bottomSheetRef.current.close();
+
+    return [selectedPackage?.sessions! - datesArray.length, datesArray.length];
+  }, [selectedPackage, selectedDates]);
 
   return (
     <>
@@ -81,46 +84,62 @@ function ScheduleScreen(): ReactElement {
               </View>
             )}
             <TouchableOpacity
-              style={[BTN_STYLE_ELEVATION, { backgroundColor: COLOR_AQUA }]}
-              className="flex-1 flex-row items-center w-full p-4 rounded-3xl"
-              onPress={() => bottomSheetRef!.current!.snapToIndex(0)}
+              style={[BTN_STYLE_ELEVATION, { backgroundColor: "white" }]}
+              className="flex-1 flex-row items-center w-full p-4 rounded-3xl border-2 border-my-green-dark"
+              onPress={() => {
+                if (Object.entries(selectedDates).length !== 0) {
+                  bottomSheetRef!.current!.snapToIndex(0);
+                } else {
+                  Toast.config({ position: "center" });
+                  Toast.show("Please Select Date & Time");
+                }
+              }}
             >
-              <View className="flex-1 items-center gap-2">
-                <Image
-                  className="contain-content rounded-full border-4 border-white"
-                  source={require("@assets/background/coach.webp")}
-                  style={{ width: 80, height: 80 }}
-                />
-                <Text className="font-bold">
+              <View className="items-center">
+                <View
+                  className="rounded-full overflow-hidden"
+                  style={{ elevation: 4 }}
+                >
+                  <Image
+                    className="contain-content rounded-full border-4 border-white"
+                    source={require("@assets/background/coach.webp")}
+                    style={{ width: 80, height: 80 }}
+                  />
+                </View>
+                <Text className="font-bold text-xl">
                   {trainer?.displayName || trainer?.fullName}
                 </Text>
               </View>
-              <View className="flex-1 h-full justify-center gap-2">
+              <View className="flex-grow h-full justify-center items-center gap-2">
                 <HeadingChips
                   text={serviceName || ""}
                   width={120}
                   size="text-xs"
                   color={COLOR_LIGHT_GREEN}
                 />
-                <Text className="text-sm">
-                  <Text className="font-bold">Time:</Text>{" "}
-                  {selectedDates[selectedDate || ""] || selectedTime}
-                </Text>
-                <Text className="text-sm">
-                  <Text className="font-bold">Date:</Text> {selectedDate}
-                </Text>
-                <Text className="text-sm">
-                  <Text className="font-bold">Sessions:</Text>{" "}
-                  {selectedPackage?.sessions}
-                </Text>
                 <Text className="text-3xl font-bold text-my-green-dark">
                   {selectedPackage?.price} AED
                 </Text>
+                <View className="flex-row items-center gap-4">
+                  <View className="items-center">
+                    <Text className="text-sm font-bold">Scheduled</Text>
+                    <Text className="text-2xl font-bold text-my-green-dark">
+                      {scheduled}
+                    </Text>
+                  </View>
+                  <View className="w-[1] h-full bg-my-green-dark" />
+                  <View className="items-center">
+                    <Text className="text-sm font-bold">Unscheduled</Text>
+                    <Text className="text-2xl font-bold text-my-green-dark">
+                      {unscheduled}
+                    </Text>
+                  </View>
+                </View>
               </View>
             </TouchableOpacity>
           </View>
         </ScrollView>
-        <View className="p-2">
+        <View className="px-2 pb-4">
           <PrimaryButton text={PRIMARY_BTN_TEXT} onPress={scheduleBooking} />
         </View>
       </View>
