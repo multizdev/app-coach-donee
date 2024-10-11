@@ -66,7 +66,11 @@ function SelectPackageScreen(): ReactElement {
             </View>
             <PrimaryButton
               text="Checkout"
-              onPress={() => push("user/screens/schedule")}
+              onPress={() => {
+                if (selectedPackage) {
+                  push("user/screens/schedule");
+                }
+              }}
             />
           </View>
         </View>

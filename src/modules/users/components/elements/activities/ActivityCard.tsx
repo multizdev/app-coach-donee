@@ -13,13 +13,14 @@ function ActivityCard({
   index: number;
   color: string;
 }): ReactElement {
-  const { setServiceId } = useBookingStore();
+  const { setServiceId, setServiceName } = useBookingStore();
   const { push } = useRouter();
 
   const { id, name, categoryName } = item;
 
   const handleActivitySelect = () => {
     setServiceId(id);
+    setServiceName(name);
     push("user/screens/trainers");
   };
 
