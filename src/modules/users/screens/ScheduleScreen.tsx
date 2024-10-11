@@ -1,47 +1,35 @@
 import React, { ReactElement } from "react";
-import {
-  View,
-  ScrollView,
-  FlatList,
-  Text,
-  Image,
-  TouchableOpacity,
-} from "react-native";
-import { useRouter } from "expo-router";
-import { LinearGradient } from "expo-linear-gradient";
+import { View, ScrollView, FlatList, Text, Image } from "react-native";
+
 import { Calendar } from "react-native-calendars";
+
 import {
   COLOR_AQUA,
-  COLOR_BLUE,
-  COLOR_LIGHT_BLUE,
   COLOR_LIGHT_GREEN,
   COLOR_YELLOW,
 } from "@src/modules/common/constants";
+import {
+  BTN_STYLE_ELEVATION,
+  PRIMARY_BTN_TEXT,
+  SELECTED_COLOR,
+} from "@src/modules/users/constants";
+import useBookingStore from "@src/modules/users/stores/home/useBookingStore";
 import HeadingChips from "@src/modules/users/components/elements/chips/HeadingChips";
 import PrimaryButton from "@src/modules/common/components/input/PrimaryButton";
 import useBookingSchedule from "@src/modules/users/hooks/booking/useBookingSchedule";
-import useBookingStore from "@src/modules/users/stores/home/useBookingStore";
-
-const SELECTED_COLOR = COLOR_BLUE;
-const GRADIENT_COLORS_SELECTED = [COLOR_BLUE, COLOR_LIGHT_BLUE];
-const GRADIENT_COLORS_DEFAULT = ["#fff", "#fff"];
-const IMAGE_PATH = "@assets/background/coach.webp";
-const PRIMARY_BTN_TEXT = "Schedule Now";
-const BTN_STYLE_ELEVATION = { elevation: 2 };
+import ScheduleTimeChip from "@src/modules/users/components/elements/chips/ScheduleTimeChip";
 
 function ScheduleScreen(): ReactElement {
-  const { replace, dismissAll } = useRouter();
   const {
-    trainer,
-    times,
+    selectedPackage,
+    serviceName,
+    selectedTime,
     selectedDay,
     selectedDate,
-    selectedTime,
-    handleDateSelect,
-    setSelectedTime,
-  } = useBookingSchedule();
+  } = useBookingStore();
 
-  const { selectedPackage, serviceName } = useBookingStore();
+  const { trainer, times, scheduleBooking, handleDateSelect } =
+    useBookingSchedule();
 
   const renderNotAvailable = () => (
     <View className="flex-1 flex-row items-center justify-center bg-gray-100 p-4 gap-1">
@@ -51,30 +39,6 @@ function ScheduleScreen(): ReactElement {
       </Text>
     </View>
   );
-
-  const renderTimeSlot = ({ item: { time } }: { item: { time: string } }) => {
-    const isSelected = time === selectedTime;
-    return (
-      <TouchableOpacity
-        style={BTN_STYLE_ELEVATION}
-        className="w-[100] h-[40] overflow-hidden rounded-full m-1"
-        onPress={() => setSelectedTime(time)}
-      >
-        <LinearGradient
-          colors={
-            isSelected ? GRADIENT_COLORS_SELECTED : GRADIENT_COLORS_DEFAULT
-          }
-          start={{ x: 0, y: 1 }}
-          end={{ x: 0, y: 0 }}
-          className="w-full h-full flex justify-center items-center"
-        >
-          <Text className={isSelected ? "text-white" : "text-black"}>
-            {time}
-          </Text>
-        </LinearGradient>
-      </TouchableOpacity>
-    );
-  };
 
   return (
     <View className="flex-1 gap-2 bg-white">
@@ -88,7 +52,7 @@ function ScheduleScreen(): ReactElement {
           <Calendar
             onDayPress={handleDateSelect}
             markedDates={{
-              [selectedDate]: {
+              [selectedDate!]: {
                 selected: true,
                 marked: true,
                 selectedColor: SELECTED_COLOR,
@@ -103,7 +67,7 @@ function ScheduleScreen(): ReactElement {
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 data={times}
-                renderItem={renderTimeSlot}
+                renderItem={(item) => <ScheduleTimeChip item={item.item} />}
               />
             </View>
           )}
@@ -114,7 +78,7 @@ function ScheduleScreen(): ReactElement {
             <View className="flex-1 items-center gap-2">
               <Image
                 className="contain-content rounded-full border-4 border-white"
-                source={require(IMAGE_PATH)}
+                source={require("@assets/background/coach.webp")}
                 style={{ width: 80, height: 80 }}
               />
               <Text className="font-bold">
@@ -146,13 +110,7 @@ function ScheduleScreen(): ReactElement {
         </View>
       </ScrollView>
       <View className="p-2">
-        <PrimaryButton
-          text={PRIMARY_BTN_TEXT}
-          onPress={() => {
-            dismissAll();
-            replace("user/home/(home)/trainers");
-          }}
-        />
+        <PrimaryButton text={PRIMARY_BTN_TEXT} onPress={scheduleBooking} />
       </View>
     </View>
   );
