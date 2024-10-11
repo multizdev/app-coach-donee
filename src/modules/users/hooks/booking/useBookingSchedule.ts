@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import { useRouter } from "expo-router";
 import moment from "moment/moment";
@@ -6,28 +6,20 @@ import { Timestamp } from "@react-native-firebase/firestore";
 
 import useBookingStore from "@src/modules/users/stores/home/useBookingStore";
 import Trainer from "@server/database/models/Trainer";
-import { DaysTime } from "@src/types";
-import useAppStore from "@src/modules/common/stores/useAppStore";
-
-const getFormattedDate = (date: Date): string =>
-  `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-
-const INITIAL_DATE = getFormattedDate(new Date());
-const INITIAL_DAY = moment().format("dddd").toLowerCase() as keyof DaysTime;
+import { DaysTime, Time } from "@src/types";
 
 function useBookingSchedule() {
   const { dismissAll, replace } = useRouter();
 
-  const { user } = useAppStore();
-  const { allTrainers, trainerId, serviceId, serviceName } = useBookingStore();
-
-  const [selectedDate, setSelectedDate] = useState<string>(INITIAL_DATE);
-  const [selectedTime, setSelectedTime] = useState<string | null>(null);
-  const [selectedDay, setSelectedDay] = useState<string>(INITIAL_DAY);
-  const [timeSpan, setTimeSpan] = useState<{
-    startTime: Date;
-    endTime: Date;
-  } | null>(null);
+  const {
+    allTrainers,
+    trainerId,
+    timeSpan,
+    setTimeSpan,
+    setSelectedDay,
+    setSelectedDate,
+    setSelectedTime,
+  } = useBookingStore();
 
   const trainer: Trainer | null = useMemo(
     () => allTrainers.find((t) => t.id === trainerId) || null,
@@ -57,7 +49,7 @@ function useBookingSchedule() {
     setSelectedTime(null); // Reset time
   };
 
-  const times: { time: string }[] | null = useMemo(() => {
+  const times: Time[] | null = useMemo(() => {
     if (!timeSpan) return null;
 
     const timeSlots = [];
@@ -80,12 +72,8 @@ function useBookingSchedule() {
   return {
     trainer,
     times,
-    selectedDate,
-    selectedTime,
-    selectedDay,
     handleDateSelect,
     scheduleBooking,
-    setSelectedTime,
   };
 }
 

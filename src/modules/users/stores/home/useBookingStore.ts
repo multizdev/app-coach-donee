@@ -3,6 +3,14 @@ import { create, StoreApi, UseBoundStore } from "zustand";
 import Trainer from "@server/database/models/Trainer";
 
 import { Package } from "@server/database/models/Package";
+import moment from "moment";
+import { DaysTime, TimeSpan } from "@src/types";
+
+const getFormattedDate = (date: Date): string =>
+  `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+
+const INITIAL_DATE = getFormattedDate(new Date());
+const INITIAL_DAY = moment().format("dddd").toLowerCase() as keyof DaysTime;
 
 type State = {
   allTrainers: Trainer[];
@@ -11,8 +19,10 @@ type State = {
   trainerId: string | null;
   loading: boolean;
   selectedPackage: Package | null;
-  date: string | null;
-  time: string | null;
+  selectedDate: string | null;
+  selectedTime: string | null;
+  selectedDay: string | null;
+  timeSpan: TimeSpan | null;
 };
 
 type Actions = {
@@ -22,8 +32,10 @@ type Actions = {
   setAllTrainers: (allTrainers: Trainer[]) => void;
   setLoading: (loading: boolean) => void;
   setPackage: (pkg: Package) => void;
-  setBookingDate: (date: string) => void;
-  setBookingTime: (time: string) => void;
+  setSelectedDate: (selectedDate: string | null) => void;
+  setSelectedTime: (selectedTime: string | null) => void;
+  setSelectedDay: (selectedDay: string | null) => void;
+  setTimeSpan: (timeSpan: TimeSpan | null) => void;
 };
 
 const defaultState: State = {
@@ -33,8 +45,10 @@ const defaultState: State = {
   allTrainers: [],
   loading: false,
   selectedPackage: null,
-  date: null,
-  time: null,
+  selectedDate: INITIAL_DATE,
+  selectedTime: null,
+  selectedDay: INITIAL_DAY,
+  timeSpan: null,
 };
 
 const useActivitiesStore: UseBoundStore<StoreApi<State & Actions>> = create(
@@ -47,8 +61,13 @@ const useActivitiesStore: UseBoundStore<StoreApi<State & Actions>> = create(
       set(() => ({ allTrainers: [...allTrainers] })),
     setLoading: (loading: boolean) => set(() => ({ loading })),
     setPackage: (pkg: Package) => set(() => ({ selectedPackage: pkg })),
-    setBookingDate: (date: string | null) => set(() => ({ date })),
-    setBookingTime: (time: string | null) => set(() => ({ time })),
+    setSelectedDate: (selectedDate: string | null) =>
+      set(() => ({ selectedDate })),
+    setSelectedTime: (selectedTime: string | null) =>
+      set(() => ({ selectedTime })),
+    setSelectedDay: (selectedDay: string | null) =>
+      set(() => ({ selectedDay })),
+    setTimeSpan: (timeSpan: TimeSpan | null) => set(() => ({ timeSpan })),
   }),
 );
 

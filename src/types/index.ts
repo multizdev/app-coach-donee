@@ -25,4 +25,16 @@ type DaysTimeTimestamp = Record<
 
 type DaysArray = { day: keyof DaysSelection; selected: boolean };
 
-export type { DaysSelection, DaysTimeTimestamp, Day, DaysTime, DaysArray };
+type Time = { time: string };
+
+type TimeSpan = { startTime: Date; endTime: Date };
+
+export type {
+  DaysSelection,
+  DaysTimeTimestamp,
+  Day,
+  DaysTime,
+  DaysArray,
+  Time,
+  TimeSpan,
+};
