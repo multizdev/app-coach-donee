@@ -1,4 +1,5 @@
 export const COLOR_BLUE = "#76A9FA";
+export const COLOR_LIGHT_BLUE = "#98d3ff";
 export const COLOR_DARK_BLUE = "#538aaf";
 export const COLOR_PURPLE = "#878afa";
 export const COLOR_DARK_GREEN = "#53af83";

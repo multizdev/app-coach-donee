@@ -7,6 +7,7 @@ import { Package } from "@server/database/models/Package";
 type State = {
   allTrainers: Trainer[];
   serviceId: string | null;
+  serviceName: string | null;
   trainerId: string | null;
   loading: boolean;
   selectedPackage: Package | null;
@@ -14,6 +15,7 @@ type State = {
 
 type Actions = {
   setServiceId: (serviceId: string) => void;
+  setServiceName: (serviceName: string) => void;
   setTrainerId: (trainerId: string) => void;
   setAllTrainers: (allTrainers: Trainer[]) => void;
   setLoading: (loading: boolean) => void;
@@ -22,6 +24,7 @@ type Actions = {
 
 const defaultState: State = {
   serviceId: null,
+  serviceName: null,
   trainerId: null,
   allTrainers: [],
   loading: false,
@@ -32,6 +35,7 @@ const useActivitiesStore: UseBoundStore<StoreApi<State & Actions>> = create(
   (set): State & Actions => ({
     ...defaultState,
     setServiceId: (serviceId: string) => set(() => ({ serviceId })),
+    setServiceName: (serviceName: string) => set(() => ({ serviceName })),
     setTrainerId: (trainerId: string) => set(() => ({ trainerId })),
     setAllTrainers: (allTrainers: Trainer[]) =>
       set(() => ({ allTrainers: [...allTrainers] })),

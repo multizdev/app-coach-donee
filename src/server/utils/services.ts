@@ -8,7 +8,9 @@ async function getTrainerServices(services: string[]) {
     .where(firestore.FieldPath.documentId(), "in", services)
     .get();
 
-  return servicesSnapshot.docs.map((doc) => doc.data() as Activity);
+  return servicesSnapshot.docs.map((doc) => {
+    return { id: doc.id, ...doc.data() } as Activity;
+  });
 }
 
 export { getTrainerServices };

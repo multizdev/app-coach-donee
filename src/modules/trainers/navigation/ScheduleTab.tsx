@@ -1,14 +1,15 @@
 import React, { ReactElement } from "react";
 import { Text, View, TouchableOpacity, ScrollView } from "react-native";
 
+import firestore, { Timestamp } from "@react-native-firebase/firestore";
+
 import HeadingChips from "@src/modules/users/components/elements/chips/HeadingChips";
 import { COLOR_BLUE } from "@src/modules/common/constants";
 import { LinearGradient } from "expo-linear-gradient";
 import useAppStore from "@src/modules/common/stores/useAppStore";
 import SelectedDays from "@src/modules/trainers/components/schedule/SelectedDays";
 import AwayMode from "@src/modules/trainers/components/schedule/AwayMode";
-import firestore from "@react-native-firebase/firestore";
-import { DaysArray, DaysSelection, DaysTime } from "@src/types";
+import { DaysArray, DaysSelection, DaysTimeTimestamp } from "@src/types";
 
 function RenderItem({
   item,
@@ -40,6 +41,11 @@ function RenderItem({
   );
 }
 
+// Convert your Date objects to Firestore Timestamps
+const convertToFirestoreTimestamp = (date: Date): Timestamp => {
+  return firestore.Timestamp.fromDate(date);
+};
+
 function ScheduleTab(): ReactElement {
   const { user, daysArray, daysTimes } = useAppStore();
 
@@ -64,9 +70,17 @@ function ScheduleTab(): ReactElement {
         onPress={async () => {
           const selectedDays = daysArray.filter((day) => day.selected);
 
-          const finalDayTimes: DaysTime = Object.fromEntries(
-            selectedDays.map(({ day }: DaysArray) => [day, daysTimes[day]]),
-          ) as DaysTime;
+          const finalDayTimes: DaysTimeTimestamp = Object.fromEntries(
+            selectedDays.map(({ day }: DaysArray) => [
+              day,
+              {
+                startTime: convertToFirestoreTimestamp(
+                  daysTimes[day]?.startTime,
+                ),
+                endTime: convertToFirestoreTimestamp(daysTimes[day]?.endTime),
+              },
+            ]),
+          ) as DaysTimeTimestamp;
 
           await firestore().collection("Trainers").doc(user?.uid).update({
             schedule: finalDayTimes,

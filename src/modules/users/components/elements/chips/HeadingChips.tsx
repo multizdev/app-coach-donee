@@ -6,10 +6,12 @@ function HeadingChips({
   text,
   color,
   width,
+  size = "text-sm",
 }: {
   text: string;
   color: string;
   width: number;
+  size?: string;
 }): ReactElement {
   return (
     <LinearGradient
@@ -19,7 +21,7 @@ function HeadingChips({
       style={{ width, backgroundColor: color }}
       className="p-2 flex justify-center items-center rounded-full overflow-hidden"
     >
-      <Text className="text-sm text-white">{text}</Text>
+      <Text className={`${size} text-white`}>{text}</Text>
     </LinearGradient>
   );
 }

@@ -1,3 +1,5 @@
+import { Timestamp } from "@react-native-firebase/firestore";
+
 type DaysSelection = {
   monday?: boolean;
   tuesday?: boolean;
@@ -16,6 +18,11 @@ type Day = {
 
 type DaysTime = Record<keyof DaysSelection, { startTime: Date; endTime: Date }>;
 
+type DaysTimeTimestamp = Record<
+  keyof DaysSelection,
+  { startTime: Timestamp; endTime: Timestamp }
+>;
+
 type DaysArray = { day: keyof DaysSelection; selected: boolean };
 
-export type { DaysSelection, Day, DaysTime, DaysArray };
+export type { DaysSelection, DaysTimeTimestamp, Day, DaysTime, DaysArray };
