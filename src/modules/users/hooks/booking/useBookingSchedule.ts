@@ -6,7 +6,8 @@ import { Timestamp } from "@react-native-firebase/firestore";
 
 import useBookingStore from "@src/modules/users/stores/home/useBookingStore";
 import Trainer from "@server/database/models/Trainer";
-import { DaysTime, Time } from "@src/types";
+import { DaysTime, MarkedDatesType, Time } from "@src/types";
+import { COLOR_DARK_GREEN } from "@src/modules/common/constants";
 
 function useBookingSchedule() {
   const { dismissAll, replace } = useRouter();
@@ -15,6 +16,7 @@ function useBookingSchedule() {
     allTrainers,
     trainerId,
     timeSpan,
+    selectedDates,
     setTimeSpan,
     setSelectedDay,
     setSelectedDate,
@@ -64,6 +66,19 @@ function useBookingSchedule() {
     return timeSlots;
   }, [timeSpan]);
 
+  const markedDates: MarkedDatesType = useMemo(() => {
+    return Object.keys(selectedDates)
+      .filter((date) => selectedDates[date]) // Only include dates with selected time
+      .reduce((acc, date) => {
+        acc[date] = {
+          selected: true,
+          marked: true,
+          selectedColor: COLOR_DARK_GREEN,
+        };
+        return acc;
+      }, {} as MarkedDatesType);
+  }, [selectedDates]);
+
   const scheduleBooking = async () => {
     dismissAll();
     replace("user/home/(home)/trainers");
@@ -72,6 +87,7 @@ function useBookingSchedule() {
   return {
     trainer,
     times,
+    markedDates,
     handleDateSelect,
     scheduleBooking,
   };

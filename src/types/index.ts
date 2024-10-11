@@ -29,6 +29,15 @@ type Time = { time: string };
 
 type TimeSpan = { startTime: Date; endTime: Date };
 
+// Define the type for markedDates
+type MarkedDatesType = {
+  [key: string]: {
+    selected: boolean;
+    marked?: boolean;
+    selectedColor: string;
+  };
+};
+
 export type {
   DaysSelection,
   DaysTimeTimestamp,
@@ -37,4 +46,5 @@ export type {
   DaysArray,
   Time,
   TimeSpan,
+  MarkedDatesType,
 };

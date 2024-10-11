@@ -23,6 +23,7 @@ function SelectPackageScreen(): ReactElement {
 
   const renderItem = ({ item }: { item: Package }) => (
     <TouchableOpacity
+      activeOpacity={0.9}
       style={{
         elevation: 4,
         borderColor: selectedPackage === item ? COLOR_BLUE : "white",
