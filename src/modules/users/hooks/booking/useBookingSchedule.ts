@@ -1,9 +1,13 @@
 import { useMemo, useState } from "react";
+
+import { useRouter } from "expo-router";
 import moment from "moment/moment";
 import { Timestamp } from "@react-native-firebase/firestore";
+
 import useBookingStore from "@src/modules/users/stores/home/useBookingStore";
 import Trainer from "@server/database/models/Trainer";
 import { DaysTime } from "@src/types";
+import useAppStore from "@src/modules/common/stores/useAppStore";
 
 const getFormattedDate = (date: Date): string =>
   `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
@@ -12,7 +16,11 @@ const INITIAL_DATE = getFormattedDate(new Date());
 const INITIAL_DAY = moment().format("dddd").toLowerCase() as keyof DaysTime;
 
 function useBookingSchedule() {
-  const { allTrainers, trainerId } = useBookingStore();
+  const { dismissAll, replace } = useRouter();
+
+  const { user } = useAppStore();
+  const { allTrainers, trainerId, serviceId, serviceName } = useBookingStore();
+
   const [selectedDate, setSelectedDate] = useState<string>(INITIAL_DATE);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [selectedDay, setSelectedDay] = useState<string>(INITIAL_DAY);
@@ -64,13 +72,19 @@ function useBookingSchedule() {
     return timeSlots;
   }, [timeSpan]);
 
+  const scheduleBooking = async () => {
+    dismissAll();
+    replace("user/home/(home)/trainers");
+  };
+
   return {
     trainer,
     times,
-    handleDateSelect,
     selectedDate,
     selectedTime,
     selectedDay,
+    handleDateSelect,
+    scheduleBooking,
     setSelectedTime,
   };
 }

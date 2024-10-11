@@ -11,6 +11,8 @@ type State = {
   trainerId: string | null;
   loading: boolean;
   selectedPackage: Package | null;
+  date: string | null;
+  time: string | null;
 };
 
 type Actions = {
@@ -20,6 +22,8 @@ type Actions = {
   setAllTrainers: (allTrainers: Trainer[]) => void;
   setLoading: (loading: boolean) => void;
   setPackage: (pkg: Package) => void;
+  setBookingDate: (date: string) => void;
+  setBookingTime: (time: string) => void;
 };
 
 const defaultState: State = {
@@ -29,6 +33,8 @@ const defaultState: State = {
   allTrainers: [],
   loading: false,
   selectedPackage: null,
+  date: null,
+  time: null,
 };
 
 const useActivitiesStore: UseBoundStore<StoreApi<State & Actions>> = create(
@@ -41,6 +47,8 @@ const useActivitiesStore: UseBoundStore<StoreApi<State & Actions>> = create(
       set(() => ({ allTrainers: [...allTrainers] })),
     setLoading: (loading: boolean) => set(() => ({ loading })),
     setPackage: (pkg: Package) => set(() => ({ selectedPackage: pkg })),
+    setBookingDate: (date: string | null) => set(() => ({ date })),
+    setBookingTime: (time: string | null) => set(() => ({ time })),
   }),
 );
 

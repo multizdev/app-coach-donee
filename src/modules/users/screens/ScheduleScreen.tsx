@@ -37,6 +37,7 @@ function ScheduleScreen(): ReactElement {
     selectedDay,
     selectedDate,
     selectedTime,
+    scheduleBooking,
     handleDateSelect,
     setSelectedTime,
   } = useBookingSchedule();
@@ -146,13 +147,7 @@ function ScheduleScreen(): ReactElement {
         </View>
       </ScrollView>
       <View className="p-2">
-        <PrimaryButton
-          text={PRIMARY_BTN_TEXT}
-          onPress={() => {
-            dismissAll();
-            replace("user/home/(home)/trainers");
-          }}
-        />
+        <PrimaryButton text={PRIMARY_BTN_TEXT} onPress={scheduleBooking} />
       </View>
     </View>
   );

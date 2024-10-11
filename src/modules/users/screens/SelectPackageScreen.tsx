@@ -4,7 +4,7 @@ import { View, Text, FlatList, TouchableOpacity } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 
-import { ActivityIndicator } from "@ant-design/react-native";
+import { ActivityIndicator, Toast } from "@ant-design/react-native";
 
 import PrimaryButton from "@src/modules/common/components/input/PrimaryButton";
 import { COLOR_BLUE } from "@src/modules/common/constants";
@@ -67,8 +67,11 @@ function SelectPackageScreen(): ReactElement {
             <PrimaryButton
               text="Checkout"
               onPress={() => {
+                Toast.config({ position: "bottom" });
                 if (selectedPackage) {
                   push("user/screens/schedule");
+                } else {
+                  Toast.show("Please select a package");
                 }
               }}
             />
