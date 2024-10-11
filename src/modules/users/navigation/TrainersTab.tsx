@@ -1,7 +1,11 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useEffect } from "react";
 import { View, Text, TextInput, FlatList, Image } from "react-native";
 
 import { Fontisto } from "@expo/vector-icons";
+import useAppStore from "@src/modules/common/stores/useAppStore";
+import firestore from "@react-native-firebase/firestore";
+import { Booking } from "@server/database/models/Booking";
+import Trainer from "@server/database/models/Trainer";
 
 type ClientData = {
   name: string;
@@ -17,7 +21,7 @@ const clients: ClientData[] = [
   },
 ];
 
-function Trainer({ item }: { item: ClientData }): ReactElement {
+function TrainerItem({ item }: { item: ClientData }): ReactElement {
   return (
     <View
       style={{ elevation: 2 }}
@@ -44,6 +48,46 @@ function Trainer({ item }: { item: ClientData }): ReactElement {
 }
 
 function TrainersTab(): ReactElement {
+  const { user } = useAppStore();
+
+  useEffect(() => {
+    (async () => {
+      if (user) {
+        const bookingsSnapshot = await firestore()
+          .collection("Bookings")
+          .where("userId", "==", user.uid)
+          .get();
+
+        const bookings = bookingsSnapshot.docs.map(
+          (doc) => doc.data() as Booking,
+        );
+        const trainerIds = bookings.map((booking) => booking.trainerId);
+
+        if (trainerIds.length) {
+          const trainersSnapshot = await firestore()
+            .collection("Trainers")
+            .where(firestore.FieldPath.documentId(), "in", trainerIds)
+            .get();
+
+          const trainers = trainersSnapshot.docs.reduce(
+            (acc, trainerDoc) => {
+              acc[trainerDoc.id] = trainerDoc.data();
+              return acc;
+            },
+            {} as Record<string, Trainer>,
+          );
+
+          const bookingsWithTrainers = bookings.map((booking) => ({
+            ...booking,
+            trainer: trainers[booking.trainerId],
+          }));
+
+          console.log(bookingsWithTrainers);
+        }
+      }
+    })();
+  }, []);
+
   return (
     <View className="flex-1 gap-4 bg-white">
       <View
@@ -58,7 +102,7 @@ function TrainersTab(): ReactElement {
           data={clients}
           keyExtractor={(item: ClientData, index: number) => item.name + index}
           renderItem={({ item }: { item: ClientData }) => (
-            <Trainer item={item} />
+            <TrainerItem item={item} />
           )}
         />
       </View>
