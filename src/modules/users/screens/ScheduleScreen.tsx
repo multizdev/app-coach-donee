@@ -36,6 +36,8 @@ function ScheduleScreen(): ReactElement {
     `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`,
   );
 
+  const [selectedDay, setSelectedDay] = useState<string | null>(null);
+
   const trainer: Trainer | null = useMemo(() => {
     return allTrainers.find((t) => t.id === trainerId) || null;
   }, [allTrainers, trainerId]);
@@ -55,6 +57,8 @@ function ScheduleScreen(): ReactElement {
       const dayOfWeek = moment(date)
         .format("dddd")
         .toLowerCase() as keyof DaysTime;
+
+      setSelectedDay(dayOfWeek);
 
       const scheduleForDay = schedule[dayOfWeek];
 
@@ -112,31 +116,41 @@ function ScheduleScreen(): ReactElement {
               },
             }}
           />
-          <View>
-            <FlatList
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              data={times}
-              renderItem={({ item }) => {
-                const { time } = item;
-                return (
-                  <TouchableOpacity
-                    style={{ elevation: 2 }}
-                    className="w-[100] h-[40] overflow-hidden rounded-full m-2"
-                  >
-                    <LinearGradient
-                      colors={["#76A9FA", "#98d3ff"]}
-                      start={{ x: 0, y: 1 }}
-                      end={{ x: 0, y: 0 }}
-                      className="w-full h-full flex justify-center items-center"
+          {!times ? (
+            <View className="flex-1 flex-row items-center justify-center bg-gray-100 p-4 gap-1">
+              <Text>Not Available on</Text>
+              <Text className="color-primary font-bold">
+                {selectedDay?.toUpperCase()}!
+              </Text>
+            </View>
+          ) : (
+            <View>
+              <FlatList
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                data={times}
+                renderItem={({ item }) => {
+                  const { time } = item;
+                  return (
+                    <TouchableOpacity
+                      style={{ elevation: 2 }}
+                      className="w-[100] h-[40] overflow-hidden rounded-full m-2"
                     >
-                      <Text className="text-white">{time}</Text>
-                    </LinearGradient>
-                  </TouchableOpacity>
-                );
-              }}
-            />
-          </View>
+                      <LinearGradient
+                        colors={["#76A9FA", "#98d3ff"]}
+                        start={{ x: 0, y: 1 }}
+                        end={{ x: 0, y: 0 }}
+                        className="w-full h-full flex justify-center items-center"
+                      >
+                        <Text className="text-white">{time}</Text>
+                      </LinearGradient>
+                    </TouchableOpacity>
+                  );
+                }}
+              />
+            </View>
+          )}
+
           <View
             style={{ elevation: 2, backgroundColor: COLOR_AQUA }}
             className="flex-1 flex-row items-center w-full p-4 rounded-3xl"
