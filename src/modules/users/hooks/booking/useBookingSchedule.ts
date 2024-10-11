@@ -1,26 +1,35 @@
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 
 import { useRouter } from "expo-router";
 import moment from "moment/moment";
-import { Timestamp } from "@react-native-firebase/firestore";
+import firestore, { Timestamp } from "@react-native-firebase/firestore";
+import { Toast } from "@ant-design/react-native";
 
 import useBookingStore from "@src/modules/users/stores/home/useBookingStore";
 import Trainer from "@server/database/models/Trainer";
 import { DaysTime, MarkedDatesType, Time } from "@src/types";
 import { COLOR_DARK_GREEN } from "@src/modules/common/constants";
+import useAppStore from "@src/modules/common/stores/useAppStore";
+import BottomSheet from "@gorhom/bottom-sheet";
 
 function useBookingSchedule() {
   const { dismissAll, replace } = useRouter();
+
+  const { user } = useAppStore();
 
   const {
     allTrainers,
     trainerId,
     timeSpan,
     selectedDates,
+    selectedPackage,
+    serviceId,
+    serviceName,
     setTimeSpan,
     setSelectedDay,
     setSelectedDate,
     setSelectedTime,
+    resetBookingState,
   } = useBookingStore();
 
   const trainer: Trainer | null = useMemo(
@@ -51,6 +60,8 @@ function useBookingSchedule() {
     setSelectedTime(null); // Reset time
   };
 
+  const bottomSheetRef = useRef<BottomSheet>(null);
+
   const times: Time[] | null = useMemo(() => {
     if (!timeSpan) return null;
 
@@ -79,15 +90,64 @@ function useBookingSchedule() {
       }, {} as MarkedDatesType);
   }, [selectedDates]);
 
+  const [unscheduled, scheduled, filteredSelectedDates] = useMemo(() => {
+    const datesArray = Object.entries(selectedDates).filter(
+      ([_, time]) => time !== null,
+    );
+
+    if (datesArray.length === 0)
+      bottomSheetRef.current && bottomSheetRef.current.close();
+
+    return [
+      selectedPackage?.sessions! - datesArray.length,
+      datesArray.length,
+      datesArray,
+    ];
+  }, [selectedPackage, selectedDates]);
+
   const scheduleBooking = async () => {
-    dismissAll();
-    replace("user/home/(home)/trainers");
+    try {
+      Toast.config({ position: "center", stackable: false });
+
+      if (!user || !trainerId || !serviceId || !serviceName) {
+        Toast.show("There was a problem");
+        return;
+      }
+      if (filteredSelectedDates.length === 0) {
+        Toast.show("Please schedule at least 1 session");
+        return;
+      }
+
+      await firestore()
+        .collection("Bookings")
+        .add({
+          trainerId,
+          userId: user.uid,
+          serviceId,
+          serviceName,
+          scheduledDates: filteredSelectedDates.map(([date, time]) => ({
+            date,
+            time,
+          })),
+        });
+      replace("user/home/(home)/trainers");
+      resetBookingState();
+      dismissAll();
+    } catch (e) {
+      if (e instanceof Error) {
+        Toast.show("Cannot schedule booking, Please try again!");
+      }
+    }
   };
 
   return {
     trainer,
     times,
     markedDates,
+    unscheduled,
+    scheduled,
+    filteredSelectedDates,
+    bottomSheetRef,
     handleDateSelect,
     scheduleBooking,
   };

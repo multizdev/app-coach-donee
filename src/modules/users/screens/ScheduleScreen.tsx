@@ -1,4 +1,4 @@
-import React, { ReactElement, useMemo, useRef } from "react";
+import React, { ReactElement } from "react";
 import {
   View,
   ScrollView,
@@ -9,7 +9,6 @@ import {
 } from "react-native";
 
 import { Calendar, CalendarProps } from "react-native-calendars";
-import BottomSheet from "@gorhom/bottom-sheet";
 import { Toast } from "@ant-design/react-native";
 
 import { COLOR_LIGHT_GREEN, COLOR_YELLOW } from "@src/modules/common/constants";
@@ -32,8 +31,16 @@ function ScheduleScreen(): ReactElement {
   const { selectedPackage, serviceName, selectedDate, selectedDates } =
     useBookingStore();
 
-  const { trainer, times, markedDates, scheduleBooking, handleDateSelect } =
-    useBookingSchedule();
+  const {
+    trainer,
+    times,
+    markedDates,
+    bottomSheetRef,
+    scheduled,
+    unscheduled,
+    scheduleBooking,
+    handleDateSelect,
+  } = useBookingSchedule();
 
   if (selectedDate && !markedDates[selectedDate]) {
     markedDates[selectedDate] = {
@@ -41,19 +48,6 @@ function ScheduleScreen(): ReactElement {
       selectedColor: SELECTED_COLOR,
     };
   }
-
-  const bottomSheetRef = useRef<BottomSheet>(null);
-
-  const [unscheduled, scheduled] = useMemo(() => {
-    const datesArray = Object.entries(selectedDates).filter(
-      ([_, time]) => time !== null,
-    );
-
-    if (datesArray.length === 0)
-      bottomSheetRef.current && bottomSheetRef.current.close();
-
-    return [selectedPackage?.sessions! - datesArray.length, datesArray.length];
-  }, [selectedPackage, selectedDates]);
 
   return (
     <>

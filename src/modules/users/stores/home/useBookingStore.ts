@@ -38,6 +38,7 @@ type Actions = {
   setSelectedTime: (selectedTime: string | null) => void;
   setSelectedDay: (selectedDay: string | null) => void;
   setTimeSpan: (timeSpan: TimeSpan | null) => void;
+  resetBookingState: () => void;
 };
 
 const defaultState: State = {
@@ -85,6 +86,7 @@ const useBookingStore: UseBoundStore<StoreApi<State & Actions>> = create(
     setSelectedDay: (selectedDay: string | null) =>
       set(() => ({ selectedDay })),
     setTimeSpan: (timeSpan: TimeSpan | null) => set(() => ({ timeSpan })),
+    resetBookingState: () => set(() => ({ ...defaultState })),
   }),
 );
 
