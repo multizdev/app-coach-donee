@@ -20,6 +20,7 @@ type State = {
   loading: boolean;
   selectedPackage: Package | null;
   selectedDate: string | null;
+  selectedDates: { [key: string]: string | null };
   selectedTime: string | null;
   selectedDay: string | null;
   timeSpan: TimeSpan | null;
@@ -32,10 +33,12 @@ type Actions = {
   setAllTrainers: (allTrainers: Trainer[]) => void;
   setLoading: (loading: boolean) => void;
   setPackage: (pkg: Package) => void;
+  addSelectedDate: (date: string, time: string | null) => void;
   setSelectedDate: (selectedDate: string | null) => void;
   setSelectedTime: (selectedTime: string | null) => void;
   setSelectedDay: (selectedDay: string | null) => void;
   setTimeSpan: (timeSpan: TimeSpan | null) => void;
+  resetBookingState: () => void;
 };
 
 const defaultState: State = {
@@ -46,12 +49,13 @@ const defaultState: State = {
   loading: false,
   selectedPackage: null,
   selectedDate: INITIAL_DATE,
+  selectedDates: {},
   selectedTime: null,
   selectedDay: INITIAL_DAY,
   timeSpan: null,
 };
 
-const useActivitiesStore: UseBoundStore<StoreApi<State & Actions>> = create(
+const useBookingStore: UseBoundStore<StoreApi<State & Actions>> = create(
   (set): State & Actions => ({
     ...defaultState,
     setServiceId: (serviceId: string) => set(() => ({ serviceId })),
@@ -63,12 +67,27 @@ const useActivitiesStore: UseBoundStore<StoreApi<State & Actions>> = create(
     setPackage: (pkg: Package) => set(() => ({ selectedPackage: pkg })),
     setSelectedDate: (selectedDate: string | null) =>
       set(() => ({ selectedDate })),
+    addSelectedDate: (date: string, time: string | null) =>
+      set((state) => ({
+        selectedDates: { ...state.selectedDates, [date]: time },
+      })),
     setSelectedTime: (selectedTime: string | null) =>
-      set(() => ({ selectedTime })),
+      set((state) => {
+        const selectedDates = {
+          ...state.selectedDates,
+          [state.selectedDate!]: selectedTime,
+        };
+
+        return {
+          selectedTime,
+          selectedDates,
+        };
+      }),
     setSelectedDay: (selectedDay: string | null) =>
       set(() => ({ selectedDay })),
     setTimeSpan: (timeSpan: TimeSpan | null) => set(() => ({ timeSpan })),
+    resetBookingState: () => set(() => ({ ...defaultState })),
   }),
 );
 
-export default useActivitiesStore;
+export default useBookingStore;
