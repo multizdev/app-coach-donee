@@ -4,7 +4,7 @@ import { Switch, View, Text, TouchableOpacity } from "react-native";
 import DatePicker from "react-native-date-picker";
 
 import HeadingChips from "@src/modules/users/components/elements/chips/HeadingChips";
-import useAwayMode from "@src/modules/trainers/hooks/useAwayMode";
+import useAwayMode from "@src/modules/trainers/hooks/trainer/useAwayMode";
 import { COLOR_BLUE } from "@src/modules/common/constants";
 
 function AwayMode(): ReactElement {

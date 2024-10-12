@@ -6,7 +6,7 @@ import { AntDesign, FontAwesome, Octicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { COLOR_BLUE } from "@src/modules/common/constants";
-import useHome from "@src/modules/trainers/hooks/useHome";
+import useHome from "@src/modules/trainers/hooks/trainer/useHome";
 import useHomeStore from "@src/modules/trainers/store/useHomeStore";
 
 function HomeScreen(): ReactElement {

@@ -3,7 +3,7 @@ import { Text, TouchableOpacity, View, SectionList } from "react-native";
 
 import { AntDesign } from "@expo/vector-icons";
 
-import useMyBookings from "@src/modules/trainers/hooks/useMyBookings";
+import useMyBookings from "@src/modules/trainers/hooks/booking/useMyBookings";
 import DaysHorizontalScroll from "@src/modules/trainers/components/mybookings/DaysHorizontalScroll";
 import useBookingsStore from "@src/modules/trainers/store/useBookingsStore";
 import { LinearGradient } from "expo-linear-gradient";
