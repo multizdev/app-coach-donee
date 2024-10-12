@@ -3,6 +3,8 @@ import { useEffect, useMemo, useRef } from "react";
 import moment from "moment";
 import BottomSheet from "@gorhom/bottom-sheet";
 import firestore, { Timestamp } from "@react-native-firebase/firestore";
+import { Toast } from "@ant-design/react-native";
+import { useRouter } from "expo-router";
 
 import useRescheduleStore from "@src/modules/re-schedule/store/useRescheduleStore";
 import { COLOR_DARK_GREEN } from "@src/modules/common/constants";
@@ -10,6 +12,8 @@ import { Booking } from "@server/database/models/Booking";
 import { DaysTime, MarkedDatesType, Time } from "@src/types";
 
 function useReschedule() {
+  const { dismissAll } = useRouter();
+
   const {
     bookingId,
     booking,
@@ -21,6 +25,8 @@ function useReschedule() {
     setSelectedDay,
     setTimeSpan,
     setSelectedTime,
+    resetSelectedDates,
+    setTrainer,
   } = useRescheduleStore();
 
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -133,6 +139,50 @@ function useReschedule() {
     }
   }, [bookingId]);
 
+  const scheduleDates = async () => {
+    try {
+      Toast.config({ position: "center", stackable: false });
+
+      if (!bookingId) {
+        Toast.show("There was a problem");
+        return;
+      }
+      if (!filteredSelectedDates || filteredSelectedDates?.length === 0) {
+        Toast.show("Please schedule at least 1 session");
+        return;
+      }
+
+      const finalDates = Object.entries(selectedDates).filter(
+        ([_, time]) => time !== null,
+      );
+
+      await firestore()
+        .collection("Bookings")
+        .doc(bookingId)
+        .update({
+          scheduledDates: [
+            ...booking?.scheduledDates!,
+            ...finalDates.map(([date, time]) => ({
+              date,
+              time,
+            })),
+          ],
+        });
+
+      setSelectedDate(null);
+      resetSelectedDates();
+      setBooking(null);
+      setTrainer(null);
+      setSelectedTime(null);
+      setTimeSpan(null);
+      dismissAll();
+    } catch (e) {
+      if (e instanceof Error) {
+        Toast.show("Cannot schedule booking, Please try again!");
+      }
+    }
+  };
+
   return {
     trainer,
     times,
@@ -142,6 +192,7 @@ function useReschedule() {
     filteredSelectedDates,
     bottomSheetRef,
     disabledDates,
+    scheduleDates,
     handleDateSelect,
   };
 }

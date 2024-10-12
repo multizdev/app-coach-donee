@@ -1,7 +1,7 @@
-import React, { ReactElement, RefObject, useMemo, useCallback } from "react";
-import { View, Text } from "react-native";
+import React, { ReactElement, RefObject, useMemo } from "react";
+import { Text, View, ScrollView } from "react-native";
 import { Fontisto, Ionicons } from "@expo/vector-icons";
-import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import {
   COLOR_DARK_BLUE,
@@ -32,18 +32,19 @@ const RenderListItem = ({
   time: string;
   isNew: boolean;
   color: string;
+  label?: string;
 }): ReactElement => (
   <View
     key={date}
     style={{ elevation: 2 }}
-    className={`flex-1 flex-row items-center justify-between bg-white rounded-xl ${
+    className={`mx-4 mt-2 mb-1 flex-1 flex-row items-center justify-between bg-white rounded-xl ${
       isNew ? "overflow-hidden" : "overflow-x-hidden relative"
     }`}
   >
     {!isNew && (
       <View
         style={{ elevation: 2 }}
-        className="absolute top-[-10] left-4 bg-primary-dark px-2 py-1 rounded-xl"
+        className="absolute top-[-10] left-4 bg-primary-dark px-4 py-1 rounded-md"
       >
         <Text className="text-white">Pre-Scheduled</Text>
       </View>
@@ -70,47 +71,37 @@ function ReScheduleBottomSheet({
   bottomSheetRef: RefObject<BottomSheetMethods>;
 }): ReactElement {
   const { selectedDates, booking } = useRescheduleStore();
-  const snapPoints = useMemo(() => ["25%", "50%", "75%"], []);
+  const snapPoints = useMemo(() => ["25%", "50%", "75%", "100%"], []);
 
-  // Merge new and old list items into one array
-  const listItems = useMemo(() => {
-    const newItems = Object.entries(selectedDates)
+  // New list items
+  const newListItems = useMemo(() => {
+    return Object.entries(selectedDates)
       .filter(([_, time]) => time !== null)
-      .map(([date, time]) => ({
-        date,
-        time: time as string,
-        isNew: true,
-        color: COLOR_DARK_GREEN,
-      }));
+      .map(([date, time]) => (
+        <RenderListItem
+          key={date}
+          date={date}
+          time={time as string}
+          isNew={true}
+          color={COLOR_DARK_GREEN}
+        />
+      ));
+  }, [selectedDates]);
 
-    const oldItems =
-      booking?.scheduledDates.map(({ date, time }: ScheduledDate) => ({
-        date,
-        time,
-        isNew: false,
-        color: COLOR_DARK_BLUE,
-      })) || [];
-
-    return [...newItems, ...oldItems];
-  }, [selectedDates, booking]);
-
-  // Render each item in the list
-  const renderItem = useCallback(
-    ({
-      item,
-    }: {
-      item: { date: string; time: string; isNew: boolean; color: string };
-    }) => (
-      <RenderListItem
-        key={item.date}
-        date={item.date}
-        time={item.time}
-        isNew={item.isNew}
-        color={item.color}
-      />
-    ),
-    [],
-  );
+  // Old list items
+  const oldListItems = useMemo(() => {
+    if (booking) {
+      return booking.scheduledDates.map(({ date, time }: ScheduledDate) => (
+        <RenderListItem
+          key={date}
+          date={date}
+          time={time}
+          isNew={false}
+          color={COLOR_DARK_BLUE}
+        />
+      ));
+    }
+  }, [booking]);
 
   return (
     <BottomSheet
@@ -119,12 +110,18 @@ function ReScheduleBottomSheet({
       snapPoints={snapPoints}
       enablePanDownToClose={true}
     >
-      <BottomSheetFlatList
-        data={listItems}
-        keyExtractor={(item) => item.date}
-        renderItem={renderItem}
-        contentContainerStyle={{ padding: 16, gap: 16 }}
-      />
+      <BottomSheetView>
+        <ScrollView>
+          <View>
+            <ScrollView>
+              <View className="flex-1 flex-grow flex-col gap-4">
+                {newListItems}
+                {oldListItems}
+              </View>
+            </ScrollView>
+          </View>
+        </ScrollView>
+      </BottomSheetView>
     </BottomSheet>
   );
 }
