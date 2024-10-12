@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
 import { Toast } from "@ant-design/react-native";
-import firestore from "@react-native-firebase/firestore";
+import firestore, { Timestamp } from "@react-native-firebase/firestore";
 
 import { Booking } from "@server/database/models/Booking";
 import Trainer from "@server/database/models/Trainer";
@@ -28,7 +28,12 @@ function useUserBookings() {
           .get();
 
         const bookings = bookingsSnapshot.docs.map(
-          (doc) => ({ id: doc.id, ...doc.data() }) as Booking,
+          (doc) =>
+            ({
+              id: doc.id,
+              ...doc.data(),
+              date: (doc.data().date as Timestamp).toDate(),
+            }) as Booking,
         );
         const trainerIds = bookings.map((booking) => booking.trainerId);
 
