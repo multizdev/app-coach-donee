@@ -35,6 +35,7 @@ type Actions = {
   setPackage: (pkg: Package) => void;
   addSelectedDate: (date: string, time: string | null) => void;
   setSelectedDate: (selectedDate: string | null) => void;
+  resetSelectedDates: () => void;
   setSelectedTime: (selectedTime: string | null) => void;
   setSelectedDay: (selectedDay: string | null) => void;
   setTimeSpan: (timeSpan: TimeSpan | null) => void;
@@ -83,6 +84,7 @@ const useBookingStore: UseBoundStore<StoreApi<State & Actions>> = create(
           selectedDates,
         };
       }),
+    resetSelectedDates: () => set(() => ({ selectedDates: {} })),
     setSelectedDay: (selectedDay: string | null) =>
       set(() => ({ selectedDay })),
     setTimeSpan: (timeSpan: TimeSpan | null) => set(() => ({ timeSpan })),

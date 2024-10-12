@@ -3,11 +3,11 @@ import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 import { useRouter } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
+import { ActivityIndicator } from "@ant-design/react-native";
 
 import { COLOR_BLUE } from "@src/modules/common/constants";
 import Trainer from "@server/database/models/Trainer";
-import useBookingTrainers from "@src/modules/users/hooks/booking/useBookingTrainers";
-import { ActivityIndicator } from "@ant-design/react-native";
+import useBookingTrainers from "@src/modules/users/hooks/home/useBookingTrainers";
 import useBookingStore from "@src/modules/users/stores/home/useBookingStore";
 
 function TrainersScreen(): ReactElement {

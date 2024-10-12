@@ -64,6 +64,11 @@ function ScheduleScreen(): ReactElement {
                 handleDateSelect(day)
               }
               markedDates={markedDates as CalendarProps["markedDates"]}
+              minDate={
+                new Date(new Date().setDate(new Date().getDate() + 1))
+                  .toISOString()
+                  .split("T")[0]
+              }
             />
             {!times ? (
               <TimeNotAvailable />
@@ -125,7 +130,7 @@ function ScheduleScreen(): ReactElement {
                   <View className="items-center">
                     <Text className="text-sm font-bold">Unscheduled</Text>
                     <Text className="text-2xl font-bold text-my-green-dark">
-                      {unscheduled}
+                      {unscheduled || 0}
                     </Text>
                   </View>
                 </View>
