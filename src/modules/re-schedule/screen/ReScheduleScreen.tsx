@@ -22,6 +22,7 @@ import useRescheduleStore from "@src/modules/re-schedule/store/useRescheduleStor
 import useReschedule from "@src/modules/re-schedule/hooks/useReschedule";
 import { ReScheduleTimeChip } from "@src/modules/re-schedule/components/ReScheduleTimeChip";
 import ReScheduleBottomSheet from "@src/modules/re-schedule/components/ReScheduleBottomSheet";
+import PrimaryButton from "@src/modules/common/components/input/PrimaryButton";
 
 function ReScheduleScreen(): ReactElement {
   const { bookingId, booking, trainer, selectedDate } = useRescheduleStore();
@@ -34,6 +35,7 @@ function ReScheduleScreen(): ReactElement {
     unscheduled,
     bottomSheetRef,
     handleDateSelect,
+    scheduleDates,
   } = useReschedule();
 
   if (selectedDate && !markedDates[selectedDate]) {
@@ -134,12 +136,9 @@ function ReScheduleScreen(): ReactElement {
                 </TouchableOpacity>
               </View>
             </ScrollView>
-            {/*<View className="px-2 pb-4">
-              <PrimaryButton
-                text={PRIMARY_BTN_TEXT}
-                onPress={scheduleBooking}
-              />
-            </View>*/}
+            <View className="px-2 pb-4">
+              <PrimaryButton text="Schedule Sessions" onPress={scheduleDates} />
+            </View>
           </View>
           <ReScheduleBottomSheet bottomSheetRef={bottomSheetRef} />
         </>

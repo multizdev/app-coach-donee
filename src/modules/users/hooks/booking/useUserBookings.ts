@@ -7,12 +7,15 @@ import { Booking } from "@server/database/models/Booking";
 import Trainer from "@server/database/models/Trainer";
 import useAppStore from "@src/modules/common/stores/useAppStore";
 import useUserBookingStore from "@src/modules/users/stores/bookings/useUserBookingStore";
+import useRescheduleStore from "@src/modules/re-schedule/store/useRescheduleStore";
 
 function useUserBookings() {
   const { user } = useAppStore();
 
   const { allBookings, setAllBookings, loading, setLoading } =
     useUserBookingStore();
+
+  const { bookingId, trainer } = useRescheduleStore();
 
   useEffect(() => {
     (async () => {
@@ -60,7 +63,7 @@ function useUserBookings() {
         }
       }
     })();
-  }, []);
+  }, [bookingId, trainer]);
 
   return { allBookings, loading };
 }
