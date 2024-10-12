@@ -1,20 +1,39 @@
 import React, { ReactElement } from "react";
-import { View, Text, TextInput, FlatList, Image } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  FlatList,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 
+import { useRouter } from "expo-router";
 import { Fontisto } from "@expo/vector-icons";
 
 import useUserBookings from "@src/modules/users/hooks/booking/useUserBookings";
 import { Booking } from "@server/database/models/Booking";
 import HeadingChips from "@src/modules/users/components/elements/chips/HeadingChips";
 import { COLOR_YELLOW } from "@src/modules/common/constants";
+import useRescheduleStore from "@src/modules/re-schedule/store/useRescheduleStore";
 
 function TrainerItem({ item }: { item: Booking }): ReactElement {
+  const { push } = useRouter();
+
+  const { setBookingId, setTrainer } = useRescheduleStore();
+
   const { trainer, serviceName, selectedPackage, scheduledDates } = item;
 
   return (
-    <View
+    <TouchableOpacity
+      activeOpacity={0.8}
       style={{ elevation: 2 }}
       className="flex-row items-center m-4 mb-1 p-4 gap-4 bg-white rounded-3xl"
+      onPress={() => {
+        setTrainer(trainer!);
+        setBookingId(item.id);
+        push("/user/screens/re-schedule");
+      }}
     >
       <View
         className="w-[70] h-[70] flex justify-center items-center rounded-full bg-white"
@@ -39,13 +58,13 @@ function TrainerItem({ item }: { item: Booking }): ReactElement {
           />
         </View>
         <View className="flex-row items-center gap-2">
-          <Text className="text-xl font-bold text-primary-dark">
+          <Text className="text-xl font-bold text-primary">
             {selectedPackage.sessions - scheduledDates.length}
           </Text>
           <Text className="text-md text-primary-dark">Sessions Remaining</Text>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
@@ -65,7 +84,7 @@ function TrainersTab(): ReactElement {
         <FlatList
           data={allBookings}
           keyExtractor={(item: Booking, index: number) => `${item.id}${index}`}
-          renderItem={TrainerItem}
+          renderItem={(item) => <TrainerItem item={item.item} />}
         />
       </View>
     </View>

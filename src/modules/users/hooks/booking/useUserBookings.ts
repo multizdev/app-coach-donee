@@ -26,7 +26,7 @@ function useUserBookings() {
             .get();
 
           const bookings = bookingsSnapshot.docs.map(
-            (doc) => doc.data() as Booking,
+            (doc) => ({ id: doc.id, ...doc.data() }) as Booking,
           );
           const trainerIds = bookings.map((booking) => booking.trainerId);
 
@@ -44,12 +44,10 @@ function useUserBookings() {
               {} as Record<string, Trainer>,
             );
 
-            const bookingsWithTrainers = bookings.map((booking) => ({
+            const bookingsWithTrainers: Booking[] = bookings.map((booking) => ({
               ...booking,
               trainer: trainers[booking.trainerId],
-            }));
-
-            console.log("BOOKING", bookingsWithTrainers);
+            })) as Booking[];
 
             setAllBookings(bookingsWithTrainers);
           }
