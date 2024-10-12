@@ -7,7 +7,7 @@ import { ActivityIndicator } from "@ant-design/react-native";
 
 import { COLOR_BLUE } from "@src/modules/common/constants";
 import Trainer from "@server/database/models/Trainer";
-import useBookingTrainers from "@src/modules/users/hooks/booking/useBookingTrainers";
+import useBookingTrainers from "@src/modules/users/hooks/home/useBookingTrainers";
 import useBookingStore from "@src/modules/users/stores/home/useBookingStore";
 
 function TrainersScreen(): ReactElement {

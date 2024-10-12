@@ -1,27 +1,16 @@
-import React, { ReactElement, useEffect } from "react";
+import React, { ReactElement } from "react";
 import { View, Text, TextInput, FlatList, Image } from "react-native";
 
 import { Fontisto } from "@expo/vector-icons";
-import useAppStore from "@src/modules/common/stores/useAppStore";
-import firestore from "@react-native-firebase/firestore";
+
+import useUserBookings from "@src/modules/users/hooks/booking/useUserBookings";
 import { Booking } from "@server/database/models/Booking";
-import Trainer from "@server/database/models/Trainer";
+import HeadingChips from "@src/modules/users/components/elements/chips/HeadingChips";
+import { COLOR_YELLOW } from "@src/modules/common/constants";
 
-type ClientData = {
-  name: string;
-  sessions: number;
-  image: any;
-};
+function TrainerItem({ item }: { item: Booking }): ReactElement {
+  const { trainer, serviceName, selectedPackage, scheduledDates } = item;
 
-const clients: ClientData[] = [
-  {
-    name: "Coach Donee",
-    sessions: 12,
-    image: require("@assets/background/coach.webp"),
-  },
-];
-
-function TrainerItem({ item }: { item: ClientData }): ReactElement {
   return (
     <View
       style={{ elevation: 2 }}
@@ -33,65 +22,40 @@ function TrainerItem({ item }: { item: ClientData }): ReactElement {
       >
         <Image
           className="rounded-full"
-          source={item.image}
+          source={require("@assets/background/coach.webp")}
           style={{ width: 60, height: 60 }}
         />
       </View>
-      <View className="flex-col">
-        <Text className="font-bold text-xl text-gray-500">{item.name}</Text>
-        <Text className="text-sm text-gray-500">
-          Unscheduled sessions: {item.sessions}
-        </Text>
+      <View className="flex-col gap-2">
+        <View className="flex-row items-center justify-between gap-2">
+          <Text className="font-bold text-2xl text-gray-500">
+            {trainer?.displayName || trainer?.fullName}
+          </Text>
+          <HeadingChips
+            text={serviceName}
+            width={130}
+            size="text-xs"
+            color={COLOR_YELLOW}
+          />
+        </View>
+        <View className="flex-row items-center gap-2">
+          <Text className="text-xl font-bold text-primary-dark">
+            {selectedPackage.sessions - scheduledDates.length}
+          </Text>
+          <Text className="text-md text-primary-dark">Sessions Remaining</Text>
+        </View>
       </View>
     </View>
   );
 }
 
 function TrainersTab(): ReactElement {
-  const { user } = useAppStore();
-
-  useEffect(() => {
-    (async () => {
-      if (user) {
-        const bookingsSnapshot = await firestore()
-          .collection("Bookings")
-          .where("userId", "==", user.uid)
-          .get();
-
-        const bookings = bookingsSnapshot.docs.map(
-          (doc) => doc.data() as Booking,
-        );
-        const trainerIds = bookings.map((booking) => booking.trainerId);
-
-        if (trainerIds.length) {
-          const trainersSnapshot = await firestore()
-            .collection("Trainers")
-            .where(firestore.FieldPath.documentId(), "in", trainerIds)
-            .get();
-
-          const trainers = trainersSnapshot.docs.reduce(
-            (acc, trainerDoc) => {
-              acc[trainerDoc.id] = trainerDoc.data();
-              return acc;
-            },
-            {} as Record<string, Trainer>,
-          );
-
-          const bookingsWithTrainers = bookings.map((booking) => ({
-            ...booking,
-            trainer: trainers[booking.trainerId],
-          }));
-
-          console.log(bookingsWithTrainers);
-        }
-      }
-    })();
-  }, []);
+  const { allBookings } = useUserBookings();
 
   return (
-    <View className="flex-1 gap-4 bg-white">
+    <View className="flex-1 bg-white">
       <View
-        style={{ elevation: 4 }}
+        style={{ elevation: 2 }}
         className="flex-row items-center m-4 py-2 px-4 gap-4 bg-white rounded-3xl"
       >
         <Fontisto name="search" size={20} color="black" />
@@ -99,11 +63,9 @@ function TrainersTab(): ReactElement {
       </View>
       <View className="flex-1">
         <FlatList
-          data={clients}
-          keyExtractor={(item: ClientData, index: number) => item.name + index}
-          renderItem={({ item }: { item: ClientData }) => (
-            <TrainerItem item={item} />
-          )}
+          data={allBookings}
+          keyExtractor={(item: Booking, index: number) => `${item.id}${index}`}
+          renderItem={TrainerItem}
         />
       </View>
     </View>

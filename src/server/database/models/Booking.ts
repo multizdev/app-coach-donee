@@ -13,7 +13,7 @@ interface Booking {
   trainerId: string;
   userId: string;
   scheduledDates: ScheduledDate[];
-  package: Package;
+  selectedPackage: Package;
   // Non-Database Field
   trainer?: Trainer;
 }
