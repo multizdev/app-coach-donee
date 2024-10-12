@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
+  RefreshControl,
 } from "react-native";
 
 import { useRouter } from "expo-router";
@@ -69,7 +70,15 @@ function TrainerItem({ item }: { item: Booking }): ReactElement {
 }
 
 function TrainersTab(): ReactElement {
-  const { allBookings } = useUserBookings();
+  const { allBookings, fetchBookings } = useUserBookings();
+
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchBookings();
+    setRefreshing(false);
+  }, []);
 
   return (
     <View className="flex-1 bg-white">
@@ -83,6 +92,11 @@ function TrainersTab(): ReactElement {
       <View className="flex-1">
         <FlatList
           data={allBookings}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
           keyExtractor={(item: Booking, index: number) => `${item.id}${index}`}
           renderItem={(item) => <TrainerItem item={item.item} />}
         />

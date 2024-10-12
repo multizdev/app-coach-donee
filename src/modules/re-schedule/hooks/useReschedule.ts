@@ -126,19 +126,6 @@ function useReschedule() {
     return [null, null, null];
   }, [selectedDates, booking]);
 
-  useEffect(() => {
-    if (bookingId) {
-      (async () => {
-        const bookingSnapshot = await firestore()
-          .collection("Bookings")
-          .doc(bookingId)
-          .get();
-
-        setBooking(bookingSnapshot.data() as Booking);
-      })();
-    }
-  }, [bookingId]);
-
   const scheduleDates = async () => {
     try {
       Toast.config({ position: "center", stackable: false });
@@ -182,6 +169,33 @@ function useReschedule() {
       }
     }
   };
+
+  useEffect(() => {
+    Toast.config({ position: "center", stackable: false });
+    if (bookingId) {
+      (async () => {
+        try {
+          const bookingSnapshot = await firestore()
+            .collection("Bookings")
+            .doc(bookingId)
+            .get();
+
+          if (bookingSnapshot.exists) {
+            const booking = bookingSnapshot.data() as Booking;
+            setBooking(booking);
+          } else {
+            Toast.show("The booking no longer exists!");
+            dismissAll();
+          }
+        } catch (e) {
+          if (e instanceof Error) {
+            Toast.show("The booking no longer exists!");
+            dismissAll();
+          }
+        }
+      })();
+    }
+  }, [bookingId]);
 
   return {
     trainer,

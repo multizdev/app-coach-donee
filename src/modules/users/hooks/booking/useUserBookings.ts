@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
-import firestore from "@react-native-firebase/firestore";
 import { Toast } from "@ant-design/react-native";
+import firestore from "@react-native-firebase/firestore";
 
 import { Booking } from "@server/database/models/Booking";
 import Trainer from "@server/database/models/Trainer";
@@ -17,55 +17,57 @@ function useUserBookings() {
 
   const { bookingId, trainer } = useRescheduleStore();
 
-  useEffect(() => {
-    (async () => {
-      if (user) {
-        setLoading(true);
+  const fetchBookings = async () => {
+    if (user) {
+      setLoading(true);
 
-        try {
-          const bookingsSnapshot = await firestore()
-            .collection("Bookings")
-            .where("userId", "==", user.uid)
+      try {
+        const bookingsSnapshot = await firestore()
+          .collection("Bookings")
+          .where("userId", "==", user.uid)
+          .get();
+
+        const bookings = bookingsSnapshot.docs.map(
+          (doc) => ({ id: doc.id, ...doc.data() }) as Booking,
+        );
+        const trainerIds = bookings.map((booking) => booking.trainerId);
+
+        if (trainerIds.length) {
+          const trainersSnapshot = await firestore()
+            .collection("Trainers")
+            .where(firestore.FieldPath.documentId(), "in", trainerIds)
             .get();
 
-          const bookings = bookingsSnapshot.docs.map(
-            (doc) => ({ id: doc.id, ...doc.data() }) as Booking,
+          const trainers = trainersSnapshot.docs.reduce(
+            (acc, trainerDoc) => {
+              acc[trainerDoc.id] = trainerDoc.data() as Trainer;
+              return acc;
+            },
+            {} as Record<string, Trainer>,
           );
-          const trainerIds = bookings.map((booking) => booking.trainerId);
 
-          if (trainerIds.length) {
-            const trainersSnapshot = await firestore()
-              .collection("Trainers")
-              .where(firestore.FieldPath.documentId(), "in", trainerIds)
-              .get();
+          const bookingsWithTrainers: Booking[] = bookings.map((booking) => ({
+            ...booking,
+            trainer: trainers[booking.trainerId],
+          })) as Booking[];
 
-            const trainers = trainersSnapshot.docs.reduce(
-              (acc, trainerDoc) => {
-                acc[trainerDoc.id] = trainerDoc.data() as Trainer;
-                return acc;
-              },
-              {} as Record<string, Trainer>,
-            );
-
-            const bookingsWithTrainers: Booking[] = bookings.map((booking) => ({
-              ...booking,
-              trainer: trainers[booking.trainerId],
-            })) as Booking[];
-
-            setAllBookings(bookingsWithTrainers);
-          }
-        } catch (e) {
-          if (e instanceof Error) {
-            Toast.show("Cannot load bookings!");
-          }
-        } finally {
-          setLoading(false);
+          setAllBookings(bookingsWithTrainers);
+        } else setAllBookings([]);
+      } catch (e) {
+        if (e instanceof Error) {
+          Toast.show("Cannot load bookings!");
         }
+      } finally {
+        setLoading(false);
       }
-    })();
+    }
+  };
+
+  useEffect(() => {
+    (async () => fetchBookings())();
   }, [bookingId, trainer]);
 
-  return { allBookings, loading };
+  return { allBookings, loading, fetchBookings };
 }
 
 export default useUserBookings;

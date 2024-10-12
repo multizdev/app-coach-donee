@@ -131,9 +131,9 @@ function useBookingSchedule() {
             time,
           })),
         });
-      replace("user/home/(home)/trainers");
-      resetBookingState();
       dismissAll();
+      resetBookingState();
+      replace("user/home/(home)/trainers");
     } catch (e) {
       if (e instanceof Error) {
         Toast.show("Cannot schedule booking, Please try again!");
