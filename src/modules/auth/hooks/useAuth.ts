@@ -6,6 +6,7 @@ import firestore from "@react-native-firebase/firestore";
 import messaging from "@react-native-firebase/messaging";
 
 import { useRouter } from "expo-router";
+import { Toast } from "@ant-design/react-native";
 
 import useAppStore from "@src/modules/common/stores/useAppStore";
 import User from "@server/database/models/User";
@@ -39,25 +40,32 @@ function useAuth() {
   } = useAppStore();
 
   useEffect(() => {
-    // Handle FCM token generation and update on state changes
-    const updateFCMToken = async () => {
-      if (user) {
-        const token = await messaging().getToken();
-        await firestore().collection(`${accountType}s`).doc(user.uid).update({
-          fcmToken: token,
-        });
-      }
-    };
+    try {
+      // Handle FCM token generation and update on state changes
+      const updateFCMToken = async () => {
+        if (user) {
+          const token = await messaging().getToken();
+          await firestore().collection(`${accountType}s`).doc(user.uid).update({
+            fcmToken: token,
+          });
+        }
+      };
 
-    (async () => updateFCMToken())();
+      (async () => updateFCMToken())();
 
-    return messaging().onTokenRefresh(async (token) => {
-      if (user) {
-        await firestore().collection(`${accountType}s`).doc(user.uid).update({
-          fcmToken: token,
-        });
+      return messaging().onTokenRefresh(async (token) => {
+        if (user) {
+          await firestore().collection(`${accountType}s`).doc(user.uid).update({
+            fcmToken: token,
+          });
+        }
+      }); // Cleanup on unmount
+    } catch (e) {
+      Toast.config({ position: "bottom" });
+      if (e instanceof Error) {
+        Toast.show("There was a problem!");
       }
-    }); // Cleanup on unmount
+    }
   }, [accountType, user]);
 
   const registerUser = async ({
@@ -104,7 +112,6 @@ function useAuth() {
       setUser(user);
     } catch (e) {
       if (e instanceof Error) {
-        console.error("Registration error:", e);
         Alert.alert("Registration Error", e.message);
       }
     } finally {
@@ -140,7 +147,6 @@ function useAuth() {
       }
     } catch (e) {
       if (e instanceof Error) {
-        console.error("Login error:", e);
         Alert.alert("Login Error", e.message);
       }
     } finally {
@@ -151,57 +157,74 @@ function useAuth() {
   useEffect(() => {
     if (!user) return;
 
-    const unsubscribeUser = firestore()
-      .collection("Users")
-      .doc(user.uid)
-      .onSnapshot((doc) => {
-        if (doc.exists) {
-          setDetailedUser(doc.data() as User);
-        }
-      });
+    try {
+      const unsubscribeUser = firestore()
+        .collection("Users")
+        .doc(user.uid)
+        .onSnapshot((doc) => {
+          if (doc && doc.exists) {
+            setDetailedUser(doc.data() as User);
+          }
+        });
 
-    const unsubscribeTrainer = firestore()
-      .collection("Trainers")
-      .doc(user.uid)
-      .onSnapshot((doc) => {
-        if (doc.exists) {
-          setDetailedTrainer(doc.data() as Trainer);
-        }
-      });
+      const unsubscribeTrainer = firestore()
+        .collection("Trainers")
+        .doc(user.uid)
+        .onSnapshot((doc) => {
+          if (doc && doc.exists) {
+            setDetailedTrainer(doc.data() as Trainer);
+          }
+        });
 
-    return () => {
-      unsubscribeUser();
-      unsubscribeTrainer();
-    };
+      return () => {
+        unsubscribeUser();
+        unsubscribeTrainer();
+      };
+    } catch (e) {
+      Toast.config({ position: "bottom" });
+      if (e instanceof Error) {
+        Toast.show("There was a problem!");
+      }
+    }
   }, [user]);
 
   const onAuthStateChanged = async (user: FirebaseAuthTypes.User | null) => {
-    setIsLoading(true);
+    try {
+      setIsLoading(true);
 
-    if (user) {
-      // Fetch user document
-      const userDoc = await firestore().collection("Users").doc(user.uid).get();
-      const trainerDoc = await firestore()
-        .collection("Trainers")
-        .doc(user.uid)
-        .get();
+      if (user) {
+        // Fetch user document
+        const userDoc = await firestore()
+          .collection("Users")
+          .doc(user.uid)
+          .get();
+        const trainerDoc = await firestore()
+          .collection("Trainers")
+          .doc(user.uid)
+          .get();
 
-      // Check if navigation is already handled to avoid repetitive navigation
-      if (userDoc.exists) {
-        setAccountType("User");
-        setDetailedUser(userDoc.data() as User);
-        replace("/user/home/(home)");
-      } else if (trainerDoc.exists) {
-        setAccountType("Trainer");
-        setDetailedTrainer(trainerDoc.data() as Trainer);
-        replace("/trainer/(home)");
+        // Check if navigation is already handled to avoid repetitive navigation
+        if (userDoc.exists) {
+          setAccountType("User");
+          setDetailedUser(userDoc.data() as User);
+          replace("/user/home/(home)");
+        } else if (trainerDoc.exists) {
+          setAccountType("Trainer");
+          setDetailedTrainer(trainerDoc.data() as Trainer);
+          replace("/trainer/(home)");
+        }
+      } else {
+        replace("/");
       }
-    } else {
-      replace("/");
+    } catch (e) {
+      Toast.config({ position: "bottom" });
+      if (e instanceof Error) {
+        Toast.show("There was a problem!");
+      }
+    } finally {
+      setAccountType(null);
+      setIsLoading(false); // Stop loading when all processing is done
     }
-
-    setAccountType(null);
-    setIsLoading(false); // Stop loading when all processing is done
   };
 
   return { registerUser, emailSignIn, isLoading, onAuthStateChanged };
