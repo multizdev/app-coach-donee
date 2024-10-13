@@ -38,6 +38,7 @@ function BookingListComponent({
         date: scheduledDate.date,
         time: scheduledDate.time,
         trainer: booking.trainer,
+        status: scheduledDate.status,
         selectedPackage: booking.selectedPackage,
         originalBookingDate: booking.date,
       }));

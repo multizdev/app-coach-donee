@@ -1,14 +1,34 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useEffect } from "react";
+import { View } from "react-native";
 
-import { Tabs } from "expo-router";
+import { Tabs, useRouter } from "expo-router";
 import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 
 import { COLOR_BLUE } from "src/modules/common/constants";
-import { View } from "react-native";
+import useAllBookings from "@src/modules/trainers/hooks/booking/useAllBookings";
+import useHomeStore from "@src/modules/trainers/store/useHomeStore";
 
 const ICON_SIZE = 24;
 
 function HomeLayout(): ReactElement {
+  const { replace } = useRouter();
+  const { bookingsList } = useAllBookings();
+
+  const { setPendingBookings } = useHomeStore();
+
+  useEffect(() => {
+    if (bookingsList.length > 0) {
+      const filteredBookings = bookingsList.filter(
+        (booking) => !booking.status,
+      );
+
+      if (filteredBookings.length > 0) {
+        setPendingBookings(filteredBookings);
+        replace("/trainer/screens/acceptBookings");
+      }
+    }
+  }, [bookingsList]);
+
   return (
     <View className="flex-1 bg-white">
       <Tabs

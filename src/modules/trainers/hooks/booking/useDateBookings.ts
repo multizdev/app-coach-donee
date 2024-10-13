@@ -103,7 +103,7 @@ function useDateBookings() {
         date: scheduledDate.date,
         time: scheduledDate.time,
         user: booking.user,
-        status: booking.status,
+        status: scheduledDate.status,
         selectedPackage: booking.selectedPackage,
         originalBookingDate: booking.date,
       }));
