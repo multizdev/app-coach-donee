@@ -16,6 +16,7 @@ interface Booking {
   scheduledDates: ScheduledDate[];
   selectedPackage: Package;
   date: Date;
+  status: "complete" | null;
   // Non-Database Field
   trainer?: Trainer;
   user?: User;
@@ -30,6 +31,8 @@ type TransformedBooking = {
   date: string;
   time: string;
   trainer?: Trainer;
+  user?: User;
+  status: "complete" | null;
   selectedPackage: Package;
   originalBookingDate: Date;
 };
