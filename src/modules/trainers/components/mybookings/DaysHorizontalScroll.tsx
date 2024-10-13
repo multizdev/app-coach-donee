@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 import { LinearGradient } from "expo-linear-gradient";
@@ -57,10 +57,10 @@ const DaysHorizontalScroll = () => {
   }, [initialIndex]);
 
   return (
-    <View className="flex-row items-center py-2">
+    <View className="flex-row py-2 border-b border-gray-100">
       <ScrollView
         ref={scrollViewRef}
-        className="w-full h-[80px]"
+        className="w-full"
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
@@ -68,7 +68,7 @@ const DaysHorizontalScroll = () => {
         {daysOfMonth.map(({ dayName, dateNumber, dateInstance }, index) => {
           const isSelected =
             selectedDate.toDateString() === dateInstance.toDateString();
-          const textClass = isSelected ? "text-white" : "text-gray-400";
+          const textClass = isSelected ? "text-white" : "text-gray-500";
 
           return (
             <TouchableOpacity
