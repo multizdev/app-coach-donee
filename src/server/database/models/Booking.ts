@@ -1,5 +1,6 @@
 import Trainer from "@server/database/models/Trainer";
 import { Package } from "@server/database/models/Package";
+import User from "@server/database/models/User";
 
 type ScheduledDate = {
   date: string;
@@ -17,6 +18,7 @@ interface Booking {
   date: Date;
   // Non-Database Field
   trainer?: Trainer;
+  user?: User;
 }
 
 type TransformedBooking = {
