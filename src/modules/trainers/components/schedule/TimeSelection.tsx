@@ -1,7 +1,7 @@
 import React, { ReactElement } from "react";
 import { Text, TouchableOpacity } from "react-native";
 import DatePicker from "react-native-date-picker";
-import useTimeSelection from "@src/modules/trainers/hooks/useTimeSelection";
+import useTimeSelection from "@src/modules/trainers/hooks/schedule/useTimeSelection";
 import { DaysSelection } from "@src/types";
 import { LinearGradient } from "expo-linear-gradient";
 

@@ -126,6 +126,7 @@ function useBookingSchedule() {
           serviceId,
           serviceName,
           selectedPackage: selectedPackage,
+          date: new Date(),
           scheduledDates: filteredSelectedDates.map(([date, time]) => ({
             date,
             time,
