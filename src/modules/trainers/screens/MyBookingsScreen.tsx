@@ -27,30 +27,21 @@ function RenderItem({ item }: { item: TransformedBooking }): ReactElement {
         <Text className="text-md text-gray-500">
           {selectedPackage.price} AED
         </Text>
-        {status ? (
-          <LinearGradient
-            colors={
-              [COLOR_BLUE, "#98d3ff"] /* Corresponds to blue-400 and blue-100 */
-            }
-            start={{ x: 0, y: 1 }}
-            end={{ x: 0, y: 0 }}
-            className="flex flex-row gap-2 bg-primary p-2 px-4 rounded-full overflow-hidden"
-          >
-            <Text className="text-xs text-white">Completed</Text>
+        <LinearGradient
+          colors={
+            [COLOR_BLUE, "#98d3ff"] /* Corresponds to blue-400 and blue-100 */
+          }
+          start={{ x: 0, y: 1 }}
+          end={{ x: 0, y: 0 }}
+          className="flex flex-row gap-2 bg-primary p-2 px-4 rounded-full overflow-hidden"
+        >
+          <Text className="text-xs text-white">
+            {status ? status?.toUpperCase() : "Pending"}
+          </Text>
+          {status === "completed" && (
             <AntDesign name="check" size={12} color="white" />
-          </LinearGradient>
-        ) : (
-          <LinearGradient
-            colors={
-              [COLOR_BLUE, "#98d3ff"] /* Corresponds to blue-400 and blue-100 */
-            }
-            start={{ x: 0, y: 1 }}
-            end={{ x: 0, y: 0 }}
-            className="flex flex-row gap-2 bg-primary p-2 px-4 rounded-full overflow-hidden"
-          >
-            <Text className="text-xs text-white">Scheduled</Text>
-          </LinearGradient>
-        )}
+          )}
+        </LinearGradient>
       </View>
     </View>
   );

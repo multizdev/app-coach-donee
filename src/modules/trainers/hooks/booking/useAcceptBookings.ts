@@ -6,18 +6,19 @@ import { Toast } from "@ant-design/react-native";
 import { Booking, TransformedBooking } from "@server/database/models/Booking";
 import useHomeStore from "@src/modules/trainers/store/useHomeStore";
 import useBookingsStore from "@src/modules/trainers/store/useBookingsStore";
+import useAllBookings from "@src/modules/trainers/hooks/booking/useAllBookings";
 
 function useAcceptBookings() {
   const { allBookings } = useBookingsStore();
   const { pendingBookings } = useHomeStore();
 
   const [currentCardIndex, setCurrentCardIndex] = useState<number>(0);
-  const [tempBookings, setTempBookings] =
-    useState<TransformedBooking[]>(pendingBookings);
+
+  const { onRefresh } = useAllBookings();
 
   const currentBooking: TransformedBooking = useMemo(() => {
     return pendingBookings[currentCardIndex];
-  }, [tempBookings, currentCardIndex]);
+  }, [currentCardIndex]);
 
   const confirmSession = async () => {
     Toast.config({ position: "bottom" });
@@ -49,6 +50,7 @@ function useAcceptBookings() {
               scheduledDates: updatedScheduledDates,
             });
 
+          await onRefresh();
           setCurrentCardIndex(currentCardIndex + 1);
         } else {
           Toast.show("No matching date found.");
