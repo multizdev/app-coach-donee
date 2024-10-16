@@ -23,8 +23,8 @@ function ChatMessageInput(): ReactElement {
         className="w-[50] h-[50] rounded-3xl overflow-hidden"
         onPress={() =>
           push({
-            pathname: "user/(home)/chat/[trainer_id]",
-            params: { trainer_id: "Coach Donee" },
+            pathname: "user/(home)/chat/[chat_id]",
+            params: { chat_id: "Coach Donee" },
           })
         }
       >
