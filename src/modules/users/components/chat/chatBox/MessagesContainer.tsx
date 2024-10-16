@@ -5,14 +5,16 @@ import { ChatMessage } from "@server/database/models/Chat";
 
 function MessagesContainer({
   messages,
+  type,
 }: {
   messages: ChatMessage[];
+  type: string;
 }): ReactElement {
   const renderItem = ({ item }: { item: ChatMessage }): ReactElement => {
     const { sender, message, date } = item;
     const dateObject = date.toDate();
 
-    if (sender === "user") {
+    if (sender === type.toLowerCase()) {
       return (
         <View className="w-full flex-col items-end gap-1">
           <LinearGradient
@@ -28,9 +30,7 @@ function MessagesContainer({
           </Text>
         </View>
       );
-    }
-
-    if (sender === "trainer") {
+    } else {
       return (
         <View className="w-[70%] flex-col gap-1">
           <View className="w-full p-4 border rounded-3xl border-gray-300">
@@ -42,8 +42,6 @@ function MessagesContainer({
         </View>
       );
     }
-
-    return <></>;
   };
 
   return (

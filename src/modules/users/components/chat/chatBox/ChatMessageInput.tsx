@@ -9,7 +9,13 @@ import { Chat } from "@server/database/models/Chat";
 import firestore from "@react-native-firebase/firestore";
 import { Toast } from "@ant-design/react-native";
 
-function ChatMessageInput({ chat }: { chat: Chat }): ReactElement {
+function ChatMessageInput({
+  chat,
+  type,
+}: {
+  chat: Chat;
+  type: string;
+}): ReactElement {
   const [message, setMessage] = useState<string>("");
 
   const tempMessages = useMemo(() => chat.messages, [chat]);
@@ -32,7 +38,7 @@ function ChatMessageInput({ chat }: { chat: Chat }): ReactElement {
           if (message !== "") {
             tempMessages.push({
               message,
-              sender: "user",
+              sender: type.toLowerCase() as "user" | "trainer",
               date: firestore.Timestamp.fromDate(new Date()),
             });
 
