@@ -140,7 +140,7 @@ function useAuth() {
         replace("/user/home/(home)");
       } else if (trainerDoc.exists) {
         setDetailedUser(trainerDoc.data() as Trainer);
-        replace("/trainer/(home)");
+        replace("/trainer/home/(home)");
       } else {
         // If no role found, navigate to a default page
         replace("/");
@@ -211,7 +211,7 @@ function useAuth() {
         } else if (trainerDoc.exists) {
           setAccountType("Trainer");
           setDetailedTrainer(trainerDoc.data() as Trainer);
-          replace("/trainer/(home)");
+          replace("/trainer/home/(home)");
         }
       } else {
         replace("/");

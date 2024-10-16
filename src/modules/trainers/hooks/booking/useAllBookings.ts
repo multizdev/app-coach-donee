@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import firestore, { Timestamp } from "@react-native-firebase/firestore";
 import { Toast } from "@ant-design/react-native";
 
 import useAppStore from "@src/modules/common/stores/useAppStore";
-import { Booking } from "@server/database/models/Booking";
+import { Booking, TransformedBooking } from "@server/database/models/Booking";
 import useBookingsStore from "@src/modules/trainers/store/useBookingsStore";
 import User from "@server/database/models/User";
 
@@ -67,7 +67,7 @@ function useAllBookings() {
     }
   };
 
-  const bookingsList = () => {
+  const bookingsList: TransformedBooking[] = useMemo(() => {
     const transformedBookings = allBookings.map((booking: Booking) => {
       return booking.scheduledDates.map((scheduledDate) => ({
         id: booking.id,
@@ -77,14 +77,16 @@ function useAllBookings() {
         userId: booking.userId,
         date: scheduledDate.date,
         time: scheduledDate.time,
+        trainer: booking.trainer,
         user: booking.user,
+        status: scheduledDate.status,
         selectedPackage: booking.selectedPackage,
         originalBookingDate: booking.date,
       }));
     });
 
     return transformedBookings.flat();
-  };
+  }, [allBookings]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);

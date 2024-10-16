@@ -5,6 +5,7 @@ import User from "@server/database/models/User";
 type ScheduledDate = {
   date: string;
   time: string;
+  status: string | undefined;
 };
 
 interface Booking {
@@ -16,7 +17,6 @@ interface Booking {
   scheduledDates: ScheduledDate[];
   selectedPackage: Package;
   date: Date;
-  status: "complete" | null;
   // Non-Database Field
   trainer?: Trainer;
   user?: User;
@@ -32,7 +32,7 @@ type TransformedBooking = {
   time: string;
   trainer?: Trainer;
   user?: User;
-  status: "complete" | null;
+  status: string | undefined;
   selectedPackage: Package;
   originalBookingDate: Date;
 };
