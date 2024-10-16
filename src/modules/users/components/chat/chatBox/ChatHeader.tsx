@@ -6,15 +6,16 @@ import { useRouter } from "expo-router";
 
 import { COLOR_BLUE } from "@src/modules/common/constants";
 import Trainer from "@server/database/models/Trainer";
+import User from "@server/database/models/User";
 
 function ChatHeader({
-  trainer,
+  chatUser,
 }: {
-  trainer: Trainer | undefined;
+  chatUser: Trainer | User | undefined;
 }): ReactElement | undefined {
   const { back } = useRouter();
 
-  if (trainer)
+  if (chatUser)
     return (
       <View className="flex-row items-center px-4 w-full h-[80] bg-white gap-4 border-0 border-b border-gray-200">
         <TouchableOpacity onPress={back}>
@@ -25,7 +26,7 @@ function ChatHeader({
           source={require("@assets/background/coach.webp")}
           style={{ width: 50, height: 50 }}
         />
-        <Text className="text-2xl text-primary">{trainer.fullName}</Text>
+        <Text className="text-2xl text-primary">{chatUser.fullName}</Text>
       </View>
     );
 }

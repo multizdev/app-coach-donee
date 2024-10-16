@@ -4,10 +4,11 @@ import { View, Text, FlatList, TouchableOpacity, Image } from "react-native";
 import firestore from "@react-native-firebase/firestore";
 
 import { useRouter } from "expo-router";
-import { Tabs, Toast } from "@ant-design/react-native";
 import { Entypo } from "@expo/vector-icons";
+import { Tabs, Toast } from "@ant-design/react-native";
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+
 import useUserBookings from "@src/modules/users/hooks/booking/useUserBookings";
 import Trainer from "@server/database/models/Trainer";
 import { COLOR_BLUE } from "@src/modules/common/constants";
@@ -27,6 +28,7 @@ function ChatListItem({ chat }: { chat: Chat }): ReactElement {
           pathname: "chat/[chat_id]",
           params: {
             chat_id: chat.id,
+            type: "User",
           },
         })
       }
