@@ -1,11 +1,12 @@
 import Trainer from "@server/database/models/Trainer";
 
 import User from "@server/database/models/User";
+import { Timestamp } from "@react-native-firebase/firestore";
 
 interface ChatMessage {
-  sender: string;
+  sender: "user" | "trainer";
   message: string;
-  date: Date;
+  date: Timestamp;
 }
 
 interface Chat {

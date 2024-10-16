@@ -26,7 +26,7 @@ function ChatListItem({ chat }: { chat: Chat }): ReactElement {
         push({
           pathname: "chat/[chat_id]",
           params: {
-            chat_id: "Coach Donee",
+            chat_id: chat.id,
           },
         })
       }
