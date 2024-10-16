@@ -1,4 +1,4 @@
-import React, { ReactElement, useState, useCallback } from "react";
+import React, { ReactElement } from "react";
 import {
   View,
   Text,
@@ -70,15 +70,7 @@ function TrainerItem({ item }: { item: Booking }): ReactElement {
 }
 
 function TrainersTab(): ReactElement {
-  const { allBookings, fetchBookings } = useUserBookings();
-
-  const [refreshing, setRefreshing] = useState<boolean>(false);
-
-  const onRefresh = useCallback(async () => {
-    setRefreshing(true);
-    await fetchBookings();
-    setRefreshing(false);
-  }, []);
+  const { allBookings, onRefresh, refreshing } = useUserBookings();
 
   return (
     <View className="flex-1 bg-white">

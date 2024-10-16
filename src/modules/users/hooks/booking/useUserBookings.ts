@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { Toast } from "@ant-design/react-native";
 import firestore, { Timestamp } from "@react-native-firebase/firestore";
@@ -16,6 +16,8 @@ function useUserBookings() {
     useUserBookingStore();
 
   const { bookingId, trainer } = useRescheduleStore();
+
+  const [refreshing, setRefreshing] = useState<boolean>(false);
 
   const fetchBookings = async () => {
     if (user) {
@@ -45,7 +47,10 @@ function useUserBookings() {
 
           const trainers = trainersSnapshot.docs.reduce(
             (acc, trainerDoc) => {
-              acc[trainerDoc.id] = trainerDoc.data() as Trainer;
+              acc[trainerDoc.id] = {
+                ...trainerDoc.data(),
+                id: trainerDoc.id,
+              } as Trainer;
               return acc;
             },
             {} as Record<string, Trainer>,
@@ -68,11 +73,17 @@ function useUserBookings() {
     }
   };
 
-  useEffect(() => {
-    (async () => fetchBookings())();
-  }, [bookingId, trainer]);
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchBookings();
+    setRefreshing(false);
+  }, []);
 
-  return { allBookings, loading, fetchBookings };
+  useEffect(() => {
+    (async () => onRefresh())();
+  }, [user, bookingId, trainer]);
+
+  return { allBookings, loading, refreshing, onRefresh, fetchBookings };
 }
 
 export default useUserBookings;
