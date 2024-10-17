@@ -113,10 +113,10 @@ function useBookingSchedule() {
         Toast.show("There was a problem");
         return;
       }
-      if (filteredSelectedDates.length === 0) {
+      /*if (filteredSelectedDates.length === 0) {
         Toast.show("Please schedule at least 1 session");
         return;
-      }
+      }*/
 
       await firestore()
         .collection("Bookings")
