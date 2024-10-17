@@ -10,62 +10,101 @@ import {
 } from "react-native";
 
 import { useRouter } from "expo-router";
-import { Fontisto } from "@expo/vector-icons";
+import { AntDesign, Fontisto, MaterialIcons } from "@expo/vector-icons";
 
 import useUserBookings from "@src/modules/users/hooks/booking/useUserBookings";
 import { Booking } from "@server/database/models/Booking";
 import HeadingChips from "@src/modules/users/components/elements/chips/HeadingChips";
-import { COLOR_YELLOW } from "@src/modules/common/constants";
+import { COLOR_DARK_BLUE, COLOR_YELLOW } from "@src/modules/common/constants";
 import useRescheduleStore from "@src/modules/re-schedule/store/useRescheduleStore";
+import firestore from "@react-native-firebase/firestore";
 
 function TrainerItem({ item }: { item: Booking }): ReactElement {
   const { push } = useRouter();
+  const onRefresh = useUserBookings().onRefresh;
 
   const { setBookingId, setTrainer } = useRescheduleStore();
 
   const { trainer, serviceName, selectedPackage, scheduledDates } = item;
 
   return (
-    <TouchableOpacity
-      activeOpacity={0.8}
+    <View
       style={{ elevation: 2 }}
-      className="flex-row items-center m-4 mb-1 p-4 gap-4 bg-white rounded-3xl"
-      onPress={() => {
-        setTrainer(trainer!);
-        setBookingId(item.id);
-        push("/user/screens/re-schedule");
-      }}
+      className="flex flex-col m-4 bg-white rounded-2xl"
     >
-      <View
-        className="w-[70] h-[70] flex justify-center items-center rounded-full bg-white"
-        style={{ elevation: 4 }}
-      >
-        <Image
-          className="rounded-full"
-          source={require("@assets/background/coach.webp")}
-          style={{ width: 60, height: 60 }}
-        />
-      </View>
-      <View className="flex-col gap-2">
-        <View className="flex-row items-center justify-between gap-2">
-          <Text className="font-bold text-2xl text-gray-500">
-            {trainer?.displayName || trainer?.fullName}
-          </Text>
-          <HeadingChips
-            text={serviceName}
-            width={130}
-            size="text-xs"
-            color={COLOR_YELLOW}
+      <View className="flex-row items-center px-4 pt-4 gap-4">
+        <View
+          className="w-[70] h-[70] flex justify-center items-center rounded-full bg-white"
+          style={{ elevation: 4 }}
+        >
+          <Image
+            className="rounded-full"
+            source={require("@assets/background/coach.webp")}
+            style={{ width: 60, height: 60 }}
           />
         </View>
-        <View className="flex-row items-center gap-2">
-          <Text className="text-xl font-bold text-primary">
-            {selectedPackage.sessions - scheduledDates.length}
-          </Text>
-          <Text className="text-md text-primary-dark">Sessions Remaining</Text>
+        <View className="flex-col gap-2">
+          <View className="flex-row items-center justify-between gap-2">
+            <Text className="font-bold text-2xl text-gray-500">
+              {trainer?.displayName || trainer?.fullName}
+            </Text>
+            <HeadingChips
+              text={serviceName}
+              width={130}
+              size="text-xs"
+              color={COLOR_YELLOW}
+            />
+          </View>
+          <View className="flex-row items-center gap-2">
+            <Text className="text-xl font-bold text-primary">
+              {selectedPackage.sessions - scheduledDates.length}
+            </Text>
+            <Text className="text-md text-primary-dark">
+              Sessions Remaining
+            </Text>
+          </View>
         </View>
       </View>
-    </TouchableOpacity>
+      <View className="flex flex-row p-4 gap-2 items-center">
+        <TouchableOpacity
+          className="flex flex-grow justify-center items-center"
+          onPress={() => {
+            setTrainer(trainer!);
+            setBookingId(item.id);
+            push("/user/screens/re-schedule");
+          }}
+        >
+          <AntDesign name="calendar" size={24} color={COLOR_DARK_BLUE} />
+          <Text className="text-primary-dark font-bold">Schedule Sessions</Text>
+        </TouchableOpacity>
+        <View className="w-[1px] h-full bg-gray-300" />
+        <TouchableOpacity
+          className="flex flex-grow justify-center items-center"
+          onPress={async () => {
+            const { selectedPackage } = item;
+
+            const { sessions, originalSessions, price } = selectedPackage;
+
+            if (sessions && originalSessions) {
+              await firestore()
+                .collection("Bookings")
+                .doc(item.id)
+                .update({
+                  selectedPackage: {
+                    originalSessions,
+                    sessions: sessions + originalSessions,
+                    price,
+                  },
+                });
+              await onRefresh();
+            }
+          }}
+        >
+          <MaterialIcons name="autorenew" size={24} color={COLOR_DARK_BLUE} />
+          <Text className="text-primary-dark font-bold">Renew Package</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 }
 

@@ -125,7 +125,10 @@ function useBookingSchedule() {
           userId: user.uid,
           serviceId,
           serviceName,
-          selectedPackage: selectedPackage,
+          selectedPackage: {
+            originalSessions: selectedPackage?.sessions,
+            ...selectedPackage,
+          },
           date: new Date(),
           scheduledDates: filteredSelectedDates.map(([date, time]) => ({
             date,

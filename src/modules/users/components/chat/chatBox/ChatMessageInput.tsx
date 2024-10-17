@@ -51,14 +51,12 @@ function ChatMessageInput({
               : chat.trainer?.displayName || chat.trainer?.fullName,
           message,
         };
+        setMessage("");
 
-        const response = await axios.post(
+        await axios.post(
           "https://coach-donee-admin-web.vercel.app/api/appNotifications/sendNotification",
           notificationPayload,
         );
-
-        console.log("SENT NOTIFICATION", response);
-        setMessage("");
       } catch (e) {
         if (e instanceof Error) {
           Toast.show(e.message);
