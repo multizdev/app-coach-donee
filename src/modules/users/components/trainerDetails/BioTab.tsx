@@ -2,6 +2,7 @@ import React, { ReactElement, useEffect, useState } from "react";
 import { View, Text, ScrollView } from "react-native";
 
 import { LinearGradient } from "expo-linear-gradient";
+import { Toast } from "@ant-design/react-native";
 
 import { COLOR_BLUE } from "@src/modules/common/constants";
 import { Activity } from "@server/database/models/Activity";
@@ -12,14 +13,18 @@ function BioTab({ trainer }: { trainer: Trainer }): ReactElement {
   const [serviceActivities, setServiceActivities] = useState<Activity[]>([]);
 
   useEffect(() => {
-    if (trainer) {
-      (async () => {
-        const servicesList: Activity[] = await getTrainerServices(
-          trainer.services,
-        );
+    try {
+      if (trainer) {
+        (async () => {
+          const servicesList: Activity[] = await getTrainerServices(
+            trainer.services,
+          );
 
-        setServiceActivities(servicesList);
-      })();
+          setServiceActivities(servicesList);
+        })();
+      }
+    } catch (error) {
+      if (error instanceof Error) Toast.show("There was a problem.");
     }
   }, [trainer]);
 

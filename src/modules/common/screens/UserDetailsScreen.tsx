@@ -9,6 +9,7 @@ import { Avatar } from "react-native-paper";
 
 import firestore from "@react-native-firebase/firestore";
 import auth from "@react-native-firebase/auth";
+import { Toast } from "@ant-design/react-native";
 
 import TextInputField from "@src/modules/common/components/input/TextInputField";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -47,30 +48,36 @@ function UpdateUserForm() {
   }
 
   async function updateUserInFirestore(values: any) {
-    if (type) {
-      const updatedValues = {
-        gender: values.gender,
-        fullName: values.fullName,
-        displayName: values.displayName,
-      };
+    try {
+      if (type) {
+        const updatedValues = {
+          gender: values.gender,
+          fullName: values.fullName,
+          displayName: values.displayName,
+        };
 
-      const doc = firestore().collection(type).doc(firebaseUser?.uid);
-      await doc.update(updatedValues);
+        const doc = firestore().collection(type).doc(firebaseUser?.uid);
+        await doc.update(updatedValues);
 
-      await auth().currentUser?.updateProfile({
-        displayName: values.displayName,
-      });
-
-      if (type === "Trainers") {
-        setDetailedTrainer({
-          ...detailedTrainer!,
-          ...updatedValues,
+        await auth().currentUser?.updateProfile({
+          displayName: values.displayName,
         });
-      } else if (type === "Users") {
-        setDetailedUser({
-          ...detailedUser!,
-          ...updatedValues,
-        });
+
+        if (type === "Trainers") {
+          setDetailedTrainer({
+            ...detailedTrainer!,
+            ...updatedValues,
+          });
+        } else if (type === "Users") {
+          setDetailedUser({
+            ...detailedUser!,
+            ...updatedValues,
+          });
+        }
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Toast.show("Could not update user details!");
       }
     }
   }

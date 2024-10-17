@@ -10,7 +10,7 @@ import PrimaryButton from "@src/modules/common/components/input/PrimaryButton";
 import useActivities from "@src/modules/common/hooks/useActivities";
 import { Activity } from "@server/database/models/Activity";
 import useAppStore from "@src/modules/common/stores/useAppStore";
-import { ActivityIndicator } from "@ant-design/react-native";
+import { ActivityIndicator, Toast } from "@ant-design/react-native";
 import firestore from "@react-native-firebase/firestore";
 import { useRouter } from "expo-router";
 
@@ -81,7 +81,13 @@ function ExperienceDetailsScreen(): ReactElement {
         }}
         validationSchema={experienceSchema}
         onSubmit={async (values) => {
-          await updateTrainerDetails(values);
+          try {
+            await updateTrainerDetails(values);
+          } catch (error) {
+            if (error instanceof Error) {
+              Toast.show("There was a problem.");
+            }
+          }
         }}
       >
         {({ handleSubmit, setFieldValue, values, errors, touched }) => (
