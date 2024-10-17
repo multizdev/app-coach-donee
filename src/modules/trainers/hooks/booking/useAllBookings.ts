@@ -7,10 +7,12 @@ import useAppStore from "@src/modules/common/stores/useAppStore";
 import { Booking, TransformedBooking } from "@server/database/models/Booking";
 import useBookingsStore from "@src/modules/trainers/store/useBookingsStore";
 import User from "@server/database/models/User";
+import useHomeStore from "@src/modules/trainers/store/useHomeStore";
 
 function useAllBookings() {
   const { user } = useAppStore();
 
+  const { selectedMonth } = useHomeStore();
   const { allBookings, setAllBookings } = useBookingsStore();
 
   const [refreshing, setRefreshing] = useState<boolean>(false);
@@ -67,6 +69,32 @@ function useAllBookings() {
     }
   };
 
+  const [scheduledSessions, unscheduledSessions] = useMemo(() => {
+    let totalAssignedSessions = 0;
+    let totalScheduledSessions = 0;
+
+    allBookings.forEach((booking: Booking) => {
+      // Filter scheduledDates to include only those in the selectedMonth
+      const scheduledDatesInMonth = booking.scheduledDates.filter(
+        (scheduledDate) => {
+          const scheduledDateObj = new Date(scheduledDate.date);
+          return (
+            scheduledDateObj.getFullYear() === selectedMonth.getFullYear() &&
+            scheduledDateObj.getMonth() === selectedMonth.getMonth()
+          );
+        },
+      );
+
+      totalAssignedSessions += booking.selectedPackage.sessions;
+      totalScheduledSessions += scheduledDatesInMonth.length;
+    });
+
+    return [
+      totalScheduledSessions,
+      totalAssignedSessions - totalScheduledSessions,
+    ];
+  }, [allBookings, selectedMonth]);
+
   const bookingsList: TransformedBooking[] = useMemo(() => {
     const transformedBookings = allBookings.map((booking: Booking) => {
       return booking.scheduledDates.map((scheduledDate) => ({
@@ -100,7 +128,14 @@ function useAllBookings() {
     }
   }, [user]);
 
-  return { allBookings, refreshing, onRefresh, bookingsList };
+  return {
+    allBookings,
+    refreshing,
+    onRefresh,
+    bookingsList,
+    scheduledSessions,
+    unscheduledSessions,
+  };
 }
 
 export default useAllBookings;
