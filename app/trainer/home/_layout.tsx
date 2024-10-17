@@ -33,7 +33,6 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
             source={require("@assets/activities/gym.webp")}
           />
           <Text className="text-lg font-bold mb-1.25">{fullName}</Text>
-          <Text className="text-sm text-gray-500">Pro Member</Text>
           <View className="flex-row items-center gap-2">
             <Octicons
               name="dot-fill"
