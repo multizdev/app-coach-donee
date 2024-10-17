@@ -19,6 +19,7 @@
     "@react-native-firebase/firestore": "^20.5.0",
     "@react-native-firebase/messaging": "^20.5.0",
     "@react-navigation/drawer": "^6.7.2",
+    "axios": "^1.7.7",
     "date-fns": "^4.1.0",
     "expo": "~51.0.28",
     "expo-app-loading": "^2.1.1",
