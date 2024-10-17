@@ -6,11 +6,12 @@ import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import auth from "@react-native-firebase/auth";
 
-// Import your global CSS file
-import "@/global.css";
-import { ActivityIndicator, Provider } from "@ant-design/react-native";
+import { ActivityIndicator, Provider, Toast } from "@ant-design/react-native";
 import useAppStore from "@src/modules/common/stores/useAppStore";
 import useAuth from "@src/modules/auth/hooks/useAuth";
+
+// Import your global CSS file
+import "@/global.css";
 
 SplashScreen.preventAutoHideAsync().then();
 
@@ -37,10 +38,14 @@ function RootLayout(): ReactElement {
   }, []);
 
   useEffect(() => {
-    if (user === null) {
-      setUser(auth().currentUser);
+    try {
+      if (user === null) {
+        setUser(auth().currentUser);
+      }
+      (async () => await onAuthStateChanged(user))();
+    } catch (e) {
+      if (e instanceof Error) Toast.show("Could not load user!");
     }
-    (async () => await onAuthStateChanged(user))();
   }, [user]);
 
   if (!fontsLoaded) {

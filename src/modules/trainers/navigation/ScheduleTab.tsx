@@ -10,6 +10,7 @@ import useAppStore from "@src/modules/common/stores/useAppStore";
 import SelectedDays from "@src/modules/trainers/components/schedule/SelectedDays";
 import AwayMode from "@src/modules/trainers/components/schedule/AwayMode";
 import { DaysArray, DaysSelection, DaysTimeTimestamp } from "@src/types";
+import { Toast } from "@ant-design/react-native";
 
 function RenderItem({
   item,
@@ -68,23 +69,29 @@ function ScheduleTab(): ReactElement {
         style={{ elevation: 2 }}
         className="h-[50] rounded-full overflow-hidden mx-4 mb-4"
         onPress={async () => {
-          const selectedDays = daysArray.filter((day) => day.selected);
+          try {
+            const selectedDays = daysArray.filter((day) => day.selected);
 
-          const finalDayTimes: DaysTimeTimestamp = Object.fromEntries(
-            selectedDays.map(({ day }: DaysArray) => [
-              day,
-              {
-                startTime: convertToFirestoreTimestamp(
-                  daysTimes[day]?.startTime,
-                ),
-                endTime: convertToFirestoreTimestamp(daysTimes[day]?.endTime),
-              },
-            ]),
-          ) as DaysTimeTimestamp;
+            const finalDayTimes: DaysTimeTimestamp = Object.fromEntries(
+              selectedDays.map(({ day }: DaysArray) => [
+                day,
+                {
+                  startTime: convertToFirestoreTimestamp(
+                    daysTimes[day]?.startTime,
+                  ),
+                  endTime: convertToFirestoreTimestamp(daysTimes[day]?.endTime),
+                },
+              ]),
+            ) as DaysTimeTimestamp;
 
-          await firestore().collection("Trainers").doc(user?.uid).update({
-            schedule: finalDayTimes,
-          });
+            await firestore().collection("Trainers").doc(user?.uid).update({
+              schedule: finalDayTimes,
+            });
+          } catch (error) {
+            if (error) {
+              Toast.show("Could not save changes, Please try again later");
+            }
+          }
         }}
       >
         <LinearGradient

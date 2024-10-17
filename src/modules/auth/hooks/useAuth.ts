@@ -40,28 +40,46 @@ function useAuth() {
   } = useAppStore();
 
   useEffect(() => {
+    Toast.config({ position: "bottom" });
     try {
       // Handle FCM token generation and update on state changes
       const updateFCMToken = async () => {
-        if (user) {
-          const token = await messaging().getToken();
-          await firestore().collection(`${accountType}s`).doc(user.uid).update({
-            fcmToken: token,
-          });
+        if (user && accountType) {
+          try {
+            const token = await messaging().getToken();
+            await firestore()
+              .collection(`${accountType}s`)
+              .doc(user.uid)
+              .update({
+                fcmToken: token,
+              });
+          } catch (e) {
+            if (e instanceof Error) {
+              Toast.show("There was a problem!");
+            }
+          }
         }
       };
 
       (async () => updateFCMToken())();
 
       return messaging().onTokenRefresh(async (token) => {
-        if (user) {
-          await firestore().collection(`${accountType}s`).doc(user.uid).update({
-            fcmToken: token,
-          });
+        if (user && accountType) {
+          try {
+            await firestore()
+              .collection(`${accountType}s`)
+              .doc(user.uid)
+              .update({
+                fcmToken: token,
+              });
+          } catch (e) {
+            if (e instanceof Error) {
+              Toast.show("There was a problem!");
+            }
+          }
         }
       }); // Cleanup on unmount
     } catch (e) {
-      Toast.config({ position: "bottom" });
       if (e instanceof Error) {
         Toast.show("There was a problem!");
       }

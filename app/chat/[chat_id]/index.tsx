@@ -4,7 +4,7 @@ import { StatusBar, View } from "react-native";
 import firestore from "@react-native-firebase/firestore";
 
 import { useLocalSearchParams } from "expo-router";
-import { ActivityIndicator } from "@ant-design/react-native";
+import { ActivityIndicator, Toast } from "@ant-design/react-native";
 
 import MessagesContainer from "@src/modules/users/components/chat/chatBox/MessagesContainer";
 import ChatMessageInput from "@src/modules/users/components/chat/chatBox/ChatMessageInput";
@@ -21,39 +21,45 @@ function ChatIndex(): ReactElement {
   const { chat_id, type } = useLocalSearchParams();
 
   useEffect(() => {
-    if (chat_id) {
-      const unsubscribe = firestore()
-        .collection("Chats")
-        .doc(chat_id as string)
-        .onSnapshot(async (chatSnapshot) => {
-          const chatData = { id: chat_id, ...chatSnapshot.data() } as Chat;
-          if (chatData) {
-            if (type === "User") {
-              const trainerSnapshot = await firestore()
-                .collection(`Trainers`)
-                .doc(chatData.trainerId)
-                .get();
+    try {
+      if (chat_id) {
+        const unsubscribe = firestore()
+          .collection("Chats")
+          .doc(chat_id as string)
+          .onSnapshot(async (chatSnapshot) => {
+            const chatData = { id: chat_id, ...chatSnapshot.data() } as Chat;
+            if (chatData) {
+              if (type === "User") {
+                const trainerSnapshot = await firestore()
+                  .collection(`Trainers`)
+                  .doc(chatData.trainerId)
+                  .get();
 
-              setChat({
-                trainer: trainerSnapshot.data() as Trainer,
-                ...chatData,
-              });
-            } else if (type === "Trainer") {
-              const trainerSnapshot = await firestore()
-                .collection(`Users`)
-                .doc(chatData.userId)
-                .get();
+                setChat({
+                  trainer: trainerSnapshot.data() as Trainer,
+                  ...chatData,
+                });
+              } else if (type === "Trainer") {
+                const trainerSnapshot = await firestore()
+                  .collection(`Users`)
+                  .doc(chatData.userId)
+                  .get();
 
-              setChat({
-                user: trainerSnapshot.data() as User,
-                ...chatData,
-              });
+                setChat({
+                  user: trainerSnapshot.data() as User,
+                  ...chatData,
+                });
+              }
             }
-          }
-        });
+          });
 
-      // Cleanup the subscription on component unmount
-      return () => unsubscribe();
+        // Cleanup the subscription on component unmount
+        return () => unsubscribe();
+      }
+    } catch (error) {
+      if (error) {
+        Toast.show("Could not load current chat.");
+      }
     }
   }, [chat_id]);
 
