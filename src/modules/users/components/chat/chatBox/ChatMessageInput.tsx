@@ -2,12 +2,20 @@ import React, { ReactElement, useMemo, useState } from "react";
 
 import { TextInput, TouchableOpacity, View } from "react-native";
 
+import axios from "axios";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 
 import { Chat } from "@server/database/models/Chat";
 import firestore from "@react-native-firebase/firestore";
 import { Toast } from "@ant-design/react-native";
+
+type NotificationRequest = {
+  recepientId: string;
+  recepientType: string;
+  title: string | undefined;
+  message: string;
+};
 
 function ChatMessageInput({
   chat,
@@ -19,6 +27,45 @@ function ChatMessageInput({
   const [message, setMessage] = useState<string>("");
 
   const tempMessages = useMemo(() => chat.messages, [chat]);
+
+  const handleSendMessage = async () => {
+    if (message !== "") {
+      tempMessages.push({
+        message,
+        sender: type.toLowerCase() as "user" | "trainer",
+        date: firestore.Timestamp.fromDate(new Date()),
+      });
+
+      try {
+        await firestore().collection("Chats").doc(chat.id).update({
+          messages: tempMessages,
+        });
+
+        const notificationPayload: NotificationRequest = {
+          recepientId:
+            type.toLowerCase() === "user" ? chat.userId : chat.trainerId,
+          recepientType: type.toLowerCase() === "user" ? "Users" : "Trainers",
+          title:
+            type.toLowerCase() === "user"
+              ? chat.user?.displayName || chat.user?.fullName
+              : chat.trainer?.displayName || chat.trainer?.fullName,
+          message,
+        };
+
+        const response = await axios.post(
+          "https://coach-donee-admin-web.vercel.app/api/appNotifications/sendNotification",
+          notificationPayload,
+        );
+
+        console.log("SENT NOTIFICATION", response);
+        setMessage("");
+      } catch (e) {
+        if (e instanceof Error) {
+          Toast.show(e.message);
+        }
+      }
+    }
+  };
 
   return (
     <View
@@ -34,27 +81,7 @@ function ChatMessageInput({
       <TouchableOpacity
         style={{ elevation: 2 }}
         className="w-[50] h-[50] rounded-3xl overflow-hidden"
-        onPress={async () => {
-          if (message !== "") {
-            tempMessages.push({
-              message,
-              sender: type.toLowerCase() as "user" | "trainer",
-              date: firestore.Timestamp.fromDate(new Date()),
-            });
-
-            try {
-              await firestore().collection("Chats").doc(chat.id).update({
-                messages: tempMessages,
-              });
-
-              setMessage("");
-            } catch (e) {
-              if (e instanceof Error) {
-                Toast.show(e.message);
-              }
-            }
-          }
-        }}
+        onPress={handleSendMessage}
       >
         <LinearGradient
           colors={
