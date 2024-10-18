@@ -12,13 +12,12 @@ import {
 import { useRouter } from "expo-router";
 import { AntDesign, Fontisto, MaterialIcons } from "@expo/vector-icons";
 
-import firestore from "@react-native-firebase/firestore";
-
 import useUserBookings from "@src/modules/users/hooks/booking/useUserBookings";
 import { Booking } from "@server/database/models/Booking";
 import HeadingChips from "@src/modules/users/components/elements/chips/HeadingChips";
 import { COLOR_DARK_BLUE, COLOR_YELLOW } from "@src/modules/common/constants";
 import useRescheduleStore from "@src/modules/re-schedule/store/useRescheduleStore";
+import useBookingStore from "@src/modules/users/stores/home/useBookingStore";
 
 function ItemExpiryDate({ date }: { date: Date }) {
   const futureDate: Date = new Date(date);
@@ -36,9 +35,9 @@ function ItemExpiryDate({ date }: { date: Date }) {
 
 function TrainerItem({ item }: { item: Booking }): ReactElement {
   const { push } = useRouter();
-  const onRefresh = useUserBookings().onRefresh;
 
   const { setBookingId, setTrainer } = useRescheduleStore();
+  const { setCurrentBooking } = useBookingStore();
 
   const { trainer, serviceName, selectedPackage, scheduledDates, date } = item;
 
@@ -97,23 +96,9 @@ function TrainerItem({ item }: { item: Booking }): ReactElement {
         <TouchableOpacity
           className="flex flex-grow justify-center items-center"
           onPress={async () => {
-            const { selectedPackage } = item;
+            setCurrentBooking(item);
 
-            const { sessions, originalSessions, price } = selectedPackage;
-
-            if (sessions && originalSessions) {
-              await firestore()
-                .collection("Bookings")
-                .doc(item.id)
-                .update({
-                  selectedPackage: {
-                    originalSessions,
-                    sessions: sessions + originalSessions,
-                    price,
-                  },
-                });
-              await onRefresh();
-            }
+            push("/user/screens/package");
           }}
         >
           <MaterialIcons name="autorenew" size={24} color={COLOR_DARK_BLUE} />

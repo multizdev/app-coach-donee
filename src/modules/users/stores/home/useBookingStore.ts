@@ -5,6 +5,7 @@ import Trainer from "@server/database/models/Trainer";
 import { Package } from "@server/database/models/Package";
 import moment from "moment";
 import { DaysTime, TimeSpan } from "@src/types";
+import { Booking } from "@server/database/models/Booking";
 
 const getFormattedDate = (date: Date): string =>
   `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
@@ -24,6 +25,7 @@ type State = {
   selectedTime: string | null;
   selectedDay: string | null;
   timeSpan: TimeSpan | null;
+  currentBooking: Booking | null;
 };
 
 type Actions = {
@@ -40,6 +42,7 @@ type Actions = {
   setSelectedDay: (selectedDay: string | null) => void;
   setTimeSpan: (timeSpan: TimeSpan | null) => void;
   resetBookingState: () => void;
+  setCurrentBooking: (currentBooking: Booking | null) => void;
 };
 
 const defaultState: State = {
@@ -54,6 +57,7 @@ const defaultState: State = {
   selectedTime: null,
   selectedDay: INITIAL_DAY,
   timeSpan: null,
+  currentBooking: null,
 };
 
 const useBookingStore: UseBoundStore<StoreApi<State & Actions>> = create(
@@ -89,6 +93,8 @@ const useBookingStore: UseBoundStore<StoreApi<State & Actions>> = create(
       set(() => ({ selectedDay })),
     setTimeSpan: (timeSpan: TimeSpan | null) => set(() => ({ timeSpan })),
     resetBookingState: () => set(() => ({ ...defaultState })),
+    setCurrentBooking: (currentBooking: Booking | null) =>
+      set(() => ({ currentBooking })),
   }),
 );
 
