@@ -57,21 +57,51 @@ function useAcceptBookings() {
         }
       }
     } catch (e) {
-      Toast.config({ position: "bottom" });
       if (e instanceof Error) {
         Toast.show("There was a problem!");
       }
     }
   };
 
-  const rejectSession = async () => {};
+  const rejectSession = async () => {
+    Toast.config({ position: "bottom" });
 
-  const skipSession = async () => {
-    const newIndex = (currentCardIndex + 1) % pendingBookings.length;
-    setCurrentCardIndex(newIndex);
+    try {
+      let tempDates = allBookings.find(
+        (booking: Booking) => booking.id === currentBooking.id,
+      )?.scheduledDates;
+
+      const scheduledDates = tempDates;
+
+      if (tempDates) {
+        tempDates = [
+          ...scheduledDates!.filter((val) => val.date !== currentBooking.date),
+        ];
+
+        try {
+          await firestore()
+            .collection("Bookings")
+            .doc(currentBooking.id)
+            .update({
+              scheduledDates: tempDates,
+            });
+
+          await onRefresh();
+          setCurrentCardIndex(currentCardIndex + 1);
+        } catch (e) {
+          if (e instanceof Error) {
+            Toast.show("Cannot reject Booking, Please contact us");
+          }
+        }
+      }
+    } catch (e) {
+      if (e instanceof Error) {
+        Toast.show("There was a problem!");
+      }
+    }
   };
 
-  return { currentBooking, confirmSession, rejectSession, skipSession };
+  return { currentBooking, confirmSession, rejectSession };
 }
 
 export default useAcceptBookings;

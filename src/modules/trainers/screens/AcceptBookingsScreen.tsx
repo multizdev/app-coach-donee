@@ -1,5 +1,5 @@
 import React, { ReactElement, useEffect } from "react";
-import { View, Text, ImageBackground, TouchableOpacity } from "react-native";
+import { View, Text, ImageBackground } from "react-native";
 
 import Constants from "expo-constants";
 import { LinearGradient } from "expo-linear-gradient";
@@ -18,8 +18,7 @@ function AcceptBookingsScreen(): ReactElement | undefined {
 
   const { replace } = useRouter();
 
-  const { currentBooking, confirmSession, rejectSession, skipSession } =
-    useAcceptBookings();
+  const { currentBooking, confirmSession, rejectSession } = useAcceptBookings();
 
   useEffect(() => {
     if (!currentBooking) {
@@ -99,12 +98,6 @@ function AcceptBookingsScreen(): ReactElement | undefined {
               }
               onPress={rejectSession}
             />
-            <TouchableOpacity
-              className="flex-row justify-center items-center"
-              onPress={skipSession}
-            >
-              <Text className="text-xl text-white font-bold">Skip</Text>
-            </TouchableOpacity>
           </View>
         </LinearGradient>
       </ImageBackground>
