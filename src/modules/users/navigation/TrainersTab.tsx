@@ -20,13 +20,27 @@ import HeadingChips from "@src/modules/users/components/elements/chips/HeadingCh
 import { COLOR_DARK_BLUE, COLOR_YELLOW } from "@src/modules/common/constants";
 import useRescheduleStore from "@src/modules/re-schedule/store/useRescheduleStore";
 
+function ItemExpiryDate({ date }: { date: Date }) {
+  const futureDate: Date = new Date(date);
+
+  futureDate.setMonth(futureDate.getMonth() + 6);
+
+  return (
+    <View className="flex-row items-center gap-2">
+      <Text className="text-xs text-primary-dark font-bold">
+        Expires on {futureDate.toLocaleDateString()}
+      </Text>
+    </View>
+  );
+}
+
 function TrainerItem({ item }: { item: Booking }): ReactElement {
   const { push } = useRouter();
   const onRefresh = useUserBookings().onRefresh;
 
   const { setBookingId, setTrainer } = useRescheduleStore();
 
-  const { trainer, serviceName, selectedPackage, scheduledDates } = item;
+  const { trainer, serviceName, selectedPackage, scheduledDates, date } = item;
 
   return (
     <View
@@ -64,6 +78,7 @@ function TrainerItem({ item }: { item: Booking }): ReactElement {
               Sessions Remaining
             </Text>
           </View>
+          <ItemExpiryDate date={date} />
         </View>
       </View>
       <View className="flex flex-row p-4 gap-2 items-center">
