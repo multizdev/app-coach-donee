@@ -35,6 +35,7 @@ type TransformedBooking = {
   status: string | undefined;
   selectedPackage: Package;
   originalBookingDate: Date;
+  bookingIndex?: number;
 };
 
 export { ScheduledDate, Booking, TransformedBooking };

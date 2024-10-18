@@ -12,7 +12,5 @@ export const hasTimePassed = (
   const timeDifference =
     (currentTime.getTime() - bookingDateTime.getTime()) / 1000 / 3600;
 
-  console.log("TIME DIFF", timeDifference);
-
   return timeDifference > hours;
 };
