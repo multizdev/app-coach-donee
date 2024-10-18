@@ -12,12 +12,13 @@ import {
 import { useRouter } from "expo-router";
 import { AntDesign, Fontisto, MaterialIcons } from "@expo/vector-icons";
 
+import firestore from "@react-native-firebase/firestore";
+
 import useUserBookings from "@src/modules/users/hooks/booking/useUserBookings";
 import { Booking } from "@server/database/models/Booking";
 import HeadingChips from "@src/modules/users/components/elements/chips/HeadingChips";
 import { COLOR_DARK_BLUE, COLOR_YELLOW } from "@src/modules/common/constants";
 import useRescheduleStore from "@src/modules/re-schedule/store/useRescheduleStore";
-import firestore from "@react-native-firebase/firestore";
 
 function TrainerItem({ item }: { item: Booking }): ReactElement {
   const { push } = useRouter();
