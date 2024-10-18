@@ -10,16 +10,26 @@ import { COLOR_BLUE } from "@src/modules/common/constants";
 import useBookingStore from "@src/modules/users/stores/home/useBookingStore";
 import { Package } from "@server/database/models/Package";
 import useBookingSchedule from "@src/modules/users/hooks/booking/useBookingSchedule";
+import Trainer from "@server/database/models/Trainer";
 
 function SelectPackageScreen(): ReactElement {
-  const { allTrainers, trainerId, selectedPackage, setPackage } =
-    useBookingStore();
+  const {
+    allTrainers,
+    trainerId,
+    selectedPackage,
+    currentBooking,
+    setPackage,
+  } = useBookingStore();
 
   const trainer = useMemo(() => {
-    return allTrainers.find((t) => t.id === trainerId) || null;
+    if (currentBooking) {
+      return currentBooking.trainer as Trainer;
+    } else {
+      return allTrainers.find((t) => t.id === trainerId) || null;
+    }
   }, [allTrainers, trainerId]);
 
-  const { createBooking } = useBookingSchedule();
+  const { createBooking, renewPackage } = useBookingSchedule();
 
   const renderItem = ({ item }: { item: Package }) => (
     <TouchableOpacity
@@ -65,7 +75,16 @@ function SelectPackageScreen(): ReactElement {
               </Text>
               <Text className="text-xl">AED {selectedPackage?.price}</Text>
             </View>
-            <PrimaryButton text="Checkout" onPress={createBooking} />
+            <PrimaryButton
+              text="Checkout"
+              onPress={async () => {
+                if (currentBooking) {
+                  await renewPackage();
+                } else {
+                  await createBooking();
+                }
+              }}
+            />
           </View>
         </View>
       ) : (

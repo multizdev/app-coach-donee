@@ -11,6 +11,7 @@ import { DaysTime, MarkedDatesType, Time } from "@src/types";
 import { COLOR_DARK_GREEN } from "@src/modules/common/constants";
 import useAppStore from "@src/modules/common/stores/useAppStore";
 import BottomSheet from "@gorhom/bottom-sheet";
+import useUserBookings from "@src/modules/users/hooks/booking/useUserBookings";
 
 function useBookingSchedule() {
   const { dismissAll, replace } = useRouter();
@@ -25,6 +26,7 @@ function useBookingSchedule() {
     selectedPackage,
     serviceId,
     serviceName,
+    currentBooking,
     setTimeSpan,
     setSelectedDay,
     setSelectedDate,
@@ -144,11 +146,52 @@ function useBookingSchedule() {
     }
   };
 
+  const onRefresh = useUserBookings().onRefresh;
+
+  const renewPackage = async () => {
+    try {
+      Toast.config({ position: "center", stackable: false });
+
+      if (!user || !selectedPackage || !currentBooking) {
+        Toast.show("There was a problem");
+        return;
+      }
+
+      await firestore()
+        .collection("Bookings")
+        .doc(currentBooking?.id!)
+        .update({
+          selectedPackage: {
+            originalSessions: selectedPackage.sessions,
+            sessions:
+              selectedPackage.sessions +
+              currentBooking.selectedPackage.sessions!,
+            price:
+              selectedPackage.price + currentBooking.selectedPackage.price!,
+          },
+        });
+
+      dismissAll();
+      resetBookingState();
+      await onRefresh();
+    } catch (e) {
+      if (e instanceof Error) {
+        Toast.show("Cannot schedule booking, Please try again!");
+      }
+    }
+  };
+
   const scheduleBooking = async () => {
     try {
       Toast.config({ position: "center", stackable: false });
 
-      if (!user || !trainerId || !serviceId || !serviceName) {
+      if (
+        !user ||
+        !trainerId ||
+        !serviceId ||
+        !serviceName ||
+        !selectedPackage
+      ) {
         Toast.show("There was a problem");
         return;
       }
@@ -191,6 +234,7 @@ function useBookingSchedule() {
     handleDateSelect,
     scheduleBooking,
     createBooking,
+    renewPackage,
   };
 }
 
