@@ -15,6 +15,7 @@ module.exports = {
         "my-yellow": "#fbf6b5",
         "my-pink": "#fae8fb",
         "my-aqua": "#ccf4f2",
+        "my-red": "#ff3030",
       },
     },
   },

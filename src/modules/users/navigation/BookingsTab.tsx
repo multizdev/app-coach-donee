@@ -11,9 +11,11 @@ import { Booking, TransformedBooking } from "@server/database/models/Booking";
 import {
   COLOR_DARK_BLUE,
   COLOR_DARK_GREEN,
+  COLOR_RED,
   COLOR_YELLOW,
 } from "@src/modules/common/constants";
 import { parse12HourTime } from "@src/util/dateTime";
+import { hasTimePassed } from "@src/util/dateHelpers";
 
 const tabs = [{ title: "Scheduled Bookings" }, { title: "Completed Bookings" }];
 
@@ -50,9 +52,22 @@ function BookingListComponent({
             originalBookingDate: booking.date,
           };
 
-          if (type === "complete" && scheduledDate.status === "complete") {
+          const isCompletedByTime = hasTimePassed(
+            scheduledDate.date,
+            scheduledDate.time,
+            1.5,
+          );
+
+          if (
+            type === "complete" &&
+            (scheduledDate.status === "complete" || isCompletedByTime)
+          ) {
             return val;
-          } else if (!type && scheduledDate.status !== "complete") {
+          } else if (
+            !type &&
+            scheduledDate.status !== "complete" &&
+            !isCompletedByTime
+          ) {
             return val;
           } else {
             return null;
@@ -66,6 +81,7 @@ function BookingListComponent({
 
   return (
     <FlatList
+      contentContainerClassName="pb-16"
       data={bookings}
       refreshing={refreshing}
       onRefresh={onRefresh}
@@ -85,82 +101,95 @@ function BookingListComponent({
         return (
           <View
             style={{ elevation: 4 }}
-            className="flex-row items-center justify-between p-4 mx-4 my-2 rounded-xl bg-white"
+            className="gap-2 mx-4 my-2 rounded-xl bg-white"
           >
-            <View className="h-full flex-grow flex-col">
-              <Text className="font-bold text-gray-500">
-                {new Date(item.date).toDateString()} - {item.time}
-              </Text>
-              <Text className="font-bold text-gray-500 text-lg">
-                {item.trainer?.displayName || item.trainer?.fullName}
-              </Text>
-              <Text className="text-gray-500 text-md">{item.serviceName}</Text>
+            <View className="flex-row items-center justify-between gap-4 px-4 pt-4 pb">
+              <View className="h-full flex-grow flex-col">
+                <Text className="font-bold text-gray-500">
+                  {new Date(item.date).toDateString()} - {item.time}
+                </Text>
+                <Text className="font-bold text-gray-500 text-lg">
+                  {item.trainer?.displayName || item.trainer?.fullName}
+                </Text>
+                <Text className="text-gray-500 text-md">
+                  {item.serviceName}
+                </Text>
+              </View>
+              <View className="items-center gap-2">
+                <Text className="font-bold text-gray-500 text-xl">
+                  AED {item.selectedPackage.price}
+                </Text>
+                {!type && !item.status && (
+                  <LinearGradient
+                    colors={[COLOR_YELLOW, COLOR_YELLOW]}
+                    start={{ x: 0, y: 1 }}
+                    end={{ x: 0, y: 0 }}
+                    className="flex-row rounded-full overflow-hidden justify-center items-center py-1 px-2 gap-2"
+                  >
+                    <Text className="text-sm text-orange-800">
+                      Not confirmed
+                    </Text>
+                    <AntDesign
+                      name="warning"
+                      size={14}
+                      color="rgb(154 52 18)"
+                    />
+                  </LinearGradient>
+                )}
+                {!type && item.status === "confirmed" && (
+                  <LinearGradient
+                    colors={[COLOR_DARK_GREEN, COLOR_DARK_GREEN]}
+                    start={{ x: 0, y: 1 }}
+                    end={{ x: 0, y: 0 }}
+                    className="flex-row rounded-full overflow-hidden justify-center items-center py-1 px-2 gap-2"
+                  >
+                    <Text className="text-white text-sm">Scheduled</Text>
+                    <Feather name="user-check" size={16} color="white" />
+                  </LinearGradient>
+                )}
+                {type && item.status === "complete" && (
+                  <LinearGradient
+                    colors={[COLOR_DARK_BLUE, COLOR_DARK_BLUE]}
+                    start={{ x: 0, y: 1 }}
+                    end={{ x: 0, y: 0 }}
+                    className="flex-row rounded-full overflow-hidden justify-center items-center py-1 px-2 gap-2"
+                  >
+                    <Text className="text-white text-sm">Completed</Text>
+                    <AntDesign name="check" size={18} color="white" />
+                  </LinearGradient>
+                )}
+              </View>
             </View>
-            <View className="items-center gap-2">
-              <Text className="font-bold text-gray-500 text-xl">
-                AED {item.selectedPackage.price}
-              </Text>
-              {!type && !item.status && (
-                <LinearGradient
-                  colors={[COLOR_YELLOW, COLOR_YELLOW]}
-                  start={{ x: 0, y: 1 }}
-                  end={{ x: 0, y: 0 }}
-                  className="flex-row rounded-full overflow-hidden justify-center items-center py-1 px-2 gap-2"
+            {item.status !== "complete" &&
+              !hasTimePassed(item.date, item.time) && (
+                <TouchableOpacity
+                  disabled={isDisabled}
+                  className="flex-row justify-center items-center p-2 gap-2"
+                  onPress={() => {
+                    Alert.alert(
+                      "Cancel Booking",
+                      "Are you sure you want to cancel your booking?",
+                      [
+                        { text: "No", style: "cancel" },
+                        {
+                          text: "Cancel Booking",
+                          onPress: () => {
+                            // Positive action goes here
+                          },
+                          style: "destructive",
+                        },
+                      ],
+                    );
+                  }}
                 >
-                  <Text className="text-sm text-orange-800">Not confirmed</Text>
-                  <AntDesign name="warning" size={14} color="rgb(154 52 18)" />
-                </LinearGradient>
+                  <Text className="text-my-red font-bold">Cancel</Text>
+                  <MaterialCommunityIcons
+                    name="book-cancel-outline"
+                    size={24}
+                    color={COLOR_RED}
+                  />
+                </TouchableOpacity>
               )}
-              {!type && item.status === "confirmed" && (
-                <LinearGradient
-                  colors={[COLOR_DARK_GREEN, COLOR_DARK_GREEN]}
-                  start={{ x: 0, y: 1 }}
-                  end={{ x: 0, y: 0 }}
-                  className="flex-row rounded-full overflow-hidden justify-center items-center py-1 px-2 gap-2"
-                >
-                  <Text className="text-white text-sm">Scheduled</Text>
-                  <Feather name="user-check" size={16} color="white" />
-                </LinearGradient>
-              )}
-              {type && item.status === "complete" && (
-                <LinearGradient
-                  colors={[COLOR_DARK_BLUE, COLOR_DARK_BLUE]}
-                  start={{ x: 0, y: 1 }}
-                  end={{ x: 0, y: 0 }}
-                  className="flex-row rounded-full overflow-hidden justify-center items-center py-1 px-2 gap-2"
-                >
-                  <Text className="text-white text-sm">Completed</Text>
-                  <AntDesign name="check" size={18} color="white" />
-                </LinearGradient>
-              )}
-            </View>
-            <TouchableOpacity
-              disabled={isDisabled}
-              className="flex-row justify-center items-center p-2 gap-2"
-              onPress={() => {
-                Alert.alert(
-                  "Cancel Booking",
-                  "Are you sure you want to cancel your booking?",
-                  [
-                    { text: "No", style: "cancel" },
-                    {
-                      text: "Cancel Booking",
-                      onPress: () => {
-                        // Positive action goes here
-                      },
-                      style: "destructive",
-                    },
-                  ],
-                );
-              }}
-            >
-              <Text>Cancel</Text>
-              <MaterialCommunityIcons
-                name="book-cancel-outline"
-                size={24}
-                color="black"
-              />
-            </TouchableOpacity>
           </View>
         );
       }}
