@@ -105,6 +105,45 @@ function useBookingSchedule() {
     ];
   }, [selectedPackage, selectedDates]);
 
+  const createBooking = async () => {
+    try {
+      Toast.config({ position: "center", stackable: false });
+
+      if (
+        !user ||
+        !trainerId ||
+        !serviceId ||
+        !serviceName ||
+        !selectedPackage
+      ) {
+        Toast.show("There was a problem");
+        return;
+      }
+
+      await firestore()
+        .collection("Bookings")
+        .add({
+          trainerId,
+          userId: user.uid,
+          serviceId,
+          serviceName,
+          selectedPackage: {
+            originalSessions: selectedPackage?.sessions,
+            ...selectedPackage,
+          },
+          date: new Date(),
+          scheduledDates: [],
+        });
+      dismissAll();
+      resetBookingState();
+      replace("user/home/(home)/trainers");
+    } catch (e) {
+      if (e instanceof Error) {
+        Toast.show("Cannot schedule booking, Please try again!");
+      }
+    }
+  };
+
   const scheduleBooking = async () => {
     try {
       Toast.config({ position: "center", stackable: false });
@@ -113,10 +152,6 @@ function useBookingSchedule() {
         Toast.show("There was a problem");
         return;
       }
-      /*if (filteredSelectedDates.length === 0) {
-        Toast.show("Please schedule at least 1 session");
-        return;
-      }*/
 
       await firestore()
         .collection("Bookings")
@@ -155,6 +190,7 @@ function useBookingSchedule() {
     bottomSheetRef,
     handleDateSelect,
     scheduleBooking,
+    createBooking,
   };
 }
 

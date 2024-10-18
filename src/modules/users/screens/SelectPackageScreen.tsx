@@ -2,24 +2,24 @@ import React, { ReactElement, useMemo } from "react";
 import { View, Text, FlatList, TouchableOpacity } from "react-native";
 
 import { AntDesign } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
 
-import { ActivityIndicator, Toast } from "@ant-design/react-native";
+import { ActivityIndicator } from "@ant-design/react-native";
 
 import PrimaryButton from "@src/modules/common/components/input/PrimaryButton";
 import { COLOR_BLUE } from "@src/modules/common/constants";
 import useBookingStore from "@src/modules/users/stores/home/useBookingStore";
 import { Package } from "@server/database/models/Package";
+import useBookingSchedule from "@src/modules/users/hooks/booking/useBookingSchedule";
 
 function SelectPackageScreen(): ReactElement {
-  const { push } = useRouter();
-
   const { allTrainers, trainerId, selectedPackage, setPackage } =
     useBookingStore();
 
   const trainer = useMemo(() => {
     return allTrainers.find((t) => t.id === trainerId) || null;
   }, [allTrainers, trainerId]);
+
+  const { createBooking } = useBookingSchedule();
 
   const renderItem = ({ item }: { item: Package }) => (
     <TouchableOpacity
@@ -65,17 +65,7 @@ function SelectPackageScreen(): ReactElement {
               </Text>
               <Text className="text-xl">AED {selectedPackage?.price}</Text>
             </View>
-            <PrimaryButton
-              text="Checkout"
-              onPress={() => {
-                Toast.config({ position: "bottom" });
-                if (selectedPackage) {
-                  push("user/screens/schedule");
-                } else {
-                  Toast.show("Please select a package");
-                }
-              }}
-            />
+            <PrimaryButton text="Checkout" onPress={createBooking} />
           </View>
         </View>
       ) : (
