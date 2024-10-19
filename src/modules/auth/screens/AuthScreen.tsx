@@ -1,5 +1,5 @@
 // ./src/screens/AuthScreen.tsx
-import React, { ReactElement, useEffect } from "react";
+import React, { ReactElement } from "react";
 import { ImageBackground, Text, TouchableOpacity, View } from "react-native";
 
 import { LinearGradient } from "expo-linear-gradient";
