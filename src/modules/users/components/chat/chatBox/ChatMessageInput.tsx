@@ -15,6 +15,10 @@ type NotificationRequest = {
   recepientType: string;
   title: string | undefined;
   message: string;
+  activity: {
+    type: string;
+    id: string;
+  };
 };
 
 function ChatMessageInput({
@@ -41,20 +45,28 @@ function ChatMessageInput({
           messages: tempMessages,
         });
 
+        const recepientId =
+          type.toLowerCase() === "trainer" ? chat.userId : chat.trainerId;
+
         const notificationPayload: NotificationRequest = {
-          recepientId:
-            type.toLowerCase() === "user" ? chat.userId : chat.trainerId,
-          recepientType: type.toLowerCase() === "user" ? "Users" : "Trainers",
+          recepientId,
+          recepientType:
+            type.toLowerCase() === "trainer" ? "Users" : "Trainers",
           title:
-            type.toLowerCase() === "user"
+            type.toLowerCase() === "trainer"
               ? chat.user?.displayName || chat.user?.fullName
               : chat.trainer?.displayName || chat.trainer?.fullName,
           message,
+          activity: {
+            type: "chat",
+            id: chat.id,
+          },
         };
         setMessage("");
 
         await axios.post(
           "https://coach-donee-admin-web.vercel.app/api/appNotifications/sendNotification",
+          // "http://192.168.18.109:3000/api/appNotifications/sendNotification",
           notificationPayload,
         );
       } catch (e) {

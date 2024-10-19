@@ -1,6 +1,6 @@
 import React, { ReactElement, useEffect, useState } from "react";
 
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
@@ -15,9 +15,15 @@ import useAuth from "@src/modules/auth/hooks/useAuth";
 
 // Import your global CSS file
 import "@/global.css";
+import "@src/firebaseMessageHandler";
 import messaging from "@react-native-firebase/messaging";
 
 SplashScreen.preventAutoHideAsync().then();
+
+// Register background handler
+messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+  console.log("Message handled in the background!", remoteMessage);
+});
 
 // Configure notification handler
 Notifications.setNotificationHandler({
@@ -37,24 +43,61 @@ async function requestUserPermission(): Promise<boolean> {
 }
 
 function RootLayout(): ReactElement {
+  const { push } = useRouter();
   const { user, setUser } = useAppStore();
   const { onAuthStateChanged } = useAuth();
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
+  const handleNotificationResponse = (
+    notification: Notifications.Notification,
+  ) => {
+    if (notification.request.content.data) {
+      const { activityId, activityType } = notification.request.content.data;
+
+      console.log("DATA", activityId, activityType, user);
+
+      if (activityType === "chat") {
+        try {
+          // Ensure correct navigation based on the chat ID and type
+          push({
+            pathname: `chat/[chat_id]`,
+            params: {
+              chat_id: activityId,
+              type: "User",
+            },
+          });
+        } catch (e) {
+          console.log("ISSUE", e);
+        }
+      }
+    }
+  };
+
   useEffect(() => {
     let isMounted = true;
+
     (async (): Promise<void> => {
       await registerForPushNotificationsAsync();
       await requestUserPermission();
     })();
 
-    Notifications.getLastNotificationResponseAsync().then(async (response) => {
+    // Handle last notification response on app launch (when app is terminated)
+    Notifications.getLastNotificationResponseAsync().then((response) => {
       if (!isMounted || !response?.notification) {
+        return;
       }
+      handleNotificationResponse(response.notification);
     });
+
+    // Handle notification response when the app is in the foreground or background
+    const responseListener =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        handleNotificationResponse(response.notification);
+      });
 
     return () => {
       isMounted = false;
+      Notifications.removeNotificationSubscription(responseListener);
     };
   }, []);
 
@@ -87,7 +130,7 @@ function RootLayout(): ReactElement {
   }, [user]);
 
   if (!fontsLoaded) {
-    return <ActivityIndicator size="large" />; // Keep the splash screen visible while loading fonts
+    return <ActivityIndicator size="large" />;
   }
 
   return (
