@@ -61,7 +61,7 @@ function ChatMessageInput({
           activity: {
             type: "chat",
             id: chat.id,
-            userType: type.toLowerCase() === "trainer" ? "Trainer" : "User",
+            userType: type.toLowerCase() === "trainer" ? "User" : "Trainer",
           },
         };
         setMessage("");
