@@ -11,8 +11,6 @@ import { Avatar } from "react-native-paper";
 function Client({ item }: { item: Booking }): ReactElement {
   const { user, selectedPackage, scheduledDates } = item;
 
-  console.log("USER", user);
-
   return (
     <View
       style={{ elevation: 2 }}

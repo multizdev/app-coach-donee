@@ -39,8 +39,9 @@ function ChatListItem({ chat }: { chat: Chat }): ReactElement {
           size={50}
           color="white"
           label={
-            (user?.displayName || user?.fullName)!.charAt(0).toUpperCase() ||
-            "U"
+            user?.displayName || user?.fullName
+              ? (user?.displayName || user?.fullName)!.charAt(0).toUpperCase()
+              : "U"
           }
         />
       )}
