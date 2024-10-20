@@ -54,7 +54,7 @@ function useAuth(notificationScreen?: NotificationParams | null) {
               });
           } catch (e) {
             if (e instanceof Error) {
-              Toast.show("There was a problem!");
+              Toast.show("There was a problem!------");
             }
           }
         }
@@ -73,14 +73,14 @@ function useAuth(notificationScreen?: NotificationParams | null) {
               });
           } catch (e) {
             if (e instanceof Error) {
-              Toast.show("There was a problem!");
+              Toast.show("There was a problem!-----");
             }
           }
         }
       }); // Cleanup on unmount
     } catch (e) {
       if (e instanceof Error) {
-        Toast.show("There was a problem!");
+        Toast.show("There was a problem!----");
       }
     }
   }, [accountType, user]);
@@ -200,7 +200,7 @@ function useAuth(notificationScreen?: NotificationParams | null) {
     } catch (e) {
       Toast.config({ position: "bottom" });
       if (e instanceof Error) {
-        Toast.show("There was a problem!");
+        Toast.show("There was a problem!---");
       }
     }
   }, [user]);
@@ -235,12 +235,13 @@ function useAuth(notificationScreen?: NotificationParams | null) {
           push(notificationScreen);
         }
       } else {
-        replace("/");
+        // replace("/");
       }
     } catch (e) {
+      console.log("Error", e);
       Toast.config({ position: "bottom" });
       if (e instanceof Error) {
-        Toast.show("There was a problem!");
+        Toast.show("There was a problem!--");
       }
     } finally {
       setAccountType(null);

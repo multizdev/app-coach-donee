@@ -1,7 +1,6 @@
 import React, { ReactElement } from "react";
 
 import { View, Text, TouchableOpacity } from "react-native";
-import { Avatar } from "react-native-paper";
 import { AntDesign, FontAwesome, Octicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { ActivityIndicator } from "@ant-design/react-native";
@@ -11,6 +10,7 @@ import useHome from "@src/modules/trainers/hooks/trainer/useHome";
 import useHomeStore from "@src/modules/trainers/store/useHomeStore";
 import useAppStore from "@src/modules/common/stores/useAppStore";
 import useAllBookings from "@src/modules/trainers/hooks/booking/useAllBookings";
+import ProfileImage from "@src/modules/common/components/user/ProfileImage";
 
 function HomeScreen(): ReactElement {
   const { detailedTrainer } = useAppStore();
@@ -26,10 +26,7 @@ function HomeScreen(): ReactElement {
     return (
       <View className="flex-1 flex-col gap-10 bg-white px-4 py-4">
         <View className="flex-row items-center border-0 border-b border-gray-200 py-6 gap-4">
-          <Avatar.Image
-            size={100}
-            source={require("@assets/activities/gym.webp")}
-          />
+          <ProfileImage />
           <View className="flex-col">
             <Text className="font-bold text-2xl text-gray-500">{fullName}</Text>
             <View className="flex-row items-center gap-2">

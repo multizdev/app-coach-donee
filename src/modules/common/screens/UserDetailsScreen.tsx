@@ -1,22 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import { Text, View, TouchableOpacity } from "react-native";
 
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { LinearGradient } from "expo-linear-gradient";
 
-import { Avatar } from "react-native-paper";
+import { LinearGradient } from "expo-linear-gradient";
+import * as ImagePicker from "expo-image-picker";
+import { MaterialIcons } from "@expo/vector-icons";
 
 import firestore from "@react-native-firebase/firestore";
+import storage from "@react-native-firebase/storage";
 import auth from "@react-native-firebase/auth";
-import { Toast } from "@ant-design/react-native";
+import { ActivityIndicator, Toast } from "@ant-design/react-native";
 
 import TextInputField from "@src/modules/common/components/input/TextInputField";
-import { MaterialIcons } from "@expo/vector-icons";
 import PrimaryButton from "@src/modules/common/components/input/PrimaryButton";
 import useAppStore from "@src/modules/common/stores/useAppStore";
 import User from "@server/database/models/User";
 import Trainer from "@server/database/models/Trainer";
+import ProfileImage from "@src/modules/common/components/user/ProfileImage";
 
 const updateSchema = Yup.object().shape({
   fullName: Yup.string().required("Full Name is required"),
@@ -31,12 +33,15 @@ function UpdateUserForm() {
   let user: User | Trainer | null = null;
   let type: string | null;
 
+  const [uploading, setUploading] = useState<boolean>(false);
+
   const {
     detailedTrainer,
     detailedUser,
     user: firebaseUser,
     setDetailedTrainer,
     setDetailedUser,
+    setUser,
   } = useAppStore();
 
   if (detailedUser) {
@@ -82,17 +87,60 @@ function UpdateUserForm() {
     }
   }
 
+  const pickAndUploadImage = async () => {
+    try {
+      // No permissions request is necessary for launching the image library
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      if (!result.canceled && firebaseUser) {
+        const imageUri = result.assets[0].uri;
+
+        const ref = storage().ref(`images/${type}/${firebaseUser.uid}.png`);
+        const task = ref.putFile(imageUri);
+
+        task.on("state_changed", (taskSnapshot) => {
+          if (taskSnapshot.bytesTransferred === 0) setUploading(true);
+          if (taskSnapshot.bytesTransferred === taskSnapshot.totalBytes)
+            setUploading(false);
+        });
+
+        task
+          .then(async () => {
+            const downloadURL = await ref.getDownloadURL();
+            await firebaseUser.updateProfile({
+              photoURL: downloadURL,
+            });
+            setUser(auth().currentUser);
+          })
+          .catch((error) => {
+            if (error) {
+              Toast.show("Error uploading image" + error.message);
+              setUploading(false);
+            }
+          });
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Toast.show("Error uploading image" + error.message);
+        setUploading(false);
+      }
+    }
+  };
+
   if (user) {
     return (
       <View className="flex-1 bg-white pt-6">
         <View className="flex-col items-center gap-4 mb-4">
-          <Avatar.Image
-            size={100}
-            source={require("@assets/activities/gym.webp")}
-          />
+          {uploading ? <ActivityIndicator /> : <ProfileImage />}
           <TouchableOpacity
             activeOpacity={0.6}
             className="h-[30] flex justify-center items-center"
+            onPress={pickAndUploadImage}
           >
             <LinearGradient
               colors={["#60A5FA", "#98d3ff"]}
