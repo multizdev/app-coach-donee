@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ImageBackground, View, BackHandler } from "react-native";
 
 import AuthScreen from "@src/modules/auth/screens/AuthScreen";
@@ -8,9 +8,9 @@ import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import auth from "@react-native-firebase/auth";
 import { Toast } from "@ant-design/react-native";
-import { useRouter } from "expo-router";
 import useAuth from "@src/modules/auth/hooks/useAuth";
 import messaging from "@react-native-firebase/messaging";
+import { NotificationParams } from "@src/types";
 
 // Register background handler
 messaging().setBackgroundMessageHandler(async (remoteMessage) => {
@@ -35,9 +35,11 @@ async function requestUserPermission(): Promise<boolean> {
 }
 
 function App() {
-  const { push } = useRouter();
+  const [notificationScreen, setNotificationScreen] =
+    useState<NotificationParams | null>(null);
+
   const { user, setUser } = useAppStore();
-  const { onAuthStateChanged } = useAuth();
+  const { onAuthStateChanged } = useAuth(notificationScreen);
 
   const { accountType, setAccountType } = useAppStore();
 
@@ -45,23 +47,17 @@ function App() {
     notification: Notifications.Notification,
   ) => {
     if (notification.request.content.data) {
-      const { activityId, activityType } = notification.request.content.data;
-
-      console.log("DATA", activityId, activityType, user);
+      const { activityId, activityType, activityUserType } =
+        notification.request.content.data;
 
       if (activityType === "chat") {
-        try {
-          // Ensure correct navigation based on the chat ID and type
-          push({
-            pathname: `chat/[chat_id]`,
-            params: {
-              chat_id: activityId,
-              type: "User",
-            },
-          });
-        } catch (e) {
-          console.log("ISSUE", e);
-        }
+        setNotificationScreen({
+          pathname: "chat/[chat_id]",
+          params: {
+            chat_id: activityId,
+            type: activityUserType,
+          },
+        });
       }
     }
   };
@@ -103,7 +99,7 @@ function App() {
     } catch (e) {
       if (e instanceof Error) Toast.show("Could not load user!");
     }
-  }, [user]);
+  }, [user, notificationScreen]);
 
   useEffect(() => {
     const backAction = () => {

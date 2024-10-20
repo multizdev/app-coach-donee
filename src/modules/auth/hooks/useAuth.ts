@@ -11,6 +11,7 @@ import { Toast } from "@ant-design/react-native";
 import useAppStore from "@src/modules/common/stores/useAppStore";
 import User from "@server/database/models/User";
 import Trainer from "@server/database/models/Trainer";
+import { NotificationParams } from "@src/types";
 
 type UserRegisterData = {
   fullName: string;
@@ -24,10 +25,8 @@ type UserLoginData = {
   password: string;
 };
 
-export default useAuth;
-
-function useAuth() {
-  const { replace } = useRouter();
+function useAuth(notificationScreen?: NotificationParams | null) {
+  const { push, replace } = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const {
@@ -231,6 +230,10 @@ function useAuth() {
           setDetailedTrainer(trainerDoc.data() as Trainer);
           replace("/trainer/home/(home)");
         }
+
+        if (notificationScreen) {
+          push(notificationScreen);
+        }
       } else {
         replace("/");
       }
@@ -245,5 +248,12 @@ function useAuth() {
     }
   };
 
-  return { registerUser, emailSignIn, isLoading, onAuthStateChanged };
+  return {
+    registerUser,
+    emailSignIn,
+    isLoading,
+    onAuthStateChanged,
+  };
 }
+
+export default useAuth;

@@ -18,6 +18,7 @@ type NotificationRequest = {
   activity: {
     type: string;
     id: string;
+    userType: string;
   };
 };
 
@@ -60,13 +61,16 @@ function ChatMessageInput({
           activity: {
             type: "chat",
             id: chat.id,
+            userType: type.toLowerCase() === "trainer" ? "Trainer" : "User",
           },
         };
         setMessage("");
 
+        console.log("PAYLOAD", notificationPayload);
+
         await axios.post(
           "https://coach-donee-admin-web.vercel.app/api/appNotifications/sendNotification",
-          // "http://192.168.18.109:3000/api/appNotifications/sendNotification",
+          // "http://192.168.18.29:3000/api/appNotifications/sendNotification",
           notificationPayload,
         );
       } catch (e) {
