@@ -14,9 +14,9 @@ import {
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
 
-import { Avatar } from "react-native-paper";
 import { COLOR_BLUE, COLOR_DARK_BLUE } from "@src/modules/common/constants";
 import useAppStore from "@src/modules/common/stores/useAppStore";
+import ProfileImage from "@src/modules/common/components/user/ProfileImage";
 
 function CustomDrawerContent(props: DrawerContentComponentProps) {
   const { detailedTrainer } = useAppStore();
@@ -28,10 +28,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
       <DrawerContentScrollView {...props}>
         {/* Profile Section */}
         <View className="m-5 py-4 border-0 border-b border-b-gray-100">
-          <Avatar.Image
-            size={80}
-            source={require("@assets/activities/gym.webp")}
-          />
+          <ProfileImage />
           <Text className="text-lg font-bold mb-1.25">{fullName}</Text>
           <View className="flex-row items-center gap-2">
             <Octicons

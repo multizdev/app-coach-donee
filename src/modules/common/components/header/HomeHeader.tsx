@@ -3,11 +3,10 @@ import { View, Text, TouchableOpacity, Image, Alert } from "react-native";
 
 import { DrawerActions } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useNavigation } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 import auth from "@react-native-firebase/auth";
 
 import { COLOR_BLUE } from "@src/modules/common/constants";
-import useAuth from "@src/modules/auth/hooks/useAuth";
 import useAppStore from "@src/modules/common/stores/useAppStore";
 
 function HomeHeader({
@@ -19,8 +18,9 @@ function HomeHeader({
   search?: ReactElement;
   filter?: ReactElement;
 }): ReactElement {
+  const { replace, canDismiss, dismissAll } = useRouter();
   const { setUser } = useAppStore();
-  const { onAuthStateChanged } = useAuth();
+  // const { onAuthStateChanged } = useAuth();
 
   const navigation = useNavigation();
 
@@ -28,7 +28,9 @@ function HomeHeader({
     try {
       await auth().signOut();
       setUser(null);
-      await onAuthStateChanged(null);
+      if (canDismiss()) dismissAll();
+      replace("/");
+      // await onAuthStateChanged(null);
     } catch (e) {
       if (e instanceof Error) Alert.alert("Problem Signing out", e.message);
     }
