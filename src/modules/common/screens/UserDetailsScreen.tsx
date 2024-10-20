@@ -19,6 +19,7 @@ import useAppStore from "@src/modules/common/stores/useAppStore";
 import User from "@server/database/models/User";
 import Trainer from "@server/database/models/Trainer";
 import ProfileImage from "@src/modules/common/components/user/ProfileImage";
+import { useRouter } from "expo-router";
 
 const updateSchema = Yup.object().shape({
   fullName: Yup.string().required("Full Name is required"),
@@ -34,6 +35,9 @@ function UpdateUserForm() {
   let type: string | null;
 
   const [uploading, setUploading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const { back, canGoBack } = useRouter();
 
   const {
     detailedTrainer,
@@ -53,6 +57,7 @@ function UpdateUserForm() {
   }
 
   async function updateUserInFirestore(values: any) {
+    setLoading(true);
     try {
       if (type) {
         const updatedValues = {
@@ -79,11 +84,14 @@ function UpdateUserForm() {
             ...updatedValues,
           });
         }
+        if (canGoBack()) back();
       }
     } catch (error) {
       if (error instanceof Error) {
         Toast.show("Could not update user details!");
       }
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -180,7 +188,9 @@ function UpdateUserForm() {
             try {
               await updateUserInFirestore(values);
             } catch (error) {
-              console.error("Failed to update user:", error);
+              if (error instanceof Error) {
+                Toast.show("There was a problem");
+              }
             }
           }}
         >
@@ -251,7 +261,11 @@ function UpdateUserForm() {
               {touched.gender && errors.gender && (
                 <Text className="text-red-500">{errors.gender}</Text>
               )}
-              <PrimaryButton text="Update" onPress={handleSubmit} />
+              <PrimaryButton
+                text="Update"
+                onPress={handleSubmit}
+                loading={loading}
+              />
             </View>
           )}
         </Formik>

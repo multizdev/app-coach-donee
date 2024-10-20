@@ -106,7 +106,6 @@ function useAwayMode(): {
     } catch (error) {
       if (error instanceof Error) {
         setIsEnabled(!newState);
-        console.log("Problem changing away mode");
       }
     }
   };

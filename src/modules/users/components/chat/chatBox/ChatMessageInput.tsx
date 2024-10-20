@@ -66,8 +66,6 @@ function ChatMessageInput({
         };
         setMessage("");
 
-        console.log("PAYLOAD", notificationPayload);
-
         await axios.post(
           "https://coach-donee-admin-web.vercel.app/api/appNotifications/sendNotification",
           // "http://192.168.18.29:3000/api/appNotifications/sendNotification",

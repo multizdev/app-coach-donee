@@ -22,6 +22,8 @@ const tabs = [{ title: "Current Chats" }, { title: "Your Trainers" }];
 function ChatListItem({ chat }: { chat: Chat }): ReactElement {
   const { push } = useRouter();
 
+  const { messages } = chat;
+
   return (
     <TouchableOpacity
       onPress={() =>
@@ -57,7 +59,18 @@ function ChatListItem({ chat }: { chat: Chat }): ReactElement {
         <Text className="text-lg font-bold">
           {chat.trainer?.displayName || chat.trainer?.fullName}
         </Text>
-        <Text className="text-md text-gray-600">Last message from coach</Text>
+        {messages && messages[messages.length - 1] && (
+          <View className="flex-row items-center gap-2">
+            <Text className="text-md text-gray-600">
+              {messages[messages.length - 1].sender === "user"
+                ? `${chat.user?.displayName || chat.user?.fullName}:`
+                : "You:"}
+            </Text>
+            <Text className="text-md text-gray-600">
+              {messages[messages.length - 1].message || "Send a message"}
+            </Text>
+          </View>
+        )}
       </View>
     </TouchableOpacity>
   );
@@ -70,8 +83,6 @@ function TrainerChatItem({ trainer }: { trainer: Trainer }): ReactElement {
   const onRefreshBookings = useUserBookings().onRefresh;
 
   const user = useAppStore().user;
-
-  console.log("TRAINER", trainer);
 
   return (
     <TouchableOpacity
@@ -149,8 +160,6 @@ function ChatsTab() {
         trainerMap.set(trainerId, trainer);
       }
     });
-
-    console.log("VALUES", trainerMap.values());
 
     return Array.from(trainerMap.values());
   }, [allBookings, chats]);

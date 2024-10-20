@@ -238,7 +238,6 @@ function useAuth(notificationScreen?: NotificationParams | null) {
         // replace("/");
       }
     } catch (e) {
-      console.log("Error", e);
       Toast.config({ position: "bottom" });
       if (e instanceof Error) {
         Toast.show("There was a problem!--");
