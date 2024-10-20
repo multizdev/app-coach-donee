@@ -1,15 +1,17 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import moment from "moment";
 import BottomSheet from "@gorhom/bottom-sheet";
 import firestore, { Timestamp } from "@react-native-firebase/firestore";
 import { Toast } from "@ant-design/react-native";
 import { useRouter } from "expo-router";
+import * as Notifications from "expo-notifications";
 
 import useRescheduleStore from "@src/modules/re-schedule/store/useRescheduleStore";
 import { COLOR_DARK_GREEN } from "@src/modules/common/constants";
 import { Booking } from "@server/database/models/Booking";
 import { DaysTime, MarkedDatesType, Time } from "@src/types";
+import { parse12HourTime } from "@src/util/dateTime";
 
 function useReschedule() {
   const { dismissAll } = useRouter();
@@ -29,6 +31,7 @@ function useReschedule() {
     setTrainer,
   } = useRescheduleStore();
 
+  const [scheduling, setScheduling] = useState<boolean>(false);
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   const handleDateSelect = (day: { dateString: string }) => {
@@ -128,14 +131,17 @@ function useReschedule() {
 
   const scheduleDates = async () => {
     try {
+      setScheduling(true);
       Toast.config({ position: "center", stackable: false });
 
       if (!bookingId) {
         Toast.show("There was a problem");
+        setScheduling(false);
         return;
       }
       if (!filteredSelectedDates || filteredSelectedDates?.length === 0) {
         Toast.show("Please schedule at least 1 session");
+        setScheduling(false);
         return;
       }
 
@@ -156,6 +162,30 @@ function useReschedule() {
           ],
         });
 
+      // Schedule notifications
+      for (const [date, time] of finalDates) {
+        const dateTimeString = `${date}T${parse12HourTime(time!)}`;
+        const dateTime = moment(dateTimeString);
+
+        // Schedule notifications at 6 hours, 3 hours, and 1 hour before the session
+        const notificationTimes = [
+          dateTime.subtract(6, "hours").toDate(),
+          dateTime.subtract(3, "hours").toDate(),
+          dateTime.subtract(1, "hour").toDate(),
+        ];
+
+        for (const notificationTime of notificationTimes) {
+          await Notifications.scheduleNotificationAsync({
+            content: {
+              title: "Session Reminder",
+              body: `You have a session scheduled at ${time} on ${date}`,
+            },
+            trigger: notificationTime,
+          });
+        }
+      }
+
+      // Reset States
       setSelectedDate(null);
       resetSelectedDates();
       setBooking(null);
@@ -167,6 +197,8 @@ function useReschedule() {
       if (e instanceof Error) {
         Toast.show("Cannot schedule booking, Please try again!");
       }
+    } finally {
+      setScheduling(false);
     }
   };
 
@@ -206,6 +238,8 @@ function useReschedule() {
     filteredSelectedDates,
     bottomSheetRef,
     disabledDates,
+    scheduling,
+    setScheduling,
     scheduleDates,
     handleDateSelect,
   };

@@ -34,6 +34,7 @@ function ReScheduleScreen(): ReactElement {
     scheduled,
     unscheduled,
     bottomSheetRef,
+    scheduling,
     handleDateSelect,
     scheduleDates,
   } = useReschedule();
@@ -137,7 +138,11 @@ function ReScheduleScreen(): ReactElement {
               </View>
             </ScrollView>
             <View className="px-2 pb-4">
-              <PrimaryButton text="Schedule Sessions" onPress={scheduleDates} />
+              <PrimaryButton
+                text="Schedule Sessions"
+                onPress={scheduleDates}
+                loading={scheduling}
+              />
             </View>
           </View>
           <ReScheduleBottomSheet bottomSheetRef={bottomSheetRef} />
