@@ -8,6 +8,7 @@ interface Person {
   gender: "male" | "female";
   phoneNumber?: string;
   fcmToken?: string;
+  photoURL?: string;
 }
 
 export default Person;
