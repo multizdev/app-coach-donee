@@ -38,7 +38,16 @@ type MarkedDatesType = {
   };
 };
 
+type NotificationParams = {
+  pathname: string;
+  params: {
+    chat_id?: string;
+    type: string;
+  };
+};
+
 export type {
+  NotificationParams,
   DaysSelection,
   DaysTimeTimestamp,
   Day,
