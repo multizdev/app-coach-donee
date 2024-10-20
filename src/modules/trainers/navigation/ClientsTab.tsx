@@ -1,14 +1,17 @@
 import React, { ReactElement } from "react";
 import { View, Text, TextInput, FlatList } from "react-native";
 
-import { Fontisto, FontAwesome6 } from "@expo/vector-icons";
+import { Fontisto } from "@expo/vector-icons";
 
 import { COLOR_BLUE } from "@src/modules/common/constants";
 import useAllBookings from "@src/modules/trainers/hooks/booking/useAllBookings";
 import { Booking } from "@server/database/models/Booking";
+import { Avatar } from "react-native-paper";
 
 function Client({ item }: { item: Booking }): ReactElement {
   const { user, selectedPackage, scheduledDates } = item;
+
+  console.log("USER", user);
 
   return (
     <View
@@ -19,7 +22,22 @@ function Client({ item }: { item: Booking }): ReactElement {
         className="w-[70] h-[70] flex justify-center items-center rounded-full bg-white"
         style={{ elevation: 4 }}
       >
-        <FontAwesome6 name="user-circle" size={60} color={COLOR_BLUE} />
+        {user?.photoURL ? (
+          <Avatar.Image
+            style={{ elevation: 2 }}
+            source={{ uri: user?.photoURL || "" }}
+            size={60}
+          />
+        ) : (
+          <Avatar.Text
+            style={{ elevation: 2, backgroundColor: COLOR_BLUE }}
+            size={60}
+            color="white"
+            label={(user?.displayName || user?.fullName)!
+              .charAt(0)
+              .toUpperCase()}
+          />
+        )}
       </View>
       <View className="flex-col">
         <Text className="font-bold text-xl text-gray-500">
@@ -58,25 +76,6 @@ function ClientsTab(): ReactElement {
           renderItem={({ item }: { item: Booking }) => <Client item={item} />}
         />
       </View>
-      {/*<View className="w-full p-2">
-        <TouchableOpacity
-          style={{ elevation: 2 }}
-          className="h-[50] rounded-full overflow-hidden"
-        >
-          <LinearGradient
-            colors={
-              ["#60A5FA", "#98d3ff"] 
-            }
-            start={{ x: 0, y: 1 }}
-            end={{ x: 0, y: 0 }}
-            className="w-full h-full flex justify-center items-center"
-          >
-            <Text className="text-white text-center font-semibold">
-              Add new client
-            </Text>
-          </LinearGradient>
-        </TouchableOpacity>
-      </View>*/}
     </View>
   );
 }

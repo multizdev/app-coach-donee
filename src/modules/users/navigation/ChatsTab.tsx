@@ -1,5 +1,5 @@
 import React, { ReactElement, useMemo, useState } from "react";
-import { View, Text, FlatList, TouchableOpacity, Image } from "react-native";
+import { View, Text, FlatList, TouchableOpacity } from "react-native";
 
 import firestore from "@react-native-firebase/firestore";
 
@@ -7,6 +7,7 @@ import { useRouter } from "expo-router";
 import { Entypo } from "@expo/vector-icons";
 import { Tabs, Toast } from "@ant-design/react-native";
 
+import { Avatar } from "react-native-paper";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import useUserBookings from "@src/modules/users/hooks/booking/useUserBookings";
@@ -35,11 +36,23 @@ function ChatListItem({ chat }: { chat: Chat }): ReactElement {
       style={{ elevation: 2 }}
       className="bg-white flex-row h-[70px] items-center gap-4 px-4 rounded-xl"
     >
-      <Image
-        className="rounded-full border-2 border-gray-200"
-        source={require("@assets/background/coach.webp")}
-        style={{ width: 55, height: 55 }}
-      />
+      {chat.trainer?.photoURL ? (
+        <Avatar.Image
+          style={{ elevation: 2 }}
+          source={{ uri: chat.trainer?.photoURL || "" }}
+          size={50}
+        />
+      ) : (
+        <Avatar.Text
+          style={{ elevation: 2, backgroundColor: COLOR_BLUE }}
+          size={50}
+          color="white"
+          label={(chat.trainer?.displayName || chat.trainer?.fullName)!
+            .charAt(0)
+            .toUpperCase()}
+        />
+      )}
+
       <View className="w-full h-full justify-between py-4">
         <Text className="text-lg font-bold">
           {chat.trainer?.displayName || chat.trainer?.fullName}
@@ -57,6 +70,8 @@ function TrainerChatItem({ trainer }: { trainer: Trainer }): ReactElement {
   const onRefreshBookings = useUserBookings().onRefresh;
 
   const user = useAppStore().user;
+
+  console.log("TRAINER", trainer);
 
   return (
     <TouchableOpacity
@@ -82,11 +97,20 @@ function TrainerChatItem({ trainer }: { trainer: Trainer }): ReactElement {
         }
       }}
     >
-      <Image
-        className="rounded-full border-2 border-gray-200"
-        source={require("@assets/background/coach.webp")}
-        style={{ width: 55, height: 55 }}
-      />
+      {trainer?.photoURL ? (
+        <Avatar.Image
+          style={{ elevation: 2 }}
+          source={{ uri: trainer?.photoURL || "" }}
+          size={50}
+        />
+      ) : (
+        <Avatar.Text
+          style={{ elevation: 2, backgroundColor: COLOR_BLUE }}
+          size={50}
+          color="white"
+          label={"U"}
+        />
+      )}
       <View className="w-full h-full justify-between py-4">
         <Text className="text-lg font-bold">
           {trainer.displayName || trainer.fullName}
@@ -116,6 +140,7 @@ function ChatsTab() {
 
     allBookings.forEach((booking) => {
       const { trainer, trainerId } = booking;
+
       if (
         trainer &&
         !trainerMap.has(trainerId) &&
@@ -124,6 +149,8 @@ function ChatsTab() {
         trainerMap.set(trainerId, trainer);
       }
     });
+
+    console.log("VALUES", trainerMap.values());
 
     return Array.from(trainerMap.values());
   }, [allBookings, chats]);

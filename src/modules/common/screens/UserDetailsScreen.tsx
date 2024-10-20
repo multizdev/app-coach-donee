@@ -111,11 +111,24 @@ function UpdateUserForm() {
 
         task
           .then(async () => {
-            const downloadURL = await ref.getDownloadURL();
-            await firebaseUser.updateProfile({
-              photoURL: downloadURL,
-            });
-            setUser(auth().currentUser);
+            try {
+              const downloadURL = await ref.getDownloadURL();
+              await firestore()
+                .collection(type || "")
+                .doc(firebaseUser.uid)
+                .update({
+                  photoURL: downloadURL,
+                });
+              await firebaseUser.updateProfile({
+                photoURL: downloadURL,
+              });
+              setUser(auth().currentUser);
+            } catch (error) {
+              if (error) {
+                Toast.show("Error uploading image");
+                setUploading(false);
+              }
+            }
           })
           .catch((error) => {
             if (error) {

@@ -8,3 +8,4 @@ export const COLOR_YELLOW = "#fbf6b5";
 export const COLOR_PINK = "#fae8fb";
 export const COLOR_AQUA = "#ccf4f2";
 export const COLOR_RED = "#ff3030";
+export const COLOR_ORANGE = "#ffb580";

@@ -4,7 +4,6 @@ import {
   Text,
   TextInput,
   FlatList,
-  Image,
   TouchableOpacity,
   RefreshControl,
 } from "react-native";
@@ -15,9 +14,14 @@ import { AntDesign, Fontisto, MaterialIcons } from "@expo/vector-icons";
 import useUserBookings from "@src/modules/users/hooks/booking/useUserBookings";
 import { Booking } from "@server/database/models/Booking";
 import HeadingChips from "@src/modules/users/components/elements/chips/HeadingChips";
-import { COLOR_DARK_BLUE, COLOR_YELLOW } from "@src/modules/common/constants";
+import {
+  COLOR_BLUE,
+  COLOR_DARK_BLUE,
+  COLOR_YELLOW,
+} from "@src/modules/common/constants";
 import useRescheduleStore from "@src/modules/re-schedule/store/useRescheduleStore";
 import useBookingStore from "@src/modules/users/stores/home/useBookingStore";
+import { Avatar } from "react-native-paper";
 
 function ItemExpiryDate({ date }: { date: Date }) {
   const futureDate: Date = new Date(date);
@@ -51,11 +55,22 @@ function TrainerItem({ item }: { item: Booking }): ReactElement {
           className="w-[70] h-[70] flex justify-center items-center rounded-full bg-white"
           style={{ elevation: 4 }}
         >
-          <Image
-            className="rounded-full"
-            source={require("@assets/background/coach.webp")}
-            style={{ width: 60, height: 60 }}
-          />
+          {trainer?.photoURL ? (
+            <Avatar.Image
+              style={{ elevation: 2 }}
+              source={{ uri: trainer?.photoURL || "" }}
+              size={60}
+            />
+          ) : (
+            <Avatar.Text
+              style={{ elevation: 2, backgroundColor: COLOR_BLUE }}
+              size={60}
+              color="white"
+              label={(trainer?.displayName || trainer?.fullName)!
+                .charAt(0)
+                .toUpperCase()}
+            />
+          )}
         </View>
         <View className="flex-col gap-2">
           <View className="flex-row items-center justify-between gap-2">
